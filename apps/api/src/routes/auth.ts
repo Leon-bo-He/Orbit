@@ -2,10 +2,17 @@ import type { FastifyPluginAsync } from 'fastify';
 import { randomUUID } from 'crypto';
 import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
+import { z } from 'zod';
 import { db } from '../db/client';
 import { users } from '../db/schema/index';
 import { redis } from '../redis/client';
 import { config } from '../config';
+
+const registerSchema = z.object({
+  email: z.string().email(),
+  name: z.string().min(1).max(100),
+  password: z.string().min(8),
+});
 
 const COOKIE_OPTS = {
   httpOnly: true,
@@ -84,6 +91,66 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
       return reply
         .clearCookie('refreshToken', { path: '/api/auth' })
         .send({ ok: true });
+    }
+  );
+
+  // POST /api/auth/register
+  app.post<{ Body: unknown }>('/api/auth/register', async (req, reply) => {
+    const parsed = registerSchema.safeParse(req.body);
+    if (!parsed.success) {
+      return reply.code(400).send({ error: parsed.error.errors[0]?.message ?? 'Invalid input' });
+    }
+    const { email, name, password } = parsed.data;
+
+    const [existing] = await db.select({ id: users.id }).from(users).where(eq(users.email, email)).limit(1);
+    if (existing) {
+      return reply.code(409).send({ error: 'Email already registered' });
+    }
+
+    const passwordHash = await bcrypt.hash(password, 10);
+    const [user] = await db
+      .insert(users)
+      .values({ email, name, passwordHash })
+      .returning();
+
+    if (!user) {
+      return reply.code(500).send({ error: 'Failed to create user' });
+    }
+
+    const jti = randomUUID();
+    const accessToken = app.jwt.sign(
+      { sub: user.id, email: user.email, jti },
+      { expiresIn: config.JWT_ACCESS_TTL }
+    );
+    const refreshToken = app.jwt.sign(
+      { sub: user.id, type: 'refresh', jti },
+      { expiresIn: config.JWT_REFRESH_TTL }
+    );
+
+    await redis.setex(`session:${user.id}:${jti}`, config.JWT_REFRESH_TTL, '1');
+
+    return reply
+      .code(201)
+      .setCookie('refreshToken', refreshToken, { ...COOKIE_OPTS, maxAge: config.JWT_REFRESH_TTL })
+      .send({
+        accessToken,
+        user: { id: user.id, email: user.email, name: user.name, locale: user.locale },
+      });
+  });
+
+  // GET /api/auth/me
+  app.get(
+    '/api/auth/me',
+    { onRequest: [app.authenticate] },
+    async (req, reply) => {
+      const { sub } = req.user as { sub: string };
+      const [user] = await db
+        .select({ id: users.id, email: users.email, name: users.name, locale: users.locale, timezone: users.timezone })
+        .from(users)
+        .where(eq(users.id, sub))
+        .limit(1);
+      if (!user) return reply.code(404).send({ error: 'User not found' });
+      return reply.send(user);
     }
   );
 };
