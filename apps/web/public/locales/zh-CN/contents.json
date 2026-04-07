@@ -17,7 +17,91 @@
     "hooks": "爆点提炼",
     "titles": "标题候选",
     "outline": "内容大纲",
-    "references": "竞品参考"
+    "references": "竞品参考",
+    "back_to_board": "返回看板",
+    "sections": {
+      "format": "内容类型 / Content Format",
+      "audience": "目标受众 / Target Audience",
+      "goals": "内容目标 / Content Goals",
+      "hooks": "爆点提炼 / Hook Analysis",
+      "titles": "标题候选 / Title Candidates",
+      "outline": "内容大纲 / Content Outline",
+      "references": "竞品参考 / Competitive References"
+    },
+    "format": {
+      "duration_label": "时长",
+      "duration_unit": "秒",
+      "aspect_ratio_label": "画面比例",
+      "aspect_ratio_placeholder": "选择画面比例",
+      "notes_label": "格式备注",
+      "notes_placeholder": "关于格式、风格或制作要求的任何说明…"
+    },
+    "audience": {
+      "age_range_label": "年龄范围",
+      "age_range_placeholder": "例如 18-25",
+      "persona_tags_label": "用户标签",
+      "persona_tags_placeholder": "输入后按回车",
+      "pain_points_label": "痛点",
+      "pain_points_placeholder": "目标受众面临哪些问题？",
+      "reach_scenario_label": "触达场景",
+      "reach_scenario_placeholder": "他们在哪里、什么时候看到这个内容？",
+      "save_template": "保存为模板",
+      "load_template": "加载模板",
+      "no_templates": "暂无保存的模板",
+      "save_template_modal_title": "保存受众模板",
+      "template_name_placeholder": "模板名称",
+      "save_template_confirm": "保存"
+    },
+    "goals": {
+      "goals_label": "内容目标",
+      "grow_followers": "涨粉",
+      "convert": "转化",
+      "traffic": "引流",
+      "branding": "品牌曝光",
+      "description_label": "目标说明",
+      "description_placeholder": "描述这条内容的成功标准…",
+      "kpi_label": "KPI 目标",
+      "kpi_likes": "点赞",
+      "kpi_comments": "评论",
+      "kpi_shares": "分享",
+      "kpi_followers": "新增粉丝"
+    },
+    "hooks": {
+      "core_hook_label": "核心爆点",
+      "core_hook_placeholder": "最能吸引眼球的核心亮点…",
+      "conflict_label": "冲突 / 反差",
+      "conflict_placeholder": "什么张力或反差能引发兴趣？",
+      "golden_opening_label": "黄金3秒开场",
+      "golden_opening_placeholder": "让人停下滑动的前3秒…",
+      "memory_anchor_label": "记忆锚点",
+      "memory_anchor_placeholder": "看完后他们会记住什么？"
+    },
+    "titles": {
+      "title_placeholder": "输入候选标题…",
+      "add_title": "添加标题",
+      "set_primary": "设为主标题",
+      "remove_title": "删除标题"
+    },
+    "outline": {
+      "section_placeholder": "段落描述…",
+      "note_placeholder": "本段落的注释…",
+      "add_section": "添加段落",
+      "drag_to_reorder": "拖拽排序",
+      "toggle_note": "展开/收起注释",
+      "remove_section": "删除段落"
+    },
+    "references": {
+      "add_reference": "添加参考",
+      "add_reference_modal_title": "添加竞品参考",
+      "author_name_label": "作者",
+      "content_title_label": "内容标题",
+      "platform_label": "平台",
+      "views_label": "播放量",
+      "likes_label": "点赞数",
+      "comments_label": "评论数",
+      "takeaway_label": "核心收获",
+      "add_reference_confirm": "添加"
+    }
   },
   "card": {
     "scheduled": "预定 {{date}}",
@@ -34,7 +118,8 @@
     "notes_label": "备注",
     "idea_link": "来源想法",
     "close": "关闭",
-    "add_tag": "添加标签"
+    "add_tag": "添加标签",
+    "open_brief": "打开策划书 ✍️"
   },
   "create": {
     "title": "新建内容",

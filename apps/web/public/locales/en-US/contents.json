@@ -17,7 +17,91 @@
     "hooks": "Key Hooks",
     "titles": "Title Candidates",
     "outline": "Content Outline",
-    "references": "References"
+    "references": "References",
+    "back_to_board": "Back to Board",
+    "sections": {
+      "format": "内容类型 / Content Format",
+      "audience": "目标受众 / Target Audience",
+      "goals": "内容目标 / Content Goals",
+      "hooks": "爆点提炼 / Hook Analysis",
+      "titles": "标题候选 / Title Candidates",
+      "outline": "内容大纲 / Content Outline",
+      "references": "竞品参考 / Competitive References"
+    },
+    "format": {
+      "duration_label": "Duration",
+      "duration_unit": "seconds",
+      "aspect_ratio_label": "Aspect Ratio",
+      "aspect_ratio_placeholder": "Select aspect ratio",
+      "notes_label": "Format Notes",
+      "notes_placeholder": "Any notes about format, style, or production requirements…"
+    },
+    "audience": {
+      "age_range_label": "Age Range",
+      "age_range_placeholder": "e.g. 18-25",
+      "persona_tags_label": "Persona Tags",
+      "persona_tags_placeholder": "Type and press Enter",
+      "pain_points_label": "Pain Points",
+      "pain_points_placeholder": "What problems does this audience face?",
+      "reach_scenario_label": "Reach Scenario",
+      "reach_scenario_placeholder": "Where and when will they see this content?",
+      "save_template": "Save as Template",
+      "load_template": "Load Template",
+      "no_templates": "No templates saved yet",
+      "save_template_modal_title": "Save Audience Template",
+      "template_name_placeholder": "Template name",
+      "save_template_confirm": "Save"
+    },
+    "goals": {
+      "goals_label": "Content Goals",
+      "grow_followers": "Grow Followers",
+      "convert": "Convert",
+      "traffic": "Drive Traffic",
+      "branding": "Brand Awareness",
+      "description_label": "Goal Description",
+      "description_placeholder": "Describe what success looks like for this content…",
+      "kpi_label": "KPI Targets",
+      "kpi_likes": "Likes",
+      "kpi_comments": "Comments",
+      "kpi_shares": "Shares",
+      "kpi_followers": "Followers"
+    },
+    "hooks": {
+      "core_hook_label": "Core Hook",
+      "core_hook_placeholder": "The single most compelling hook…",
+      "conflict_label": "Conflict / Contrast",
+      "conflict_placeholder": "What tension or contrast drives interest?",
+      "golden_opening_label": "Golden 3-Second Opening",
+      "golden_opening_placeholder": "First 3 seconds that stop the scroll…",
+      "memory_anchor_label": "Memory Anchor",
+      "memory_anchor_placeholder": "What will they remember after watching?"
+    },
+    "titles": {
+      "title_placeholder": "Enter title candidate…",
+      "add_title": "Add Title",
+      "set_primary": "Set as primary",
+      "remove_title": "Remove title"
+    },
+    "outline": {
+      "section_placeholder": "Section description…",
+      "note_placeholder": "Notes for this section…",
+      "add_section": "Add Section",
+      "drag_to_reorder": "Drag to reorder",
+      "toggle_note": "Toggle note",
+      "remove_section": "Remove section"
+    },
+    "references": {
+      "add_reference": "Add Reference",
+      "add_reference_modal_title": "Add Competitive Reference",
+      "author_name_label": "Author",
+      "content_title_label": "Content Title",
+      "platform_label": "Platform",
+      "views_label": "Views",
+      "likes_label": "Likes",
+      "comments_label": "Comments",
+      "takeaway_label": "Key Takeaway",
+      "add_reference_confirm": "Add"
+    }
   },
   "card": {
     "scheduled": "Scheduled {{date}}",
@@ -34,7 +118,8 @@
     "notes_label": "Notes",
     "idea_link": "From Idea",
     "close": "Close",
-    "add_tag": "Add tag"
+    "add_tag": "Add tag",
+    "open_brief": "Open Brief ✍️"
   },
   "create": {
     "title": "New Content",
