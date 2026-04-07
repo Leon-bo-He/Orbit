@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import type { Content, Stage, Platform, ContentType } from '@contentflow/shared';
 import { STAGE_ORDER } from '@contentflow/shared';
 import { useTranslation } from 'react-i18next';
@@ -45,6 +46,7 @@ interface DrawerBodyProps {
 
 function DrawerBody({ content, workspaceId, onClose }: DrawerBodyProps) {
   const { t } = useTranslation('contents');
+  const navigate = useNavigate();
   const updateContent = useUpdateContent();
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -99,13 +101,24 @@ function DrawerBody({ content, workspaceId, onClose }: DrawerBodyProps) {
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 flex-shrink-0">
           <h2 className="text-sm font-semibold text-gray-700">{t('drawer.title_label')}</h2>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 text-lg leading-none"
-            aria-label={t('drawer.close')}
-          >
-            ✕
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => {
+                onClose();
+                navigate(`/workspaces/${workspaceId}/contents/${content.id}/brief`);
+              }}
+              className="text-xs bg-indigo-50 text-indigo-600 border border-indigo-200 px-2 py-1 rounded hover:bg-indigo-100"
+            >
+              {t('drawer.open_brief')}
+            </button>
+            <button
+              onClick={onClose}
+              className="text-gray-400 hover:text-gray-600 text-lg leading-none"
+              aria-label={t('drawer.close')}
+            >
+              ✕
+            </button>
+          </div>
         </div>
 
         {/* Body */}
