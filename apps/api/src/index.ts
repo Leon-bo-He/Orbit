@@ -1,7 +1,7 @@
-import { buildApp } from './app.js';
-import { config } from './config.js';
-import { redis } from './redis/client.js';
-import { startWorkers } from './queue/workers.js';
+import { buildApp } from './app';
+import { config } from './config';
+import { redis } from './redis/client';
+import { startWorkers } from './queue/workers';
 
 async function main() {
   await redis.connect();

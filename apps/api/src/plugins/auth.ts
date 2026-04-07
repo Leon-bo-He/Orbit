@@ -1,8 +1,8 @@
 import fp from 'fastify-plugin';
 import jwtPlugin from '@fastify/jwt';
 import cookiePlugin from '@fastify/cookie';
-import { config } from '../config.js';
-import { redis } from '../redis/client.js';
+import { config } from '../config';
+import { redis } from '../redis/client';
 import type { FastifyRequest, FastifyReply } from 'fastify';
 
 export const authPlugin = fp(async (app) => {

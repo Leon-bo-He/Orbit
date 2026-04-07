@@ -1,0 +1,13 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1775563876415,
+      "tag": "0000_fine_sabra",
+      "breakpoints": true
+    }
+  ]
+}

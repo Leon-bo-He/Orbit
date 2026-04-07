@@ -1,13 +1,13 @@
 import type { FastifyInstance } from 'fastify';
-import { healthRoutes } from './health.js';
-import { authRoutes } from './auth.js';
-import { ideasRoutes } from './ideas.js';
-import { workspacesRoutes } from './workspaces.js';
-import { contentsRoutes } from './contents.js';
-import { contentPlansRoutes } from './content-plans.js';
-import { publicationsRoutes } from './publications.js';
-import { metricsRoutes } from './metrics.js';
-import { dashboardRoutes } from './dashboard.js';
+import { healthRoutes } from './health';
+import { authRoutes } from './auth';
+import { ideasRoutes } from './ideas';
+import { workspacesRoutes } from './workspaces';
+import { contentsRoutes } from './contents';
+import { contentPlansRoutes } from './content-plans';
+import { publicationsRoutes } from './publications';
+import { metricsRoutes } from './metrics';
+import { dashboardRoutes } from './dashboard';
 
 export async function registerRoutes(app: FastifyInstance) {
   await app.register(healthRoutes);

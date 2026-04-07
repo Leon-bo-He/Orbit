@@ -1,7 +1,7 @@
 import { pgTable, uuid, text, timestamp, jsonb } from 'drizzle-orm/pg-core';
-import { users } from './users.js';
-import { workspaces } from './workspaces.js';
-import { contents } from './contents.js';
+import { users } from './users';
+import { workspaces } from './workspaces';
+import { contents } from './contents';
 
 export const ideas = pgTable('ideas', {
   id: uuid('id').primaryKey().defaultRandom(),

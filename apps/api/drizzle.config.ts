@@ -1,10 +1,10 @@
-import type { Config } from 'drizzle-kit';
+import { defineConfig } from 'drizzle-kit';
 
-export default {
-  schema: './src/db/schema/index.ts',
+export default defineConfig({
+  schema: './src/db/schema/*.ts',
   out: './src/db/migrations',
-  driver: 'pg',
+  dialect: 'postgresql',
   dbCredentials: {
-    connectionString: process.env['DATABASE_URL'] ?? 'postgres://contentflow:secret@localhost:5432/contentflow',
+    url: process.env['DATABASE_URL'] ?? 'postgres://contentflow:secret@localhost:5432/contentflow',
   },
-} satisfies Config;
+});

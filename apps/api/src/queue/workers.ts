@@ -1,5 +1,5 @@
 import { Worker } from 'bullmq';
-import { bullmqConnection } from './client.js';
+import { bullmqConnection } from './client';
 
 export function startWorkers() {
   const notificationWorker = new Worker(

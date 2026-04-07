@@ -1,7 +1,7 @@
 import type { FastifyPluginAsync } from 'fastify';
 import { sql } from 'drizzle-orm';
-import { db } from '../db/client.js';
-import { redis } from '../redis/client.js';
+import { db } from '../db/client';
+import { redis } from '../redis/client';
 
 export const healthRoutes: FastifyPluginAsync = async (app) => {
   app.get('/health', async (_req, reply) => {

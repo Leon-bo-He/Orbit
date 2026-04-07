@@ -2,10 +2,10 @@ import type { FastifyPluginAsync } from 'fastify';
 import { randomUUID } from 'crypto';
 import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
-import { db } from '../db/client.js';
-import { users } from '../db/schema/index.js';
-import { redis } from '../redis/client.js';
-import { config } from '../config.js';
+import { db } from '../db/client';
+import { users } from '../db/schema/index';
+import { redis } from '../redis/client';
+import { config } from '../config';
 
 const COOKIE_OPTS = {
   httpOnly: true,

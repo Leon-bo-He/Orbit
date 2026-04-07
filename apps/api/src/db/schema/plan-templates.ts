@@ -1,5 +1,5 @@
 import { pgTable, uuid, text, timestamp, jsonb } from 'drizzle-orm/pg-core';
-import { workspaces } from './workspaces.js';
+import { workspaces } from './workspaces';
 
 export const planTemplates = pgTable('plan_templates', {
   id: uuid('id').primaryKey().defaultRandom(),

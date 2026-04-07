@@ -1,4 +1,4 @@
-import { config } from '../config.js';
+import { config } from '../config';
 
 export const bullmqConnection = {
   host: new URL(config.REDIS_URL).hostname,

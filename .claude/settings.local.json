@@ -3,7 +3,31 @@
     "allow": [
       "Bash(git init:*)",
       "Bash(git add:*)",
-      "Bash(git commit -m 'chore: initial project setup with docs and root config:*)"
+      "Bash(git commit -m 'chore: initial project setup with docs and root config:*)",
+      "Bash(git -C /Users/bo/IdeaProjects/content_creator log --oneline -5)",
+      "Bash(git commit -m ':*)",
+      "Bash(git -C /Users/bo/IdeaProjects/content_creator add apps/)",
+      "Bash(git -C /Users/bo/IdeaProjects/content_creator commit -m ':*)",
+      "Bash(git -C /Users/bo/IdeaProjects/content_creator add apps/api/)",
+      "Bash(git -C /Users/bo/IdeaProjects/content_creator add apps/web/)",
+      "Bash(pnpm install:*)",
+      "Bash(export PATH=\"/usr/local/bin:/opt/homebrew/bin:$PATH\")",
+      "Bash(pnpm --version)",
+      "Read(//Users/bo/.local/share/**)",
+      "Read(//Users/bo/Library/**)",
+      "Bash(export PATH=\"/Users/bo/.nvm/versions/node/v18.20.8/lib/node_modules/corepack/shims:$PATH\")",
+      "Bash(pnpm --filter @contentflow/shared typecheck)",
+      "Bash(pnpm --filter web typecheck)",
+      "Bash(pnpm --filter api typecheck)",
+      "Bash(git -C /Users/bo/IdeaProjects/content_creator add apps/web/tsconfig.json apps/web/src/router/index.tsx apps/api/src/redis/client.ts)",
+      "Bash(git:*)",
+      "Bash(npm --version)",
+      "Bash(npm install:*)",
+      "Bash(DATABASE_URL=postgres://contentflow:secret@localhost:5432/contentflow pnpm generate)",
+      "Bash(./node_modules/.bin/drizzle-kit --version)",
+      "Bash(./node_modules/.bin/drizzle-kit generate:pg:*)",
+      "Bash(pnpm generate:*)",
+      "Bash(xargs sed:*)"
     ]
   }
 }

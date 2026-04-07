@@ -1,8 +1,8 @@
 import Fastify from 'fastify';
-import { config } from './config.js';
-import { corsPlugin } from './plugins/cors.js';
-import { authPlugin } from './plugins/auth.js';
-import { registerRoutes } from './routes/index.js';
+import { config } from './config';
+import { corsPlugin } from './plugins/cors';
+import { authPlugin } from './plugins/auth';
+import { registerRoutes } from './routes/index';
 
 export async function buildApp() {
   const app = Fastify({
