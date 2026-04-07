@@ -180,6 +180,62 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
     }
   );
 
+  // PATCH /api/auth/password
+  app.patch<{ Body: unknown }>(
+    '/api/auth/password',
+    { onRequest: [app.authenticate] },
+    async (req, reply) => {
+      const schema = z.object({
+        currentPassword: z.string().min(1),
+        newPassword: z.string().min(8),
+      });
+      const parsed = schema.safeParse(req.body);
+      if (!parsed.success) {
+        return reply.code(400).send({ error: parsed.error.errors[0]?.message ?? 'Invalid input' });
+      }
+
+      const { sub } = req.user as { sub: string };
+      const [user] = await db.select().from(users).where(eq(users.id, sub)).limit(1);
+      if (!user?.passwordHash) return reply.code(404).send({ error: 'User not found' });
+
+      const valid = await bcrypt.compare(parsed.data.currentPassword, user.passwordHash);
+      if (!valid) return reply.code(401).send({ error: 'Current password is incorrect' });
+
+      const newHash = await bcrypt.hash(parsed.data.newPassword, 10);
+      await db.update(users).set({ passwordHash: newHash }).where(eq(users.id, sub));
+
+      return reply.send({ ok: true });
+    }
+  );
+
+  // DELETE /api/auth/account
+  app.delete(
+    '/api/auth/account',
+    { onRequest: [app.authenticate] },
+    async (req, reply) => {
+      const schema = z.object({ password: z.string().min(1) });
+      const parsed = schema.safeParse(req.body);
+      if (!parsed.success) {
+        return reply.code(400).send({ error: 'Password required' });
+      }
+
+      const { sub, jti } = req.user as { sub: string; jti: string };
+      const [user] = await db.select().from(users).where(eq(users.id, sub)).limit(1);
+      if (!user?.passwordHash) return reply.code(404).send({ error: 'User not found' });
+
+      const valid = await bcrypt.compare(parsed.data.password, user.passwordHash);
+      if (!valid) return reply.code(401).send({ error: 'Incorrect password' });
+
+      // Revoke session, then delete user
+      await redis.del(`session:${sub}:${jti}`);
+      await db.delete(users).where(eq(users.id, sub));
+
+      return reply
+        .clearCookie('refreshToken', { path: '/api/auth' })
+        .send({ ok: true });
+    }
+  );
+
   // GET /api/auth/me
   app.get(
     '/api/auth/me',

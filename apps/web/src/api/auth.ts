@@ -55,6 +55,26 @@ export function useUpdateProfile() {
   });
 }
 
+export function useChangePassword() {
+  return useMutation<{ ok: boolean }, ApiError, { currentPassword: string; newPassword: string }>({
+    mutationFn: (body) =>
+      apiFetch<{ ok: boolean }>('/api/auth/password', {
+        method: 'PATCH',
+        body: JSON.stringify(body),
+      }),
+  });
+}
+
+export function useDeleteAccount() {
+  return useMutation<{ ok: boolean }, ApiError, { password: string }>({
+    mutationFn: (body) =>
+      apiFetch<{ ok: boolean }>('/api/auth/account', {
+        method: 'DELETE',
+        body: JSON.stringify(body),
+      }),
+  });
+}
+
 export function useMe(accessToken: string | null) {
   return useQuery<AuthUser, ApiError>({
     queryKey: ['auth', 'me'],
