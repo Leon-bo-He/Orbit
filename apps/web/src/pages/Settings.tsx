@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import type { Workspace } from '@contentflow/shared';
 import { useWorkspaces, useUpdateWorkspace } from '../api/workspaces.js';
 import { useAuthStore } from '../store/auth.store.js';
-import { useUiStore } from '../store/ui.store.js';
+import { useUiStore, type Theme } from '../store/ui.store.js';
 import { CreateWorkspaceModal } from '../components/workspaces/CreateWorkspaceModal.js';
 import i18n, { SUPPORTED_LOCALES, type SupportedLocale } from '../i18n/index.js';
 
@@ -106,10 +106,18 @@ function EditWorkspaceModal({ workspace, onClose }: { workspace: Workspace; onCl
 
 // ─── Section panels ───────────────────────────────────────────────────────────
 
+const THEME_OPTIONS: { value: Theme; label: string; icon: string }[] = [
+  { value: 'system', label: 'System', icon: '💻' },
+  { value: 'light',  label: 'Light',  icon: '☀️' },
+  { value: 'dark',   label: 'Dark',   icon: '🌙' },
+];
+
 function GeneralPanel() {
   const { t: tc } = useTranslation('common');
   const locale = useUiStore((s) => s.locale);
   const setLocale = useUiStore((s) => s.setLocale);
+  const theme = useUiStore((s) => s.theme);
+  const setTheme = useUiStore((s) => s.setTheme);
 
   function handleLocale(l: SupportedLocale) {
     setLocale(l);
@@ -118,12 +126,10 @@ function GeneralPanel() {
 
   return (
     <div className="space-y-6">
-      {/* Language */}
       <div>
+        {/* Language */}
         <div className="flex items-center justify-between py-3 border-b border-gray-100">
-          <div>
-            <p className="text-sm font-medium text-gray-900">{tc('action.language') || 'Language'}</p>
-          </div>
+          <p className="text-sm font-medium text-gray-900">{tc('action.language') || 'Language'}</p>
           <select
             value={locale}
             onChange={(e) => handleLocale(e.target.value as SupportedLocale)}
@@ -137,7 +143,7 @@ function GeneralPanel() {
           </select>
         </div>
 
-        {/* Timezone (display only for now) */}
+        {/* Timezone (display only) */}
         <div className="flex items-center justify-between py-3 border-b border-gray-100">
           <p className="text-sm font-medium text-gray-900">Timezone</p>
           <span className="text-sm text-gray-500">
@@ -145,10 +151,25 @@ function GeneralPanel() {
           </span>
         </div>
 
-        {/* Theme placeholder */}
+        {/* Appearance */}
         <div className="flex items-center justify-between py-3 border-b border-gray-100">
           <p className="text-sm font-medium text-gray-900">Appearance</p>
-          <span className="text-sm text-gray-400 bg-gray-100 px-2 py-0.5 rounded">Light (coming soon)</span>
+          <div className="flex items-center rounded-lg border border-gray-200 overflow-hidden">
+            {THEME_OPTIONS.map((opt) => (
+              <button
+                key={opt.value}
+                onClick={() => setTheme(opt.value)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 text-sm transition-colors ${
+                  theme === opt.value
+                    ? 'bg-indigo-600 text-white font-medium'
+                    : 'bg-white text-gray-600 hover:bg-gray-50'
+                }`}
+              >
+                <span>{opt.icon}</span>
+                <span>{opt.label}</span>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </div>

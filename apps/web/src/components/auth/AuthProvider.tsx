@@ -3,12 +3,14 @@ import { useRefreshToken, useMe } from '../../api/auth.js';
 import { useAuthStore } from '../../store/auth.store.js';
 import { setAccessToken } from '../../api/client.js';
 import { FullPageSpinner } from '../ui/FullPageSpinner.js';
+import { useTheme } from '../../hooks/useTheme.js';
 
 interface AuthProviderProps {
   children: React.ReactNode;
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
+  useTheme();
   const setAuth = useAuthStore((s) => s.setAuth);
   const clearAuth = useAuthStore((s) => s.clearAuth);
   const storedToken = useAuthStore((s) => s.accessToken);
