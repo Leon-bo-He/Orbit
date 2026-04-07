@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiFetch, ApiError } from './client.js';
+import { toast } from '../store/toast.store.js';
 import type { Publication } from '@contentflow/shared';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -149,6 +150,10 @@ export function useCreateMetrics() {
       void qc.invalidateQueries({ queryKey: ['analytics'] });
       void qc.invalidateQueries({ queryKey: ['dashboard'] });
       void qc.invalidateQueries({ queryKey: ['contentMetrics'] });
+      toast.success('Metrics recorded');
+    },
+    onError: (err) => {
+      toast.error(`Failed to record metrics: ${err.message}`);
     },
   });
 }

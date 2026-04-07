@@ -1,6 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import { AppShell } from '../components/layout/AppShell.js';
+import { ErrorBoundary } from '../components/ui/ErrorBoundary.js';
 
 const Dashboard = lazy(() => import('../pages/Dashboard.js'));
 const Ideas = lazy(() => import('../pages/Ideas.js'));
@@ -10,6 +11,7 @@ const Publications = lazy(() => import('../pages/Publications.js'));
 const Analytics = lazy(() => import('../pages/Analytics.js'));
 const Settings = lazy(() => import('../pages/Settings.js'));
 const ContentBrief = lazy(() => import('../pages/ContentBrief.js'));
+const NotFound = lazy(() => import('../pages/NotFound.js'));
 
 function Loading() {
   return <div className="p-6 text-gray-400">Loading…</div>;
@@ -17,9 +19,11 @@ function Loading() {
 
 function wrap(C: React.ComponentType) {
   return (
-    <Suspense fallback={<Loading />}>
-      <C />
-    </Suspense>
+    <ErrorBoundary>
+      <Suspense fallback={<Loading />}>
+        <C />
+      </Suspense>
+    </ErrorBoundary>
   );
 }
 
@@ -36,6 +40,7 @@ export const router: ReturnType<typeof createBrowserRouter> = createBrowserRoute
       { path: 'workspaces/:workspaceId/contents/:contentId/brief', element: wrap(ContentBrief) },
       { path: 'publications', element: wrap(Publications) },
       { path: 'settings', element: wrap(Settings) },
+      { path: '*', element: wrap(NotFound) },
     ],
   },
 ]);

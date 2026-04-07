@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiFetch, ApiError } from './client.js';
+import { toast } from '../store/toast.store.js';
 import type { Publication } from '@contentflow/shared';
 
 export interface QueueItem {
@@ -34,6 +35,10 @@ export function useCreatePublication(contentId: string) {
       }),
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: ['publications', contentId] });
+      toast.success('Platform added to publish queue');
+    },
+    onError: (err) => {
+      toast.error(`Failed to add platform: ${err.message}`);
     },
   });
 }
@@ -50,6 +55,9 @@ export function useUpdatePublication() {
     onSuccess: (_data, vars) => {
       void qc.invalidateQueries({ queryKey: ['publications', vars.contentId] });
       void qc.invalidateQueries({ queryKey: ['publishQueue'] });
+    },
+    onError: (err) => {
+      toast.error(`Failed to update publication: ${err.message}`);
     },
   });
 }
@@ -70,6 +78,10 @@ export function useMarkPublished() {
     onSuccess: (_data, vars) => {
       void qc.invalidateQueries({ queryKey: ['publications', vars.contentId] });
       void qc.invalidateQueries({ queryKey: ['publishQueue'] });
+      toast.success('Marked as published');
+    },
+    onError: (err) => {
+      toast.error(`Failed to mark published: ${err.message}`);
     },
   });
 }

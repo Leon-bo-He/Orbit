@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { useDashboard } from '../api/analytics.js';
 import { BarChart } from '../components/charts/BarChart.js';
+import { SkeletonCard } from '../components/ui/Skeleton.js';
 import type { ActivityItem } from '../api/analytics.js';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -126,7 +127,18 @@ export default function Dashboard() {
 
   if (isLoading) {
     return (
-      <div className="p-6 text-gray-400">{t('dashboard.loading')}</div>
+      <div className="p-6 space-y-6 max-w-7xl mx-auto">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <SkeletonCard key={i} />
+          ))}
+        </div>
+        <SkeletonCard className="h-64" />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <SkeletonCard />
+          <SkeletonCard />
+        </div>
+      </div>
     );
   }
 

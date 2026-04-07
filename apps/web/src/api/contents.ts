@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiFetch, ApiError } from './client.js';
+import { apiFetch, ApiError, QUEUED_OFFLINE } from './client.js';
+import { toast } from '../store/toast.store.js';
 import type { Content } from '@contentflow/shared';
 
 export interface ContentFilters {
@@ -32,8 +33,14 @@ export function useCreateContent() {
         method: 'POST',
         body: JSON.stringify(body),
       }),
-    onSuccess: (_data, variables) => {
+    onSuccess: (data, variables) => {
       void qc.invalidateQueries({ queryKey: ['contents', variables['workspaceId']] });
+      if ((data as unknown) !== QUEUED_OFFLINE) {
+        toast.success('Content created');
+      }
+    },
+    onError: (err) => {
+      toast.error(`Failed to create content: ${err.message}`);
     },
   });
 }
@@ -54,13 +61,19 @@ export function useUpdateContent() {
       );
       return { prev };
     },
-    onError: (_err, _vars, ctx) => {
+    onSuccess: (_data, vars) => {
+      if (vars.data['stage']) {
+        toast.success(`Stage updated to ${String(vars.data['stage'])}`);
+      }
+    },
+    onError: (err, _vars, ctx) => {
       const context = ctx as { prev?: [unknown, Content[] | undefined][] } | undefined;
       if (context?.prev) {
         for (const [queryKey, data] of context.prev) {
           qc.setQueryData(queryKey as Parameters<typeof qc.setQueryData>[0], data);
         }
       }
+      toast.error(`Failed to update content: ${err.message}`);
     },
     onSettled: (_data, _err, vars) => {
       void qc.invalidateQueries({ queryKey: ['contents', vars.workspaceId] });
