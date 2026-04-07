@@ -44,15 +44,15 @@ export default function Ideas() {
   }
 
   return (
-    <div className="p-4 md:p-6 max-w-5xl mx-auto">
+    <div className="p-8 max-w-5xl mx-auto">
       {/* Header */}
-      <div className="flex items-center justify-between mb-5">
-        <h1 className="text-2xl font-semibold text-gray-900">{t('title')}</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-[22px] font-semibold text-gray-900 tracking-tight">{t('title')}</h1>
         <button
           onClick={() => setModalOpen(true)}
-          className="hidden md:inline-flex items-center gap-1.5 bg-indigo-600 text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
+          className="hidden md:inline-flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-md border border-gray-200 text-gray-600 bg-white hover:bg-gray-50 transition-colors"
         >
-          <span className="text-lg leading-none">+</span>
+          <span className="text-base leading-none">+</span>
           {t('quick_capture')}
         </button>
       </div>
@@ -109,7 +109,7 @@ export default function Ideas() {
       {/* Mobile FAB */}
       <button
         onClick={() => setModalOpen(true)}
-        className="md:hidden fixed bottom-20 right-4 z-50 w-14 h-14 rounded-full bg-indigo-600 text-white shadow-lg flex items-center justify-center text-2xl hover:bg-indigo-700 transition-colors"
+        className="md:hidden fixed bottom-20 right-4 z-50 w-12 h-12 rounded-full bg-indigo-600 text-white shadow-md flex items-center justify-center text-xl hover:bg-indigo-700 transition-colors"
         aria-label={t('quick_capture')}
       >
         +

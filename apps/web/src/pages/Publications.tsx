@@ -120,13 +120,13 @@ export default function Publications() {
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="px-6 py-4 border-b border-gray-200 flex-shrink-0">
-        <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
-          <h1 className="text-xl font-semibold text-gray-900">{t('queue_page.title')}</h1>
+      <div className="px-8 py-5 border-b border-gray-100 flex-shrink-0">
+        <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+          <h1 className="text-[22px] font-semibold text-gray-900 tracking-tight">{t('queue_page.title')}</h1>
           <button
             type="button"
             onClick={() => void refetch()}
-            className="text-xs px-3 py-1.5 rounded border border-gray-200 text-gray-600 hover:bg-gray-50"
+            className="text-xs px-3 py-1.5 rounded-md border border-gray-200 text-gray-500 hover:bg-gray-50 transition-colors"
           >
             ↻ Refresh
           </button>
@@ -171,7 +171,7 @@ export default function Publications() {
       </div>
 
       {/* Body */}
-      <div className="flex-1 overflow-y-auto px-6 py-4">
+      <div className="flex-1 overflow-y-auto px-8 py-5">
         {isLoading && (
           <p className="text-sm text-gray-400 text-center py-10">Loading…</p>
         )}

@@ -2,70 +2,47 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Design tokens ─────────────────────────────────────────────────────────── */
+
 :root {
-  --color-surface: #f9fafb;
+  /* Surfaces */
+  --color-surface:        #f7f7f5;
   --color-surface-raised: #ffffff;
+
+  /* Notion-style tokens */
+  --cf-bg:      #ffffff;
+  --cf-surface: #f7f7f5;
+
+  --cf-text:       #37352f;
+  --cf-text-sub:   #787774;
+  --cf-text-muted: #acaaa6;
+
+  --cf-border: rgba(55, 53, 47, 0.09);
+
+  --cf-hover:  rgba(55, 53, 47, 0.06);
+  --cf-active: rgba(55, 53, 47, 0.10);
 }
 
 .dark {
   color-scheme: dark;
-  --color-surface: #0f172a;
-  --color-surface-raised: #1e293b;
+
+  --color-surface:        #1f1f1f;
+  --color-surface-raised: #191919;
+
+  --cf-bg:      #191919;
+  --cf-surface: #1f1f1f;
+
+  --cf-text:       rgba(255, 255, 255, 0.81);
+  --cf-text-sub:   rgba(255, 255, 255, 0.45);
+  --cf-text-muted: rgba(255, 255, 255, 0.28);
+
+  --cf-border: rgba(255, 255, 255, 0.07);
+
+  --cf-hover:  rgba(255, 255, 255, 0.055);
+  --cf-active: rgba(255, 255, 255, 0.09);
 }
 
-/* ── Global dark-mode overrides ─────────────────────────────────────────────
-   Higher specificity (.dark .class) beats Tailwind utilities (.class),
-   so no !important needed. This avoids adding dark: to every component. */
-
-/* Backgrounds */
-.dark body,
-.dark .bg-white          { background-color: #1e293b; }
-.dark .bg-gray-50        { background-color: #0f172a; }
-.dark .bg-gray-100       { background-color: #1e293b; }
-.dark .bg-gray-200       { background-color: #334155; }
-
-/* Hover backgrounds */
-.dark .hover\:bg-gray-50:hover  { background-color: #1e293b; }
-.dark .hover\:bg-gray-100:hover { background-color: #334155; }
-.dark .hover\:bg-gray-200:hover { background-color: #475569; }
-
-/* Text */
-.dark .text-gray-900 { color: #f1f5f9; }
-.dark .text-gray-800 { color: #e2e8f0; }
-.dark .text-gray-700 { color: #cbd5e1; }
-.dark .text-gray-600 { color: #94a3b8; }
-.dark .text-gray-500 { color: #64748b; }
-.dark .text-gray-400 { color: #475569; }
-
-/* Borders */
-.dark .border-gray-100 { border-color: #1e293b; }
-.dark .border-gray-200 { border-color: #334155; }
-.dark .border-gray-300 { border-color: #475569; }
-
-/* Dividers */
-.dark .divide-gray-100 > * + * { border-color: #1e293b; }
-.dark .divide-gray-200 > * + * { border-color: #334155; }
-
-/* Form elements */
-.dark input:not([type="range"]),
-.dark select,
-.dark textarea {
-  background-color: #0f172a;
-  color: #e2e8f0;
-  border-color: #334155;
-}
-.dark input::placeholder,
-.dark textarea::placeholder { color: #475569; }
-
-/* Shadows in dark mode — tone them down */
-.dark .shadow,
-.dark .shadow-sm,
-.dark .shadow-md,
-.dark .shadow-lg,
-.dark .shadow-xl,
-.dark .shadow-2xl {
-  --tw-shadow-color: rgba(0, 0, 0, 0.6);
-}
+/* ── Base styles ───────────────────────────────────────────────────────────── */
 
 * {
   box-sizing: border-box;
@@ -73,22 +50,86 @@
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background-color: var(--cf-bg);
+  color: var(--cf-text);
+  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
 
+/* Notion-style thin scrollbars */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(55, 53, 47, 0.15); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(55, 53, 47, 0.25); }
+.dark ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); }
+.dark ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+
+/* ── Global dark-mode overrides ────────────────────────────────────────────── */
+/* Using .dark .class (specificity 0,2,0) beats Tailwind .class (0,1,0).      */
+/* This makes every component dark without adding dark: to each one.           */
+
+.dark body,
+.dark .bg-white          { background-color: var(--cf-bg); }
+.dark .bg-gray-50        { background-color: var(--cf-surface); }
+.dark .bg-gray-100       { background-color: rgba(255,255,255,0.06); }
+.dark .bg-gray-200       { background-color: rgba(255,255,255,0.10); }
+
+.dark .hover\:bg-white:hover    { background-color: var(--cf-bg); }
+.dark .hover\:bg-gray-50:hover  { background-color: var(--cf-hover); }
+.dark .hover\:bg-gray-100:hover { background-color: var(--cf-active); }
+.dark .hover\:bg-gray-200:hover { background-color: rgba(255,255,255,0.12); }
+
+.dark .text-gray-900 { color: var(--cf-text); }
+.dark .text-gray-800 { color: var(--cf-text); }
+.dark .text-gray-700 { color: var(--cf-text-sub); }
+.dark .text-gray-600 { color: var(--cf-text-sub); }
+.dark .text-gray-500 { color: var(--cf-text-muted); }
+.dark .text-gray-400 { color: var(--cf-text-muted); }
+
+.dark .border-gray-50,
+.dark .border-gray-100,
+.dark .border-gray-200,
+.dark .border-gray-300 { border-color: var(--cf-border); }
+
+.dark .divide-gray-100 > * + *,
+.dark .divide-gray-200 > * + * { border-color: var(--cf-border); }
+
+.dark input:not([type='range']),
+.dark select,
+.dark textarea {
+  background-color: var(--cf-surface);
+  color: var(--cf-text);
+  border-color: var(--cf-border);
+}
+.dark input::placeholder,
+.dark textarea::placeholder { color: var(--cf-text-muted); }
+
+/* ── Notion-style card/shadow softening ────────────────────────────────────── */
+
+.shadow-sm  { box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
+.shadow     { box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+.shadow-md  { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+.shadow-lg  { box-shadow: 0 4px 16px rgba(0,0,0,0.10); }
+.shadow-xl  { box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+.shadow-2xl { box-shadow: 0 16px 40px rgba(0,0,0,0.14); }
+
+.dark .shadow-sm  { box-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+.dark .shadow     { box-shadow: 0 1px 4px rgba(0,0,0,0.35); }
+.dark .shadow-md  { box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
+.dark .shadow-lg  { box-shadow: 0 4px 16px rgba(0,0,0,0.45); }
+.dark .shadow-xl  { box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
+.dark .shadow-2xl { box-shadow: 0 16px 40px rgba(0,0,0,0.55); }
+
+/* ── Animations ────────────────────────────────────────────────────────────── */
+
 @keyframes toast-slide-in {
-  from {
-    opacity: 0;
-    transform: translateX(1.5rem);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  from { opacity: 0; transform: translateX(1.5rem); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
 }

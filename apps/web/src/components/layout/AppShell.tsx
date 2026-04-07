@@ -8,7 +8,7 @@ import { useOnlineStatus } from '../../hooks/useOnlineStatus.js';
 
 function OfflineBanner() {
   return (
-    <div className="bg-amber-50 border-b border-amber-200 px-4 py-2 text-sm text-amber-800 text-center">
+    <div className="bg-amber-50 border-b border-amber-200 px-4 py-2 text-xs text-amber-700 text-center">
       You're offline — changes will sync when reconnected
     </div>
   );
@@ -19,29 +19,24 @@ export function AppShell() {
   useOfflineSync();
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-surface dark:bg-slate-950">
-      {/* Banners */}
+    <div className="flex flex-col h-screen overflow-hidden" style={{ background: 'var(--cf-bg)' }}>
       {!isOnline && <OfflineBanner />}
       <NotificationPermissionBanner />
 
       <div className="flex flex-1 overflow-hidden">
-        {/* Desktop sidebar */}
         <aside className="hidden md:flex flex-col flex-shrink-0">
           <Sidebar />
         </aside>
 
-        {/* Main content */}
         <main className="flex-1 overflow-auto pb-16 md:pb-0">
           <Outlet />
         </main>
       </div>
 
-      {/* Mobile bottom nav */}
-      <div className="fixed bottom-0 inset-x-0 md:hidden border-t border-gray-200 dark:border-slate-700">
+      <div className="fixed bottom-0 inset-x-0 md:hidden border-t border-[var(--cf-border)]">
         <MobileBottomNav />
       </div>
 
-      {/* Toast notifications */}
       <ToastContainer />
     </div>
   );

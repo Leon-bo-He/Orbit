@@ -52,21 +52,21 @@ export default function WorkspaceBoard() {
   return (
     <div className="h-full flex flex-col overflow-hidden">
       {/* Page header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 flex-shrink-0">
-        <div className="flex items-center gap-3">
+      <div className="flex items-center justify-between px-8 py-4 border-b border-gray-100 flex-shrink-0">
+        <div className="flex items-center gap-2.5">
           {workspace && (
             <span
-              className="w-3 h-3 rounded-full flex-shrink-0"
+              className="w-2 h-2 rounded-full flex-shrink-0"
               style={{ backgroundColor: accentColor }}
             />
           )}
-          <h1 className="text-xl font-semibold text-gray-900">
+          <h1 className="text-[22px] font-semibold text-gray-900 tracking-tight">
             {workspace ? `${workspace.icon} ${workspace.name}` : t('title')}
           </h1>
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+          className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium border border-gray-200 text-gray-600 bg-white rounded-md hover:bg-gray-50 transition-colors"
         >
           <span>+</span>
           <span>{t('create')}</span>

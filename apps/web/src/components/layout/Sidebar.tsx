@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { WorkspaceSwitcher } from './WorkspaceSwitcher.js';
 import { useUiStore } from '../../store/ui.store.js';
 import { useWorkspaces } from '../../api/workspaces.js';
 import { useAuthStore } from '../../store/auth.store.js';
@@ -9,10 +8,15 @@ import { useLogout } from '../../api/auth.js';
 import { toast } from '../../store/toast.store.js';
 
 const topNavItems = [
-  { path: '/', label: 'nav.dashboard', icon: '◻' },
-  { path: '/ideas', label: 'nav.ideas', icon: '💡' },
-  { path: '/publications', label: 'nav.publications', icon: '📤' },
+  { path: '/',            label: 'nav.dashboard',   icon: '⊞' },
+  { path: '/ideas',       label: 'nav.ideas',        icon: '○' },
+  { path: '/publications',label: 'nav.publications', icon: '↑' },
 ] as const;
+
+const NAV_ITEM =
+  'w-full flex items-center gap-2 px-2 py-[5px] rounded-[4px] text-[13.5px] text-[var(--cf-text-sub)] hover:bg-[var(--cf-hover)] transition-colors text-left';
+const NAV_ITEM_ACTIVE =
+  'bg-[var(--cf-active)] text-[var(--cf-text)] font-medium';
 
 export function Sidebar() {
   const { t } = useTranslation('common');
@@ -28,11 +32,9 @@ export function Sidebar() {
 
   const { data: workspaces = [] } = useWorkspaces();
 
-  // Account popout state
   const [popoutOpen, setPopoutOpen] = useState(false);
   const popoutRef = useRef<HTMLDivElement>(null);
 
-  // Close popout on outside click
   useEffect(() => {
     if (!popoutOpen) return;
     function onClickOutside(e: MouseEvent) {
@@ -71,47 +73,97 @@ export function Sidebar() {
 
   const userInitial = user?.name ? (user.name[0]?.toUpperCase() ?? 'U') : 'U';
 
-  return (
-    <div className="h-full flex flex-col bg-surface-raised dark:bg-slate-900 border-r border-gray-200 dark:border-slate-700">
-      {/* Logo */}
-      <div className="h-14 flex items-center px-4 border-b border-gray-200 dark:border-slate-700 flex-shrink-0">
-        {!collapsed && <span className="font-semibold text-indigo-600">ContentFlow</span>}
+  if (collapsed) {
+    return (
+      <div className="h-full w-12 flex flex-col bg-[var(--cf-surface)] border-r border-[var(--cf-border)] items-center py-3 gap-1">
         <button
           onClick={toggle}
-          className="ml-auto text-gray-400 dark:text-slate-500 hover:text-gray-600 dark:hover:text-slate-300"
-          aria-label="Toggle sidebar"
+          className="w-8 h-8 flex items-center justify-center rounded-[4px] text-[var(--cf-text-muted)] hover:bg-[var(--cf-hover)] transition-colors text-sm"
+          aria-label="Expand sidebar"
         >
-          {collapsed ? '→' : '←'}
+          →
         </button>
-      </div>
-
-      {/* Workspace switcher */}
-      {!collapsed && <WorkspaceSwitcher />}
-
-      {/* Main nav */}
-      <nav className="flex-1 py-2 space-y-0.5 px-2 overflow-y-auto">
         {topNavItems.map((item) => (
           <NavLink
             key={item.path}
             to={item.path}
             end={item.path === '/'}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-2 py-2 rounded-md text-sm transition-colors ${
+              `w-8 h-8 flex items-center justify-center rounded-[4px] text-base transition-colors ${
                 isActive
-                  ? 'bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-400 font-medium'
-                  : 'text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-800'
+                  ? 'bg-[var(--cf-active)] text-[var(--cf-text)]'
+                  : 'text-[var(--cf-text-muted)] hover:bg-[var(--cf-hover)]'
               }`
             }
           >
-            <span>{item.icon}</span>
-            {!collapsed && <span>{t(item.label)}</span>}
+            {item.icon}
+          </NavLink>
+        ))}
+        <div className="flex-1" />
+        {workspaces.map((ws) => (
+          <button
+            key={ws.id}
+            onClick={() => handleWorkspaceSelect(ws.id)}
+            title={ws.name}
+            className={`w-7 h-7 rounded-md text-base transition-colors ${
+              ws.id === activeWorkspaceId
+                ? 'bg-[var(--cf-active)]'
+                : 'hover:bg-[var(--cf-hover)]'
+            }`}
+          >
+            {ws.icon}
+          </button>
+        ))}
+        <button
+          onClick={() => setPopoutOpen((o) => !o)}
+          className="w-7 h-7 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs font-semibold mt-1"
+        >
+          {userInitial}
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="h-full w-56 flex flex-col bg-[var(--cf-surface)] border-r border-[var(--cf-border)]"
+      style={{ minWidth: '14rem' }}
+    >
+      {/* Header: app name + collapse */}
+      <div className="flex items-center justify-between px-3 h-[44px] flex-shrink-0">
+        <span className="text-sm font-semibold text-[var(--cf-text)] tracking-tight">
+          ContentFlow
+        </span>
+        <button
+          onClick={toggle}
+          className="w-6 h-6 flex items-center justify-center rounded-[4px] text-[var(--cf-text-muted)] hover:bg-[var(--cf-hover)] transition-colors text-sm"
+          aria-label="Collapse sidebar"
+        >
+          ←
+        </button>
+      </div>
+
+      {/* Scrollable nav body */}
+      <nav className="flex-1 overflow-y-auto px-2 py-1 space-y-[1px]">
+        {/* Top nav */}
+        {topNavItems.map((item) => (
+          <NavLink
+            key={item.path}
+            to={item.path}
+            end={item.path === '/'}
+            className={({ isActive }) =>
+              `${NAV_ITEM} ${isActive ? NAV_ITEM_ACTIVE : ''}`
+            }
+          >
+            <span className="w-4 text-center text-xs opacity-60">{item.icon}</span>
+            <span>{t(item.label)}</span>
           </NavLink>
         ))}
 
         {/* Workspaces section */}
-        {!collapsed && workspaces.length > 0 && (
-          <div className="pt-3">
-            <p className="px-2 pb-1 text-xs font-medium text-gray-400 dark:text-slate-500 uppercase tracking-wide">
+        {workspaces.length > 0 && (
+          <div className="pt-3 pb-1">
+            <p className="px-2 pb-1 text-[11px] font-medium text-[var(--cf-text-muted)] uppercase tracking-wider">
               {t('nav.workspaces')}
             </p>
             {workspaces.map((ws) => {
@@ -120,36 +172,30 @@ export function Sidebar() {
                 <div key={ws.id}>
                   <button
                     onClick={() => handleWorkspaceSelect(ws.id)}
-                    className={`w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-sm transition-colors ${
-                      isActive
-                        ? 'bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-400 font-medium'
-                        : 'text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-800'
-                    }`}
+                    className={`${NAV_ITEM} ${isActive ? NAV_ITEM_ACTIVE : ''}`}
                   >
+                    <span className="w-4 text-center text-sm leading-none">{ws.icon}</span>
+                    <span className="truncate">{ws.name}</span>
                     <span
-                      className="w-2 h-2 rounded-full flex-shrink-0"
+                      className="ml-auto w-1.5 h-1.5 rounded-full flex-shrink-0"
                       style={{ backgroundColor: ws.color }}
                     />
-                    <span className="truncate">{ws.icon} {ws.name}</span>
                   </button>
 
                   {isActive && (
-                    <div className="ml-6 mt-0.5 space-y-0.5">
+                    <div className="ml-4 mt-[1px] space-y-[1px]">
                       {[
-                        { to: `/workspaces/${ws.id}/board`, icon: '📋', label: 'nav.board' },
-                        { to: `/workspaces/${ws.id}/calendar`, icon: '📅', label: 'nav.calendar' },
-                        { to: `/workspaces/${ws.id}/analytics`, icon: '📊', label: 'nav.analytics' },
+                        { to: `/workspaces/${ws.id}/board`,     label: 'nav.board' },
+                        { to: `/workspaces/${ws.id}/calendar`,  label: 'nav.calendar' },
+                        { to: `/workspaces/${ws.id}/analytics`, label: 'nav.analytics' },
                       ].map((sub) => (
                         <NavLink
                           key={sub.to}
                           to={sub.to}
                           className={({ isActive: a }) =>
-                            `flex items-center gap-2 px-2 py-1 rounded text-xs transition-colors ${
-                              a ? 'text-indigo-600 dark:text-indigo-400 font-medium' : 'text-gray-500 dark:text-slate-500 hover:text-gray-700 dark:hover:text-slate-300'
-                            }`
+                            `${NAV_ITEM} text-[12.5px] ${a ? NAV_ITEM_ACTIVE : ''}`
                           }
                         >
-                          <span>{sub.icon}</span>
                           <span>{t(sub.label)}</span>
                         </NavLink>
                       ))}
@@ -160,61 +206,60 @@ export function Sidebar() {
             })}
           </div>
         )}
-
-        {/* Collapsed workspace dots */}
-        {collapsed && workspaces.map((ws) => (
-          <button
-            key={ws.id}
-            onClick={() => handleWorkspaceSelect(ws.id)}
-            title={ws.name}
-            className={`w-full flex items-center justify-center py-2 rounded-md transition-colors ${
-              ws.id === activeWorkspaceId ? 'bg-indigo-50 dark:bg-indigo-950' : 'hover:bg-gray-100 dark:hover:bg-slate-800'
-            }`}
-          >
-            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: ws.color }} />
-          </button>
-        ))}
       </nav>
 
-      {/* Account area — triggers popout */}
-      <div className="border-t border-gray-200 dark:border-slate-700 p-2 relative" ref={popoutRef}>
+      {/* Account area */}
+      <div
+        className="border-t border-[var(--cf-border)] px-2 py-2 relative flex-shrink-0"
+        ref={popoutRef}
+      >
         <button
           onClick={() => setPopoutOpen((o) => !o)}
-          className={`w-full flex items-center gap-2 px-2 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors text-left ${
-            popoutOpen ? 'bg-gray-100 dark:bg-slate-800' : ''
+          className={`w-full flex items-center gap-2 px-2 py-[6px] rounded-[4px] hover:bg-[var(--cf-hover)] transition-colors text-left ${
+            popoutOpen ? 'bg-[var(--cf-hover)]' : ''
           }`}
         >
-          <div className="w-7 h-7 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs font-semibold flex-shrink-0">
+          <div className="w-6 h-6 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[11px] font-semibold flex-shrink-0">
             {userInitial}
           </div>
-          {!collapsed && (
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-medium text-gray-700 dark:text-slate-300 truncate">{user?.name ?? ''}</p>
-              <p className="text-xs text-gray-400 dark:text-slate-500 truncate">{user?.email ?? ''}</p>
-            </div>
-          )}
+          <div className="flex-1 min-w-0">
+            <p className="text-[13px] font-medium text-[var(--cf-text)] truncate leading-tight">
+              {user?.name ?? ''}
+            </p>
+          </div>
         </button>
 
-        {/* Popout menu */}
+        {/* Popout */}
         {popoutOpen && (
-          <div className="absolute bottom-full left-2 right-2 mb-1 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-gray-200 dark:border-slate-700 py-1 z-50">
-            <button
-              onClick={handleSettings}
-              className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
-            >
-              <span>⚙️</span>
-              <span>{t('nav.settings')}</span>
-            </button>
-
-            <div className="border-t border-gray-100 dark:border-slate-700 mt-1 pt-1">
+          <div
+            className="absolute bottom-full left-2 right-2 mb-1 z-50 overflow-hidden"
+            style={{
+              background: 'var(--cf-bg)',
+              border: '1px solid var(--cf-border)',
+              borderRadius: '8px',
+              boxShadow: '0 4px 16px rgba(0,0,0,0.12)',
+            }}
+          >
+            <div className="py-1">
+              <div className="px-3 py-2 border-b border-[var(--cf-border)] mb-1">
+                <p className="text-[12px] font-medium text-[var(--cf-text)] truncate">{user?.name}</p>
+                <p className="text-[11px] text-[var(--cf-text-muted)] truncate">{user?.email}</p>
+              </div>
               <button
-                onClick={handleSignOut}
-                disabled={logoutMutation.isPending}
-                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors disabled:opacity-50"
+                onClick={handleSettings}
+                className="w-full flex items-center gap-2 px-3 py-[6px] text-[13px] text-[var(--cf-text-sub)] hover:bg-[var(--cf-hover)] transition-colors"
               >
-                <span>↩</span>
-                <span>{t('auth.sign_out')}</span>
+                Settings
               </button>
+              <div className="border-t border-[var(--cf-border)] mt-1 pt-1">
+                <button
+                  onClick={handleSignOut}
+                  disabled={logoutMutation.isPending}
+                  className="w-full flex items-center gap-2 px-3 py-[6px] text-[13px] text-red-500 hover:bg-[var(--cf-hover)] transition-colors disabled:opacity-50"
+                >
+                  {t('auth.sign_out')}
+                </button>
+              </div>
             </div>
           </div>
         )}
