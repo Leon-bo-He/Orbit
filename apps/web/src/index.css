@@ -13,9 +13,58 @@
   --color-surface-raised: #1e293b;
 }
 
-.dark body {
-  background-color: var(--color-surface);
-  color: #f1f5f9;
+/* ── Global dark-mode overrides ─────────────────────────────────────────────
+   Higher specificity (.dark .class) beats Tailwind utilities (.class),
+   so no !important needed. This avoids adding dark: to every component. */
+
+/* Backgrounds */
+.dark body,
+.dark .bg-white          { background-color: #1e293b; }
+.dark .bg-gray-50        { background-color: #0f172a; }
+.dark .bg-gray-100       { background-color: #1e293b; }
+.dark .bg-gray-200       { background-color: #334155; }
+
+/* Hover backgrounds */
+.dark .hover\:bg-gray-50:hover  { background-color: #1e293b; }
+.dark .hover\:bg-gray-100:hover { background-color: #334155; }
+.dark .hover\:bg-gray-200:hover { background-color: #475569; }
+
+/* Text */
+.dark .text-gray-900 { color: #f1f5f9; }
+.dark .text-gray-800 { color: #e2e8f0; }
+.dark .text-gray-700 { color: #cbd5e1; }
+.dark .text-gray-600 { color: #94a3b8; }
+.dark .text-gray-500 { color: #64748b; }
+.dark .text-gray-400 { color: #475569; }
+
+/* Borders */
+.dark .border-gray-100 { border-color: #1e293b; }
+.dark .border-gray-200 { border-color: #334155; }
+.dark .border-gray-300 { border-color: #475569; }
+
+/* Dividers */
+.dark .divide-gray-100 > * + * { border-color: #1e293b; }
+.dark .divide-gray-200 > * + * { border-color: #334155; }
+
+/* Form elements */
+.dark input:not([type="range"]),
+.dark select,
+.dark textarea {
+  background-color: #0f172a;
+  color: #e2e8f0;
+  border-color: #334155;
+}
+.dark input::placeholder,
+.dark textarea::placeholder { color: #475569; }
+
+/* Shadows in dark mode — tone them down */
+.dark .shadow,
+.dark .shadow-sm,
+.dark .shadow-md,
+.dark .shadow-lg,
+.dark .shadow-xl,
+.dark .shadow-2xl {
+  --tw-shadow-color: rgba(0, 0, 0, 0.6);
 }
 
 * {

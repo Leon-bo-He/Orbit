@@ -29,7 +29,8 @@
       "Bash(pnpm generate:*)",
       "Bash(xargs sed:*)",
       "Bash(pnpm --filter api install --silent)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(grep -c \"dark:\" apps/web/src/pages/*.tsx apps/web/src/components/**/*.tsx)"
     ]
   }
 }
