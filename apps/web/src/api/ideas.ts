@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiFetch, ApiError } from './client.js';
+import { apiFetch, ApiError, QUEUED_OFFLINE } from './client.js';
+import { toast } from '../store/toast.store.js';
 import type { Idea } from '@contentflow/shared';
 
 export interface IdeaFilters {
@@ -51,8 +52,14 @@ export function useCreateIdea() {
         method: 'POST',
         body: JSON.stringify(body),
       }),
-    onSuccess: () => {
+    onSuccess: (data) => {
       void qc.invalidateQueries({ queryKey: ['ideas'] });
+      if ((data as unknown) !== QUEUED_OFFLINE) {
+        toast.success('Idea created');
+      }
+    },
+    onError: (err) => {
+      toast.error(`Failed to create idea: ${err.message}`);
     },
   });
 }
@@ -73,13 +80,17 @@ export function useUpdateIdea() {
       );
       return { prev };
     },
-    onError: (_err, _vars, ctx) => {
+    onSuccess: () => {
+      toast.success('Idea saved');
+    },
+    onError: (err, _vars, ctx) => {
       const context = ctx as { prev?: [unknown, Idea[] | undefined][] } | undefined;
       if (context?.prev) {
         for (const [queryKey, data] of context.prev) {
           qc.setQueryData(queryKey as Parameters<typeof qc.setQueryData>[0], data);
         }
       }
+      toast.error(`Failed to update idea: ${err.message}`);
     },
     onSettled: () => {
       void qc.invalidateQueries({ queryKey: ['ideas'] });

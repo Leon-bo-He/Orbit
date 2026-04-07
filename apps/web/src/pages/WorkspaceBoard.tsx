@@ -8,6 +8,7 @@ import { useContents, useUpdateContent } from '../api/contents.js';
 import { KanbanColumn } from '../components/kanban/KanbanColumn.js';
 import { ContentDrawer } from '../components/kanban/ContentDrawer.js';
 import { CreateContentModal } from '../components/kanban/CreateContentModal.js';
+import { Skeleton } from '../components/ui/Skeleton.js';
 
 export default function WorkspaceBoard() {
   const { workspaceId } = useParams<{ workspaceId: string }>();
@@ -74,7 +75,19 @@ export default function WorkspaceBoard() {
 
       {/* Kanban board */}
       {isLoading ? (
-        <div className="flex-1 flex items-center justify-center text-gray-400">Loading…</div>
+        <div className="flex gap-4 p-6 overflow-x-auto">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="w-64 flex-shrink-0 space-y-3">
+              <Skeleton variant="text" className="w-1/2 h-5" />
+              {Array.from({ length: 3 }).map((__, j) => (
+                <div key={j} className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm space-y-2">
+                  <Skeleton variant="text" className="w-3/4" />
+                  <Skeleton variant="text" className="w-1/2" />
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
       ) : (
         <div className="flex-1 overflow-x-auto">
           <div className="flex gap-4 p-6 h-full min-w-max">

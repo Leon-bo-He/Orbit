@@ -6,6 +6,7 @@ import { ApiError } from '../api/client.js';
 import { IdeaCard } from '../components/ideas/IdeaCard.js';
 import { IdeaFiltersBar } from '../components/ideas/IdeaFilters.js';
 import { IdeaCaptureModal } from '../components/ideas/IdeaCaptureModal.js';
+import { Skeleton } from '../components/ui/Skeleton.js';
 import type { Workspace } from '@contentflow/shared';
 
 export default function Ideas() {
@@ -65,7 +66,11 @@ export default function Ideas() {
       {isLoading && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="bg-gray-100 rounded-xl h-32 animate-pulse" />
+            <div key={i} className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm space-y-3">
+              <Skeleton variant="text" className="w-2/3" />
+              <Skeleton variant="text" className="w-full" />
+              <Skeleton variant="text" className="w-1/2" />
+            </div>
           ))}
         </div>
       )}
