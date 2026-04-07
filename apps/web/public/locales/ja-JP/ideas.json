@@ -1,17 +1,33 @@
 {
-  "title": "",
-  "quick_capture": "",
-  "placeholder": "",
-  "convert": "",
+  "title": "アイデア",
+  "quick_capture": "アイデアを追加",
+  "placeholder": "アイデアを入力…",
+  "convert": "コンテンツに変換",
   "filter": {
-    "all": "",
-    "active": "",
-    "converted": "",
-    "archived": ""
+    "all": "すべて",
+    "active": "進行中",
+    "converted": "変換済み",
+    "archived": "アーカイブ"
   },
   "priority": {
-    "low": "",
-    "medium": "",
-    "high": ""
-  }
+    "low": "低",
+    "medium": "中",
+    "high": "高"
+  },
+  "fields": {
+    "title": "タイトル",
+    "title_placeholder": "どんなアイデアですか？",
+    "note": "メモ",
+    "note_placeholder": "詳細を追加…",
+    "tags": "タグ",
+    "tags_placeholder": "入力して Enter",
+    "priority": "優先度",
+    "workspace": "ワークスペース",
+    "no_workspace": "ワークスペースなし"
+  },
+  "empty": {
+    "heading": "まだアイデアがありません",
+    "body": "「アイデアを追加」をクリックするか、Cmd+Shift+I で最初のアイデアを記録しましょう。"
+  },
+  "login_required": "アイデアを表示するにはログインしてください。"
 }

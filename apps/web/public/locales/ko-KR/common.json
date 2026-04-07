@@ -1,31 +1,45 @@
 {
   "nav": {
-    "dashboard": "",
-    "ideas": "",
-    "board": "",
-    "calendar": "",
-    "publications": "",
-    "analytics": "",
-    "settings": ""
+    "dashboard": "대시보드",
+    "ideas": "아이디어",
+    "board": "콘텐츠 보드",
+    "calendar": "캘린더",
+    "publications": "발행 관리",
+    "analytics": "분석",
+    "settings": "설정",
+    "workspaces": "워크스페이스"
   },
   "action": {
-    "save": "",
-    "cancel": "",
-    "delete": "",
-    "edit": "",
-    "create": "",
-    "confirm": "",
-    "add": ""
+    "save": "저장",
+    "cancel": "취소",
+    "delete": "삭제",
+    "edit": "편집",
+    "create": "만들기",
+    "confirm": "확인",
+    "add": "추가"
   },
   "status": {
-    "loading": "",
-    "error": "",
-    "empty": "",
-    "saved": ""
+    "loading": "불러오는 중…",
+    "error": "오류가 발생했습니다",
+    "empty": "데이터 없음",
+    "saved": "저장됨"
   },
   "workspace": {
-    "switcher_label": "",
-    "create": "",
-    "no_workspace": ""
+    "switcher_label": "워크스페이스 전환",
+    "create": "워크스페이스 만들기",
+    "no_workspace": "워크스페이스 없음"
+  },
+  "calendar": {
+    "month_view": "월간",
+    "week_view": "주간",
+    "list_view": "목록",
+    "prev": "이전 달",
+    "next": "다음 달",
+    "today": "오늘",
+    "no_content": "콘텐츠 없음",
+    "goal_banner": "이번 주: {{scheduled}} / {{goal}}개 예약됨",
+    "on_track": "순조롭게 진행 중",
+    "behind": "일정 지연",
+    "add_content": "콘텐츠 추가"
   }
 }

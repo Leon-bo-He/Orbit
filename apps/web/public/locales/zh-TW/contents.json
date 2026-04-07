@@ -1,22 +1,153 @@
 {
-  "title": "",
-  "create": "",
+  "title": "內容看板",
+  "create": "新建內容",
   "stages": {
-    "planned": "",
-    "planning": "",
-    "creating": "",
-    "ready": "",
-    "publishing": "",
-    "published": "",
-    "reviewed": ""
+    "planned": "選題確認",
+    "planning": "內容規劃",
+    "creating": "製作中",
+    "ready": "待發佈",
+    "publishing": "發佈管理",
+    "published": "已發佈",
+    "reviewed": "複盤完成"
   },
   "brief": {
-    "title": "",
-    "audience": "",
-    "goals": "",
-    "hooks": "",
-    "titles": "",
-    "outline": "",
-    "references": ""
+    "title": "內容策劃",
+    "audience": "目標受眾",
+    "goals": "內容目標",
+    "hooks": "爆點提煉",
+    "titles": "標題候選",
+    "outline": "內容大綱",
+    "references": "競品參考",
+    "back_to_board": "返回看板",
+    "sections": {
+      "format": "內容類型 / Content Format",
+      "audience": "目標受眾 / Target Audience",
+      "goals": "內容目標 / Content Goals",
+      "hooks": "爆點提煉 / Hook Analysis",
+      "titles": "標題候選 / Title Candidates",
+      "outline": "內容大綱 / Content Outline",
+      "references": "競品參考 / Competitive References"
+    },
+    "format": {
+      "duration_label": "時長",
+      "duration_unit": "秒",
+      "aspect_ratio_label": "畫面比例",
+      "aspect_ratio_placeholder": "選擇畫面比例",
+      "notes_label": "格式備註",
+      "notes_placeholder": "關於格式、風格或製作要求的任何說明…"
+    },
+    "audience": {
+      "age_range_label": "年齡範圍",
+      "age_range_placeholder": "例如 18-25",
+      "persona_tags_label": "用戶標籤",
+      "persona_tags_placeholder": "輸入後按 Enter",
+      "pain_points_label": "痛點",
+      "pain_points_placeholder": "目標受眾面臨哪些問題？",
+      "reach_scenario_label": "觸達場景",
+      "reach_scenario_placeholder": "他們在哪裡、什麼時候看到這個內容？",
+      "save_template": "儲存為模板",
+      "load_template": "載入模板",
+      "no_templates": "尚無儲存的模板",
+      "save_template_modal_title": "儲存受眾模板",
+      "template_name_placeholder": "模板名稱",
+      "save_template_confirm": "儲存"
+    },
+    "goals": {
+      "goals_label": "內容目標",
+      "grow_followers": "增加粉絲",
+      "convert": "轉化",
+      "traffic": "引流",
+      "branding": "品牌曝光",
+      "description_label": "目標說明",
+      "description_placeholder": "描述這篇內容的成功標準…",
+      "kpi_label": "KPI 目標",
+      "kpi_likes": "按讚數",
+      "kpi_comments": "留言數",
+      "kpi_shares": "分享數",
+      "kpi_followers": "新增粉絲"
+    },
+    "hooks": {
+      "core_hook_label": "核心爆點",
+      "core_hook_placeholder": "最能吸引眼球的核心亮點…",
+      "conflict_label": "衝突 / 反差",
+      "conflict_placeholder": "什麼張力或反差能引發興趣？",
+      "golden_opening_label": "黃金3秒開場",
+      "golden_opening_placeholder": "讓人停下滑動的前3秒…",
+      "memory_anchor_label": "記憶錨點",
+      "memory_anchor_placeholder": "看完後他們會記住什麼？"
+    },
+    "titles": {
+      "title_placeholder": "輸入候選標題…",
+      "add_title": "新增標題",
+      "set_primary": "設為主標題",
+      "remove_title": "刪除標題"
+    },
+    "outline": {
+      "section_placeholder": "段落描述…",
+      "note_placeholder": "本段落的注釋…",
+      "add_section": "新增段落",
+      "drag_to_reorder": "拖曳排序",
+      "toggle_note": "展開/收起注釋",
+      "remove_section": "刪除段落"
+    },
+    "references": {
+      "add_reference": "新增參考",
+      "add_reference_modal_title": "新增競品參考",
+      "author_name_label": "作者",
+      "content_title_label": "內容標題",
+      "platform_label": "平台",
+      "views_label": "播放量",
+      "likes_label": "按讚數",
+      "comments_label": "留言數",
+      "takeaway_label": "核心收穫",
+      "add_reference_confirm": "新增"
+    }
+  },
+  "card": {
+    "scheduled": "預定 {{date}}",
+    "tags_more": "+{{count}} 更多",
+    "no_date": "未設定日期"
+  },
+  "drawer": {
+    "title_label": "標題",
+    "stage_label": "階段",
+    "content_type_label": "內容類型",
+    "platforms_label": "目標平台",
+    "tags_label": "標籤",
+    "scheduled_label": "計畫發佈時間",
+    "notes_label": "備註",
+    "idea_link": "來源靈感",
+    "close": "關閉",
+    "add_tag": "新增標籤",
+    "open_brief": "開啟策劃書 ✍️",
+    "tab_details": "詳情",
+    "tab_publish": "發佈"
+  },
+  "create": {
+    "title": "新建內容",
+    "title_label": "標題",
+    "title_placeholder": "輸入內容標題",
+    "content_type_label": "內容類型",
+    "platforms_label": "目標平台",
+    "submit": "建立",
+    "cancel": "取消"
+  },
+  "content_types": {
+    "video_short": "短影片",
+    "video_long": "長影片",
+    "image_text": "圖文",
+    "article": "長文章",
+    "podcast": "Podcast",
+    "live": "直播"
+  },
+  "platforms": {
+    "douyin": "抖音",
+    "xiaohongshu": "小紅書",
+    "weixin": "微信公眾號",
+    "weixin_video": "微信視頻號",
+    "bilibili": "嗶哩嗶哩",
+    "x": "X (Twitter)",
+    "youtube": "YouTube",
+    "instagram": "Instagram"
   }
 }

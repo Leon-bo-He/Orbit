@@ -1,25 +1,82 @@
 {
-  "title": "",
-  "queue": "",
-  "add_platform": "",
-  "mark_published": "",
+  "title": "配信管理",
+  "queue": "配信キュー",
+  "add_platform": "プラットフォームを追加",
+  "mark_published": "配信済みにする",
+  "no_publications": "配信計画がありません",
+  "loading": "読み込み中…",
+  "error": "読み込みに失敗しました",
+  "remove_confirm": "この配信計画を削除しますか？",
   "status": {
-    "draft": "",
-    "queued": "",
-    "ready": "",
-    "posting": "",
-    "published": "",
-    "failed": "",
-    "skipped": ""
+    "draft": "下書き",
+    "queued": "キュー中",
+    "ready": "配信待ち",
+    "posting": "配信中",
+    "published": "配信済み",
+    "failed": "配信失敗",
+    "skipped": "スキップ"
   },
   "platforms": {
-    "douyin": "",
-    "xiaohongshu": "",
-    "weixin": "",
-    "weixin_video": "",
-    "bilibili": "",
-    "x": "",
-    "youtube": "",
-    "instagram": ""
+    "douyin": "TikTok",
+    "xiaohongshu": "Xiaohongshu",
+    "weixin": "WeChat公式アカウント",
+    "weixin_video": "WeChatビデオ",
+    "bilibili": "Bilibili",
+    "x": "X (Twitter)",
+    "youtube": "YouTube",
+    "instagram": "Instagram"
+  },
+  "action": {
+    "configure": "設定",
+    "mark_published": "配信済みにする",
+    "remove": "削除",
+    "view": "表示",
+    "retry": "再試行"
+  },
+  "queue_page": {
+    "title": "配信キュー",
+    "filter_status": "ステータスで絞り込み",
+    "filter_from": "開始日",
+    "filter_to": "終了日",
+    "today": "今日",
+    "tomorrow": "明日",
+    "empty": "予定された配信はありません",
+    "all_statuses": "すべてのステータス",
+    "btn_mark_published": "配信済みにする",
+    "btn_view": "表示",
+    "btn_retry": "再試行"
+  },
+  "config": {
+    "platform_title": "プラットフォームタイトル",
+    "platform_title_hint": "空白の場合はコンテンツタイトルを使用",
+    "platform_copy": "プラットフォーム文章",
+    "hashtags": "ハッシュタグ",
+    "hashtag_placeholder": "#タグ — Enter で追加",
+    "scheduled_at": "配信予定日時",
+    "visibility": "公開設定",
+    "visibility_public": "公開",
+    "visibility_private": "非公開",
+    "visibility_friends": "友達のみ",
+    "allow_comments": "コメントを許可",
+    "save": "保存",
+    "cancel": "キャンセル"
+  },
+  "add": {
+    "title": "プラットフォームを追加",
+    "select_platform": "プラットフォームを選択",
+    "all_added": "すべてのプラットフォームが追加済みです",
+    "set_schedule": "配信時間を設定",
+    "submit": "追加",
+    "cancel": "キャンセル"
+  },
+  "mark": {
+    "title": "配信済みにする",
+    "platform_url": "プラットフォームURL",
+    "url_required": "URLを入力してください",
+    "platform_post_id": "投稿ID",
+    "optional": "任意",
+    "published_at": "配信日時",
+    "submit": "確認",
+    "cancel": "キャンセル"
   }
 }

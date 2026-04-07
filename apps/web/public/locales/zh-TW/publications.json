@@ -1,25 +1,82 @@
 {
-  "title": "",
-  "queue": "",
-  "add_platform": "",
-  "mark_published": "",
+  "title": "發佈管理",
+  "queue": "發佈佇列",
+  "add_platform": "新增發佈平台",
+  "mark_published": "標記已發佈",
+  "no_publications": "尚無發佈計畫",
+  "loading": "載入中…",
+  "error": "載入失敗",
+  "remove_confirm": "確定要移除這個發佈計畫嗎？",
   "status": {
-    "draft": "",
-    "queued": "",
-    "ready": "",
-    "posting": "",
-    "published": "",
-    "failed": "",
-    "skipped": ""
+    "draft": "草稿",
+    "queued": "排隊中",
+    "ready": "待發佈",
+    "posting": "發佈中",
+    "published": "已發佈",
+    "failed": "發佈失敗",
+    "skipped": "已略過"
   },
   "platforms": {
-    "douyin": "",
-    "xiaohongshu": "",
-    "weixin": "",
-    "weixin_video": "",
-    "bilibili": "",
-    "x": "",
-    "youtube": "",
-    "instagram": ""
+    "douyin": "抖音",
+    "xiaohongshu": "小紅書",
+    "weixin": "微信公眾號",
+    "weixin_video": "視頻號",
+    "bilibili": "嗶哩嗶哩",
+    "x": "X (Twitter)",
+    "youtube": "YouTube",
+    "instagram": "Instagram"
+  },
+  "action": {
+    "configure": "設定",
+    "mark_published": "標記已發佈",
+    "remove": "移除",
+    "view": "查看",
+    "retry": "重試"
+  },
+  "queue_page": {
+    "title": "發佈佇列",
+    "filter_status": "狀態篩選",
+    "filter_from": "開始日期",
+    "filter_to": "結束日期",
+    "today": "今天",
+    "tomorrow": "明天",
+    "empty": "尚無待發佈內容",
+    "all_statuses": "全部狀態",
+    "btn_mark_published": "標記發佈",
+    "btn_view": "查看",
+    "btn_retry": "重試"
+  },
+  "config": {
+    "platform_title": "平台標題",
+    "platform_title_hint": "留空則使用內容標題",
+    "platform_copy": "平台文案",
+    "hashtags": "話題標籤",
+    "hashtag_placeholder": "#話題 按 Enter 新增",
+    "scheduled_at": "計畫發佈時間",
+    "visibility": "可見性",
+    "visibility_public": "公開",
+    "visibility_private": "僅自己",
+    "visibility_friends": "僅好友",
+    "allow_comments": "允許留言",
+    "save": "儲存",
+    "cancel": "取消"
+  },
+  "add": {
+    "title": "新增發佈平台",
+    "select_platform": "選擇平台",
+    "all_added": "已新增全部平台",
+    "set_schedule": "設定發佈時間",
+    "submit": "新增",
+    "cancel": "取消"
+  },
+  "mark": {
+    "title": "標記已發佈",
+    "platform_url": "發佈連結",
+    "url_required": "請填寫發佈連結",
+    "platform_post_id": "平台貼文 ID",
+    "optional": "選填",
+    "published_at": "發佈時間",
+    "submit": "確認",
+    "cancel": "取消"
   }
 }
