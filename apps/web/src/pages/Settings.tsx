@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import type { Workspace } from '@contentflow/shared';
 import { useWorkspaces, useUpdateWorkspace } from '../api/workspaces.js';
-import { useUpdateProfile } from '../api/auth.js';
+import { useUpdateProfile, useChangePassword, useDeleteAccount } from '../api/auth.js';
 import { useAuthStore } from '../store/auth.store.js';
 import { useUiStore, type Theme } from '../store/ui.store.js';
 import { CreateWorkspaceModal } from '../components/workspaces/CreateWorkspaceModal.js';
@@ -364,10 +364,141 @@ function EditableField({
   );
 }
 
+// ─── Change Password Modal ────────────────────────────────────────────────────
+
+function ChangePasswordModal({ onClose }: { onClose: () => void }) {
+  const changePassword = useChangePassword();
+  const [current, setCurrent] = useState('');
+  const [next, setNext] = useState('');
+  const [confirm, setConfirm] = useState('');
+  const [error, setError] = useState('');
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError('');
+    if (next !== confirm) { setError('New passwords do not match'); return; }
+    if (next.length < 8) { setError('Password must be at least 8 characters'); return; }
+    try {
+      await changePassword.mutateAsync({ currentPassword: current, newPassword: next });
+      onClose();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to change password');
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[60] p-4">
+      <div className="bg-white rounded-lg border border-gray-200 shadow-xl w-full max-w-sm">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+          <h2 className="text-sm font-semibold text-gray-900">Change Password</h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-sm">✕</button>
+        </div>
+        <form onSubmit={(e) => void handleSubmit(e)} className="px-5 py-4 space-y-3">
+          {[
+            { label: 'Current password', value: current, onChange: setCurrent },
+            { label: 'New password',     value: next,    onChange: setNext    },
+            { label: 'Confirm new',      value: confirm, onChange: setConfirm },
+          ].map(({ label, value, onChange }) => (
+            <div key={label}>
+              <label className="block text-xs font-medium text-gray-700 mb-1">{label}</label>
+              <input
+                type="password"
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+                required
+                className="w-full text-sm border border-gray-200 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-200"
+              />
+            </div>
+          ))}
+          {error && <p className="text-xs text-red-500">{error}</p>}
+          <div className="flex justify-end gap-2 pt-1">
+            <button type="button" onClick={onClose} className="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900">
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={changePassword.isPending}
+              className="px-3 py-1.5 text-sm bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50"
+            >
+              {changePassword.isPending ? '…' : 'Update password'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+// ─── Delete Account Modal ─────────────────────────────────────────────────────
+
+function DeleteAccountModal({ onClose }: { onClose: () => void }) {
+  const deleteAccount = useDeleteAccount();
+  const clearAuth = useAuthStore((s) => s.clearAuth);
+  const navigate = useNavigate();
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+
+  async function handleDelete(e: React.FormEvent) {
+    e.preventDefault();
+    setError('');
+    try {
+      await deleteAccount.mutateAsync({ password });
+      clearAuth();
+      void navigate('/login', { replace: true });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete account');
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[60] p-4">
+      <div className="bg-white rounded-lg border border-gray-200 shadow-xl w-full max-w-sm">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+          <h2 className="text-sm font-semibold text-gray-900">Delete Account</h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-sm">✕</button>
+        </div>
+        <form onSubmit={(e) => void handleDelete(e)} className="px-5 py-4 space-y-4">
+          <p className="text-sm text-gray-600">
+            This will permanently delete your account and all associated data. This action cannot be undone.
+          </p>
+          <div>
+            <label className="block text-xs font-medium text-gray-700 mb-1">Confirm your password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              placeholder="Enter your password to confirm"
+              className="w-full text-sm border border-gray-200 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-red-200"
+            />
+          </div>
+          {error && <p className="text-xs text-red-500">{error}</p>}
+          <div className="flex justify-end gap-2 pt-1">
+            <button type="button" onClick={onClose} className="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900">
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={deleteAccount.isPending || !password}
+              className="px-3 py-1.5 text-sm bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50"
+            >
+              {deleteAccount.isPending ? '…' : 'Delete my account'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+// ─── Account Panel ────────────────────────────────────────────────────────────
+
 function AccountPanel() {
   const user = useAuthStore((s) => s.user);
   const updateUser = useAuthStore((s) => s.updateUser);
   const updateProfile = useUpdateProfile();
+  const [showChangePassword, setShowChangePassword] = useState(false);
+  const [showDeleteAccount, setShowDeleteAccount] = useState(false);
   const initial = user?.name ? (user.name[0]?.toUpperCase() ?? 'U') : 'U';
 
   async function saveName(name: string) {
@@ -392,27 +523,30 @@ function AccountPanel() {
         </div>
       </div>
 
-      <EditableField
-        label="Name"
-        value={user?.name ?? ''}
-        onSave={saveName}
-        saving={updateProfile.isPending}
-      />
-      <EditableField
-        label="Email"
-        type="email"
-        value={user?.email ?? ''}
-        onSave={saveEmail}
-        saving={updateProfile.isPending}
-      />
+      <EditableField label="Name" value={user?.name ?? ''} onSave={saveName} saving={updateProfile.isPending} />
+      <EditableField label="Email" type="email" value={user?.email ?? ''} onSave={saveEmail} saving={updateProfile.isPending} />
 
       <div className={ROW}>
         <span className={LABEL}>Password</span>
-        <button className="text-sm text-indigo-600 hover:text-indigo-700">Change password</button>
+        <button
+          onClick={() => setShowChangePassword(true)}
+          className="text-sm text-indigo-600 hover:text-indigo-700"
+        >
+          Change password
+        </button>
       </div>
+
       <div className="pt-5">
-        <button className="text-sm text-red-500 hover:text-red-600">Delete account…</button>
+        <button
+          onClick={() => setShowDeleteAccount(true)}
+          className="text-sm text-red-500 hover:text-red-600"
+        >
+          Delete account…
+        </button>
       </div>
+
+      {showChangePassword && <ChangePasswordModal onClose={() => setShowChangePassword(false)} />}
+      {showDeleteAccount  && <DeleteAccountModal  onClose={() => setShowDeleteAccount(false)} />}
     </div>
   );
 }
