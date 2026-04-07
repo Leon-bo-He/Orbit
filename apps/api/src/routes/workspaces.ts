@@ -71,6 +71,4 @@ export const workspacesRoutes: FastifyPluginAsync = async (app) => {
     return reply.send(updated);
   });
 
-  app.post('/api/workspaces/:id/plan-templates', { onRequest: [app.authenticate] }, async (_r, reply) => reply.code(501).send(NI));
-  app.get('/api/workspaces/:id/plan-templates', { onRequest: [app.authenticate] }, async (_r, reply) => reply.code(501).send(NI));
 };
