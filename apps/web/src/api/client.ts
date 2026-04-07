@@ -1,3 +1,5 @@
+import { useOfflineQueue } from '../store/offline-queue.store.js';
+
 export class ApiError extends Error {
   constructor(
     public status: number,
@@ -7,6 +9,8 @@ export class ApiError extends Error {
     this.name = 'ApiError';
   }
 }
+
+export const QUEUED_OFFLINE = Symbol('QUEUED_OFFLINE');
 
 let accessToken: string | null = null;
 
@@ -27,7 +31,29 @@ export async function apiFetch<T>(
     headers['Authorization'] = `Bearer ${accessToken}`;
   }
 
-  const res = await fetch(path, { ...options, headers });
+  let res: Response;
+  try {
+    res = await fetch(path, { ...options, headers });
+  } catch (networkErr) {
+    // Network failure — enqueue mutations, reject GETs
+    const method = (options.method ?? 'GET').toUpperCase();
+    if (method === 'POST' || method === 'PATCH' || method === 'DELETE') {
+      let body: unknown;
+      try {
+        body = options.body ? JSON.parse(options.body as string) : undefined;
+      } catch {
+        body = options.body;
+      }
+      useOfflineQueue.getState().enqueue({
+        id: crypto.randomUUID(),
+        method: method as 'POST' | 'PATCH' | 'DELETE',
+        url: path,
+        body,
+      });
+      return QUEUED_OFFLINE as unknown as T;
+    }
+    throw networkErr;
+  }
 
   if (!res.ok) {
     const body = await res.json().catch(() => ({ error: res.statusText }));

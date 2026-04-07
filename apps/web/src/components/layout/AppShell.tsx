@@ -1,24 +1,48 @@
 import { Outlet } from 'react-router-dom';
 import { Sidebar } from './Sidebar.js';
 import { MobileBottomNav } from './MobileBottomNav.js';
+import { ToastContainer } from '../ui/Toast.js';
+import { NotificationPermissionBanner } from '../ui/NotificationPermissionBanner.js';
+import { useOfflineSync } from '../../hooks/useOfflineSync.js';
+import { useOnlineStatus } from '../../hooks/useOnlineStatus.js';
+
+function OfflineBanner() {
+  return (
+    <div className="bg-amber-50 border-b border-amber-200 px-4 py-2 text-sm text-amber-800 text-center">
+      You're offline — changes will sync when reconnected
+    </div>
+  );
+}
 
 export function AppShell() {
-  return (
-    <div className="flex h-screen bg-surface overflow-hidden">
-      {/* Desktop sidebar */}
-      <aside className="hidden md:flex flex-col flex-shrink-0">
-        <Sidebar />
-      </aside>
+  const { isOnline } = useOnlineStatus();
+  useOfflineSync();
 
-      {/* Main content */}
-      <main className="flex-1 overflow-auto pb-16 md:pb-0">
-        <Outlet />
-      </main>
+  return (
+    <div className="flex flex-col h-screen overflow-hidden bg-surface">
+      {/* Banners */}
+      {!isOnline && <OfflineBanner />}
+      <NotificationPermissionBanner />
+
+      <div className="flex flex-1 overflow-hidden">
+        {/* Desktop sidebar */}
+        <aside className="hidden md:flex flex-col flex-shrink-0">
+          <Sidebar />
+        </aside>
+
+        {/* Main content */}
+        <main className="flex-1 overflow-auto pb-16 md:pb-0">
+          <Outlet />
+        </main>
+      </div>
 
       {/* Mobile bottom nav */}
       <div className="fixed bottom-0 inset-x-0 md:hidden border-t border-gray-200">
         <MobileBottomNav />
       </div>
+
+      {/* Toast notifications */}
+      <ToastContainer />
     </div>
   );
 }
