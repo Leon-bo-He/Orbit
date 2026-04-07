@@ -16,7 +16,8 @@
     "edit": "編集",
     "create": "作成",
     "confirm": "確認",
-    "add": "追加"
+    "add": "追加",
+    "language": "言語"
   },
   "status": {
     "loading": "読み込み中…",

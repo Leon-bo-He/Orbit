@@ -16,7 +16,8 @@
     "edit": "編輯",
     "create": "新建",
     "confirm": "確認",
-    "add": "新增"
+    "add": "新增",
+    "language": "語言"
   },
   "status": {
     "loading": "載入中…",

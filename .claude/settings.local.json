@@ -28,7 +28,8 @@
       "Bash(./node_modules/.bin/drizzle-kit generate:pg:*)",
       "Bash(pnpm generate:*)",
       "Bash(xargs sed:*)",
-      "Bash(pnpm --filter api install --silent)"
+      "Bash(pnpm --filter api install --silent)",
+      "Bash(node:*)"
     ]
   }
 }

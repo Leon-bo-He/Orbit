@@ -16,7 +16,8 @@
     "edit": "Edit",
     "create": "Create",
     "confirm": "Confirm",
-    "add": "Add"
+    "add": "Add",
+    "language": "Language"
   },
   "status": {
     "loading": "Loading…",

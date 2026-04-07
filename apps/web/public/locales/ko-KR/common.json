@@ -16,7 +16,8 @@
     "edit": "편집",
     "create": "만들기",
     "confirm": "확인",
-    "add": "추가"
+    "add": "추가",
+    "language": "언어"
   },
   "status": {
     "loading": "불러오는 중…",
