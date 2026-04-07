@@ -119,7 +119,9 @@
     "idea_link": "From Idea",
     "close": "Close",
     "add_tag": "Add tag",
-    "open_brief": "Open Brief ✍️"
+    "open_brief": "Open Brief ✍️",
+    "tab_details": "Details",
+    "tab_publish": "Publish"
   },
   "create": {
     "title": "New Content",

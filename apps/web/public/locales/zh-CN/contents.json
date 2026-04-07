@@ -119,7 +119,9 @@
     "idea_link": "来源想法",
     "close": "关闭",
     "add_tag": "添加标签",
-    "open_brief": "打开策划书 ✍️"
+    "open_brief": "打开策划书 ✍️",
+    "tab_details": "详情",
+    "tab_publish": "发布"
   },
   "create": {
     "title": "新建内容",

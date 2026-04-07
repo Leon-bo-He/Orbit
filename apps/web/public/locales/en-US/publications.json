@@ -1,25 +1,82 @@
 {
-  "title": "",
-  "queue": "",
-  "add_platform": "",
-  "mark_published": "",
+  "title": "Publications",
+  "queue": "Publish Queue",
+  "add_platform": "Add Platform",
+  "mark_published": "Mark Published",
+  "no_publications": "No publication plans yet",
+  "loading": "Loading…",
+  "error": "Failed to load",
+  "remove_confirm": "Remove this publication plan?",
   "status": {
-    "draft": "",
-    "queued": "",
-    "ready": "",
-    "posting": "",
-    "published": "",
-    "failed": "",
-    "skipped": ""
+    "draft": "Draft",
+    "queued": "Queued",
+    "ready": "Ready",
+    "posting": "Posting",
+    "published": "Published",
+    "failed": "Failed",
+    "skipped": "Skipped"
   },
   "platforms": {
-    "douyin": "",
-    "xiaohongshu": "",
-    "weixin": "",
-    "weixin_video": "",
-    "bilibili": "",
-    "x": "",
-    "youtube": "",
-    "instagram": ""
+    "douyin": "Douyin",
+    "xiaohongshu": "Xiaohongshu",
+    "weixin": "WeChat OA",
+    "weixin_video": "WeChat Video",
+    "bilibili": "Bilibili",
+    "x": "X (Twitter)",
+    "youtube": "YouTube",
+    "instagram": "Instagram"
+  },
+  "action": {
+    "configure": "Configure",
+    "mark_published": "Mark Published",
+    "remove": "Remove",
+    "view": "View",
+    "retry": "Retry"
+  },
+  "queue_page": {
+    "title": "Publish Queue",
+    "filter_status": "Filter by status",
+    "filter_from": "From date",
+    "filter_to": "To date",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "empty": "No scheduled publications",
+    "all_statuses": "All statuses",
+    "btn_mark_published": "Mark Published",
+    "btn_view": "View",
+    "btn_retry": "Retry"
+  },
+  "config": {
+    "platform_title": "Platform Title",
+    "platform_title_hint": "Leave blank to use content title",
+    "platform_copy": "Platform Copy",
+    "hashtags": "Hashtags",
+    "hashtag_placeholder": "#tag — press Enter to add",
+    "scheduled_at": "Scheduled Date & Time",
+    "visibility": "Visibility",
+    "visibility_public": "Public",
+    "visibility_private": "Private",
+    "visibility_friends": "Friends Only",
+    "allow_comments": "Allow Comments",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "add": {
+    "title": "Add Platform",
+    "select_platform": "Select a platform",
+    "all_added": "All platforms already added",
+    "set_schedule": "Set scheduled time",
+    "submit": "Add",
+    "cancel": "Cancel"
+  },
+  "mark": {
+    "title": "Mark as Published",
+    "platform_url": "Platform URL",
+    "url_required": "Please enter the platform URL",
+    "platform_post_id": "Platform Post ID",
+    "optional": "Optional",
+    "published_at": "Published At",
+    "submit": "Confirm",
+    "cancel": "Cancel"
   }
 }

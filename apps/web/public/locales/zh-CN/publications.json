@@ -3,6 +3,10 @@
   "queue": "发布队列",
   "add_platform": "添加发布平台",
   "mark_published": "标记已发布",
+  "no_publications": "暂无发布计划",
+  "loading": "加载中…",
+  "error": "加载失败",
+  "remove_confirm": "确定要移除这个发布计划吗？",
   "status": {
     "draft": "草稿",
     "queued": "排队中",
@@ -21,5 +25,58 @@
     "x": "X (Twitter)",
     "youtube": "YouTube",
     "instagram": "Instagram"
+  },
+  "action": {
+    "configure": "配置",
+    "mark_published": "标记已发布",
+    "remove": "移除",
+    "view": "查看",
+    "retry": "重试"
+  },
+  "queue_page": {
+    "title": "发布队列",
+    "filter_status": "状态筛选",
+    "filter_from": "开始日期",
+    "filter_to": "结束日期",
+    "today": "今天",
+    "tomorrow": "明天",
+    "empty": "暂无待发布内容",
+    "all_statuses": "全部状态",
+    "btn_mark_published": "标记发布",
+    "btn_view": "查看",
+    "btn_retry": "重试"
+  },
+  "config": {
+    "platform_title": "平台标题",
+    "platform_title_hint": "留空则使用内容标题",
+    "platform_copy": "平台文案",
+    "hashtags": "话题标签",
+    "hashtag_placeholder": "#话题 按回车添加",
+    "scheduled_at": "计划发布时间",
+    "visibility": "可见性",
+    "visibility_public": "公开",
+    "visibility_private": "仅自己",
+    "visibility_friends": "仅好友",
+    "allow_comments": "允许评论",
+    "save": "保存",
+    "cancel": "取消"
+  },
+  "add": {
+    "title": "添加发布平台",
+    "select_platform": "选择平台",
+    "all_added": "已添加全部平台",
+    "set_schedule": "设置发布时间",
+    "submit": "添加",
+    "cancel": "取消"
+  },
+  "mark": {
+    "title": "标记已发布",
+    "platform_url": "发布链接",
+    "url_required": "请填写发布链接",
+    "platform_post_id": "平台帖子 ID",
+    "optional": "选填",
+    "published_at": "发布时间",
+    "submit": "确认",
+    "cancel": "取消"
   }
 }
