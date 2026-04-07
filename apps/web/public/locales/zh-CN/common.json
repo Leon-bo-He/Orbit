@@ -28,5 +28,18 @@
     "switcher_label": "切换工作空间",
     "create": "创建工作空间",
     "no_workspace": "暂无工作空间"
+  },
+  "calendar": {
+    "month_view": "月视图",
+    "week_view": "周视图",
+    "list_view": "列表",
+    "prev": "上月",
+    "next": "下月",
+    "today": "今天",
+    "no_content": "暂无内容",
+    "goal_banner": "本周：已排期 {{scheduled}} / 目标 {{goal}} 条",
+    "on_track": "进度正常",
+    "behind": "进度落后",
+    "add_content": "添加内容"
   }
 }

@@ -28,5 +28,18 @@
     "switcher_label": "Switch workspace",
     "create": "Create workspace",
     "no_workspace": "No workspaces yet"
+  },
+  "calendar": {
+    "month_view": "Month",
+    "week_view": "Week",
+    "list_view": "List",
+    "prev": "Previous",
+    "next": "Next",
+    "today": "Today",
+    "no_content": "No content",
+    "goal_banner": "This week: {{scheduled}} of {{goal}} posts scheduled",
+    "on_track": "On track",
+    "behind": "Behind",
+    "add_content": "Add content"
   }
 }
