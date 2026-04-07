@@ -33,13 +33,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setAccessToken(storedToken);
     }
 
+    // Fallback: if API is unreachable, stop spinning after 5s
+    const timeout = setTimeout(() => {
+      clearAuth();
+      setIsLoading(false);
+    }, 5000);
+
     refreshMutation.mutate(undefined, {
       onSuccess: (data) => {
+        clearTimeout(timeout);
         setAccessToken(data.accessToken);
         setRefreshedToken(data.accessToken);
-        // meQuery will fire once refreshedToken is set
       },
       onError: () => {
+        clearTimeout(timeout);
         clearAuth();
         setIsLoading(false);
       },

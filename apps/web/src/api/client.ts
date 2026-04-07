@@ -35,9 +35,10 @@ export async function apiFetch<T>(
   try {
     res = await fetch(path, { ...options, headers });
   } catch (networkErr) {
-    // Network failure — enqueue mutations, reject GETs
+    // Network failure — enqueue mutations, reject GETs and auth routes
     const method = (options.method ?? 'GET').toUpperCase();
-    if (method === 'POST' || method === 'PATCH' || method === 'DELETE') {
+    const isAuthRoute = path.startsWith('/api/auth');
+    if (!isAuthRoute && (method === 'POST' || method === 'PATCH' || method === 'DELETE')) {
       let body: unknown;
       try {
         body = options.body ? JSON.parse(options.body as string) : undefined;
