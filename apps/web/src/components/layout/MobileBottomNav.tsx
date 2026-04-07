@@ -1,32 +1,77 @@
 import { NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-
-const items = [
-  { path: '/', label: 'nav.dashboard', icon: '◻' },
-  { path: '/ideas', label: 'nav.ideas', icon: '💡' },
-  { path: '/publications', label: 'nav.publications', icon: '📤' },
-  { path: '/settings', label: 'nav.settings', icon: '⚙' },
-] as const;
+import { useUiStore } from '../../store/ui.store.js';
 
 export function MobileBottomNav() {
   const { t } = useTranslation('common');
+  const activeWorkspaceId = useUiStore((s) => s.activeWorkspaceId);
+
+  const boardPath = activeWorkspaceId
+    ? `/workspaces/${activeWorkspaceId}/board`
+    : '/settings';
+
   return (
     <div className="flex justify-around items-center h-16 bg-surface-raised">
-      {items.map((item) => (
-        <NavLink
-          key={item.path}
-          to={item.path}
-          end={item.path === '/'}
-          className={({ isActive }) =>
-            `flex flex-col items-center gap-0.5 text-xs px-3 py-1 ${
-              isActive ? 'text-indigo-600' : 'text-gray-500'
-            }`
-          }
-        >
-          <span className="text-xl">{item.icon}</span>
-          <span>{t(item.label)}</span>
-        </NavLink>
-      ))}
+      <NavLink
+        to="/"
+        end
+        className={({ isActive }) =>
+          `flex flex-col items-center gap-0.5 text-xs px-3 py-1 ${
+            isActive ? 'text-indigo-600' : 'text-gray-500'
+          }`
+        }
+      >
+        <span className="text-xl">◻</span>
+        <span>{t('nav.dashboard')}</span>
+      </NavLink>
+
+      <NavLink
+        to="/ideas"
+        className={({ isActive }) =>
+          `flex flex-col items-center gap-0.5 text-xs px-3 py-1 ${
+            isActive ? 'text-indigo-600' : 'text-gray-500'
+          }`
+        }
+      >
+        <span className="text-xl">💡</span>
+        <span>{t('nav.ideas')}</span>
+      </NavLink>
+
+      <NavLink
+        to={boardPath}
+        className={({ isActive }) =>
+          `flex flex-col items-center gap-0.5 text-xs px-3 py-1 ${
+            isActive ? 'text-indigo-600' : 'text-gray-500'
+          }`
+        }
+      >
+        <span className="text-xl">📋</span>
+        <span>{t('nav.board')}</span>
+      </NavLink>
+
+      <NavLink
+        to="/publications"
+        className={({ isActive }) =>
+          `flex flex-col items-center gap-0.5 text-xs px-3 py-1 ${
+            isActive ? 'text-indigo-600' : 'text-gray-500'
+          }`
+        }
+      >
+        <span className="text-xl">📤</span>
+        <span>{t('nav.publications')}</span>
+      </NavLink>
+
+      <NavLink
+        to="/settings"
+        className={({ isActive }) =>
+          `flex flex-col items-center gap-0.5 text-xs px-3 py-1 ${
+            isActive ? 'text-indigo-600' : 'text-gray-500'
+          }`
+        }
+      >
+        <span className="text-xl">⚙</span>
+        <span>{t('nav.settings')}</span>
+      </NavLink>
     </div>
   );
 }

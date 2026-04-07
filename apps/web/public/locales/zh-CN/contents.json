@@ -18,5 +18,49 @@
     "titles": "标题候选",
     "outline": "内容大纲",
     "references": "竞品参考"
+  },
+  "card": {
+    "scheduled": "预定 {{date}}",
+    "tags_more": "+{{count}} 更多",
+    "no_date": "未设置日期"
+  },
+  "drawer": {
+    "title_label": "标题",
+    "stage_label": "阶段",
+    "content_type_label": "内容类型",
+    "platforms_label": "目标平台",
+    "tags_label": "标签",
+    "scheduled_label": "计划发布时间",
+    "notes_label": "备注",
+    "idea_link": "来源想法",
+    "close": "关闭",
+    "add_tag": "添加标签"
+  },
+  "create": {
+    "title": "新建内容",
+    "title_label": "标题",
+    "title_placeholder": "输入内容标题",
+    "content_type_label": "内容类型",
+    "platforms_label": "目标平台",
+    "submit": "创建",
+    "cancel": "取消"
+  },
+  "content_types": {
+    "video_short": "短视频",
+    "video_long": "长视频",
+    "image_text": "图文",
+    "article": "长文章",
+    "podcast": "播客",
+    "live": "直播"
+  },
+  "platforms": {
+    "douyin": "抖音",
+    "xiaohongshu": "小红书",
+    "weixin": "微信公众号",
+    "weixin_video": "微信视频号",
+    "bilibili": "哔哩哔哩",
+    "x": "X (Twitter)",
+    "youtube": "YouTube",
+    "instagram": "Instagram"
   }
 }

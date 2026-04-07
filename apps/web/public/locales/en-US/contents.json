@@ -1,22 +1,66 @@
 {
-  "title": "",
-  "create": "",
+  "title": "Content Board",
+  "create": "New Content",
   "stages": {
-    "planned": "",
-    "planning": "",
-    "creating": "",
-    "ready": "",
-    "publishing": "",
-    "published": "",
-    "reviewed": ""
+    "planned": "Planned",
+    "planning": "Planning",
+    "creating": "Creating",
+    "ready": "Ready",
+    "publishing": "Publishing",
+    "published": "Published",
+    "reviewed": "Reviewed"
   },
   "brief": {
-    "title": "",
-    "audience": "",
-    "goals": "",
-    "hooks": "",
-    "titles": "",
-    "outline": "",
-    "references": ""
+    "title": "Content Brief",
+    "audience": "Target Audience",
+    "goals": "Content Goals",
+    "hooks": "Key Hooks",
+    "titles": "Title Candidates",
+    "outline": "Content Outline",
+    "references": "References"
+  },
+  "card": {
+    "scheduled": "Scheduled {{date}}",
+    "tags_more": "+{{count}} more",
+    "no_date": "No date set"
+  },
+  "drawer": {
+    "title_label": "Title",
+    "stage_label": "Stage",
+    "content_type_label": "Content Type",
+    "platforms_label": "Target Platforms",
+    "tags_label": "Tags",
+    "scheduled_label": "Scheduled Date",
+    "notes_label": "Notes",
+    "idea_link": "From Idea",
+    "close": "Close",
+    "add_tag": "Add tag"
+  },
+  "create": {
+    "title": "New Content",
+    "title_label": "Title",
+    "title_placeholder": "Enter content title",
+    "content_type_label": "Content Type",
+    "platforms_label": "Target Platforms",
+    "submit": "Create",
+    "cancel": "Cancel"
+  },
+  "content_types": {
+    "video_short": "Short Video",
+    "video_long": "Long Video",
+    "image_text": "Image + Text",
+    "article": "Article",
+    "podcast": "Podcast",
+    "live": "Live Stream"
+  },
+  "platforms": {
+    "douyin": "Douyin",
+    "xiaohongshu": "Xiaohongshu",
+    "weixin": "WeChat OA",
+    "weixin_video": "WeChat Video",
+    "bilibili": "Bilibili",
+    "x": "X (Twitter)",
+    "youtube": "YouTube",
+    "instagram": "Instagram"
   }
 }
