@@ -49,7 +49,7 @@
     "sign_out": "登出",
     "email": "電子郵件",
     "password": "密碼",
-    "name": "姓名",
+    "name": "用戶名",
     "confirm_password": "確認密碼",
     "welcome_back": "歡迎回來",
     "create_account": "建立帳號",
@@ -83,7 +83,7 @@
       "blocked": "通知已被瀏覽器攔截，請在瀏覽器設定中開啟"
     },
     "account": {
-      "name": "姓名",
+      "name": "用戶名",
       "email": "電子郵件",
       "password": "密碼",
       "change_password": "修改密碼",

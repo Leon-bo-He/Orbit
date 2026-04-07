@@ -49,7 +49,7 @@
     "sign_out": "退出登录",
     "email": "邮箱",
     "password": "密码",
-    "name": "姓名",
+    "name": "用户名",
     "confirm_password": "确认密码",
     "welcome_back": "欢迎回来",
     "create_account": "创建账号",
@@ -83,7 +83,7 @@
       "blocked": "通知已被浏览器拦截，请在浏览器设置中开启"
     },
     "account": {
-      "name": "姓名",
+      "name": "用户名",
       "email": "邮箱",
       "password": "密码",
       "change_password": "修改密码",

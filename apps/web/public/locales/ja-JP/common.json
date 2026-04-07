@@ -49,7 +49,7 @@
     "sign_out": "ログアウト",
     "email": "メールアドレス",
     "password": "パスワード",
-    "name": "名前",
+    "name": "ユーザー名",
     "confirm_password": "パスワード確認",
     "welcome_back": "おかえりなさい",
     "create_account": "アカウントを作成",
@@ -83,7 +83,7 @@
       "blocked": "通知はブラウザによってブロックされています。ブラウザの設定で有効にしてください。"
     },
     "account": {
-      "name": "名前",
+      "name": "ユーザー名",
       "email": "メールアドレス",
       "password": "パスワード",
       "change_password": "パスワードを変更",
