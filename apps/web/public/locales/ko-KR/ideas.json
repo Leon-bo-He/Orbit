@@ -1,17 +1,33 @@
 {
-  "title": "",
-  "quick_capture": "",
-  "placeholder": "",
-  "convert": "",
+  "title": "아이디어",
+  "quick_capture": "새 아이디어",
+  "placeholder": "아이디어를 입력하세요…",
+  "convert": "콘텐츠로 전환",
   "filter": {
-    "all": "",
-    "active": "",
-    "converted": "",
-    "archived": ""
+    "all": "전체",
+    "active": "진행 중",
+    "converted": "전환됨",
+    "archived": "보관됨"
   },
   "priority": {
-    "low": "",
-    "medium": "",
-    "high": ""
-  }
+    "low": "낮음",
+    "medium": "보통",
+    "high": "높음"
+  },
+  "fields": {
+    "title": "제목",
+    "title_placeholder": "어떤 아이디어인가요?",
+    "note": "메모",
+    "note_placeholder": "세부 내용 추가…",
+    "tags": "태그",
+    "tags_placeholder": "입력 후 Enter",
+    "priority": "우선순위",
+    "workspace": "워크스페이스",
+    "no_workspace": "워크스페이스 없음"
+  },
+  "empty": {
+    "heading": "아직 아이디어가 없습니다",
+    "body": "새 아이디어 버튼을 클릭하거나 Cmd+Shift+I로 첫 번째 아이디어를 기록하세요."
+  },
+  "login_required": "아이디어를 보려면 로그인하세요."
 }

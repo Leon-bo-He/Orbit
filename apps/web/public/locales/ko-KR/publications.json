@@ -1,25 +1,82 @@
 {
-  "title": "",
-  "queue": "",
-  "add_platform": "",
-  "mark_published": "",
+  "title": "발행 관리",
+  "queue": "발행 큐",
+  "add_platform": "플랫폼 추가",
+  "mark_published": "발행됨으로 표시",
+  "no_publications": "발행 계획 없음",
+  "loading": "불러오는 중…",
+  "error": "불러오기 실패",
+  "remove_confirm": "이 발행 계획을 삭제하시겠습니까?",
   "status": {
-    "draft": "",
-    "queued": "",
-    "ready": "",
-    "posting": "",
-    "published": "",
-    "failed": "",
-    "skipped": ""
+    "draft": "초안",
+    "queued": "대기 중",
+    "ready": "발행 대기",
+    "posting": "발행 중",
+    "published": "발행됨",
+    "failed": "발행 실패",
+    "skipped": "건너뜀"
   },
   "platforms": {
-    "douyin": "",
-    "xiaohongshu": "",
-    "weixin": "",
-    "weixin_video": "",
-    "bilibili": "",
-    "x": "",
-    "youtube": "",
-    "instagram": ""
+    "douyin": "TikTok",
+    "xiaohongshu": "Xiaohongshu",
+    "weixin": "WeChat 공식 계정",
+    "weixin_video": "WeChat 비디오",
+    "bilibili": "Bilibili",
+    "x": "X (Twitter)",
+    "youtube": "YouTube",
+    "instagram": "Instagram"
+  },
+  "action": {
+    "configure": "설정",
+    "mark_published": "발행됨으로 표시",
+    "remove": "삭제",
+    "view": "보기",
+    "retry": "재시도"
+  },
+  "queue_page": {
+    "title": "발행 큐",
+    "filter_status": "상태로 필터",
+    "filter_from": "시작 날짜",
+    "filter_to": "종료 날짜",
+    "today": "오늘",
+    "tomorrow": "내일",
+    "empty": "예약된 발행 없음",
+    "all_statuses": "전체 상태",
+    "btn_mark_published": "발행됨으로 표시",
+    "btn_view": "보기",
+    "btn_retry": "재시도"
+  },
+  "config": {
+    "platform_title": "플랫폼 제목",
+    "platform_title_hint": "비워두면 콘텐츠 제목 사용",
+    "platform_copy": "플랫폼 본문",
+    "hashtags": "해시태그",
+    "hashtag_placeholder": "#태그 — Enter로 추가",
+    "scheduled_at": "예약 발행 일시",
+    "visibility": "공개 설정",
+    "visibility_public": "공개",
+    "visibility_private": "비공개",
+    "visibility_friends": "친구만",
+    "allow_comments": "댓글 허용",
+    "save": "저장",
+    "cancel": "취소"
+  },
+  "add": {
+    "title": "플랫폼 추가",
+    "select_platform": "플랫폼 선택",
+    "all_added": "모든 플랫폼이 추가됨",
+    "set_schedule": "발행 시간 설정",
+    "submit": "추가",
+    "cancel": "취소"
+  },
+  "mark": {
+    "title": "발행됨으로 표시",
+    "platform_url": "플랫폼 URL",
+    "url_required": "플랫폼 URL을 입력하세요",
+    "platform_post_id": "플랫폼 게시물 ID",
+    "optional": "선택",
+    "published_at": "발행 일시",
+    "submit": "확인",
+    "cancel": "취소"
   }
 }

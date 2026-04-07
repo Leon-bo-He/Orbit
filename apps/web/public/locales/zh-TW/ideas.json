@@ -1,17 +1,33 @@
 {
-  "title": "",
-  "quick_capture": "",
-  "placeholder": "",
-  "convert": "",
+  "title": "靈感庫",
+  "quick_capture": "新增靈感",
+  "placeholder": "記錄一個想法…",
+  "convert": "升級為內容",
   "filter": {
-    "all": "",
-    "active": "",
-    "converted": "",
-    "archived": ""
+    "all": "全部",
+    "active": "待處理",
+    "converted": "已轉化",
+    "archived": "已封存"
   },
   "priority": {
-    "low": "",
-    "medium": "",
-    "high": ""
-  }
+    "low": "低",
+    "medium": "中",
+    "high": "高"
+  },
+  "fields": {
+    "title": "標題",
+    "title_placeholder": "這個想法是什麼？",
+    "note": "備註",
+    "note_placeholder": "新增詳情…",
+    "tags": "標籤",
+    "tags_placeholder": "輸入後按 Enter",
+    "priority": "優先級",
+    "workspace": "工作空間",
+    "no_workspace": "無工作空間"
+  },
+  "empty": {
+    "heading": "還沒有靈感",
+    "body": "點擊「新增靈感」或按 Cmd+Shift+I 記錄你的第一個想法。"
+  },
+  "login_required": "請先登入以查看您的靈感。"
 }

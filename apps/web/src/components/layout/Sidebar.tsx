@@ -3,6 +3,15 @@ import { useTranslation } from 'react-i18next';
 import { WorkspaceSwitcher } from './WorkspaceSwitcher.js';
 import { useUiStore } from '../../store/ui.store.js';
 import { useWorkspaces } from '../../api/workspaces.js';
+import i18n, { SUPPORTED_LOCALES, type SupportedLocale } from '../../i18n/index.js';
+
+const LOCALE_META: Record<SupportedLocale, { flag: string; code: string }> = {
+  'zh-CN': { flag: '🇨🇳', code: 'CN' },
+  'en-US': { flag: '🇺🇸', code: 'EN' },
+  'ja-JP': { flag: '🇯🇵', code: 'JA' },
+  'ko-KR': { flag: '🇰🇷', code: 'KR' },
+  'zh-TW': { flag: '🇹🇼', code: 'TW' },
+};
 
 const topNavItems = [
   { path: '/', label: 'nav.dashboard', icon: '◻' },
@@ -20,9 +29,16 @@ export function Sidebar() {
   const toggle = useUiStore((s) => s.toggleSidebar);
   const activeWorkspaceId = useUiStore((s) => s.activeWorkspaceId);
   const setActiveWorkspace = useUiStore((s) => s.setActiveWorkspace);
+  const locale = useUiStore((s) => s.locale);
+  const setLocale = useUiStore((s) => s.setLocale);
   const navigate = useNavigate();
 
   const { data: workspaces = [] } = useWorkspaces();
+
+  function handleLocaleChange(newLocale: SupportedLocale) {
+    setLocale(newLocale);
+    void i18n.changeLanguage(newLocale);
+  }
 
   function handleWorkspaceSelect(id: string) {
     setActiveWorkspace(id);
@@ -171,6 +187,41 @@ export function Sidebar() {
             {!collapsed && <span>{t(item.label)}</span>}
           </NavLink>
         ))}
+
+        {/* Locale switcher */}
+        {!collapsed && (
+          <div className="pt-2">
+            <p className="px-2 pb-1 text-xs font-medium text-gray-400 uppercase tracking-wide">Language</p>
+            <div className="flex flex-wrap gap-1 px-1">
+              {SUPPORTED_LOCALES.map((loc) => {
+                const meta = LOCALE_META[loc];
+                return (
+                  <button
+                    key={loc}
+                    onClick={() => handleLocaleChange(loc)}
+                    title={loc}
+                    className={`flex items-center gap-0.5 px-1.5 py-0.5 rounded text-xs transition-colors ${
+                      locale === loc
+                        ? 'bg-indigo-100 text-indigo-700 font-medium'
+                        : 'text-gray-500 hover:bg-gray-100'
+                    }`}
+                  >
+                    <span>{meta.flag}</span>
+                    <span>{meta.code}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* User avatar placeholder */}
+        <div className="pt-2 px-1 flex items-center gap-2">
+          <div className="w-7 h-7 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs font-semibold flex-shrink-0">
+            U
+          </div>
+          {!collapsed && <span className="text-xs text-gray-500 truncate">User</span>}
+        </div>
       </div>
     </div>
   );

@@ -1,22 +1,153 @@
 {
-  "title": "",
-  "create": "",
+  "title": "콘텐츠 보드",
+  "create": "새 콘텐츠",
   "stages": {
-    "planned": "",
-    "planning": "",
-    "creating": "",
-    "ready": "",
-    "publishing": "",
-    "published": "",
-    "reviewed": ""
+    "planned": "기획 확정",
+    "planning": "콘텐츠 설계",
+    "creating": "제작 중",
+    "ready": "발행 대기",
+    "publishing": "발행 관리",
+    "published": "발행됨",
+    "reviewed": "회고 완료"
   },
   "brief": {
-    "title": "",
-    "audience": "",
-    "goals": "",
-    "hooks": "",
-    "titles": "",
-    "outline": "",
-    "references": ""
+    "title": "콘텐츠 기획서",
+    "audience": "타겟 오디언스",
+    "goals": "콘텐츠 목표",
+    "hooks": "후크 분석",
+    "titles": "제목 후보",
+    "outline": "콘텐츠 구성",
+    "references": "경쟁 사례",
+    "back_to_board": "보드로 돌아가기",
+    "sections": {
+      "format": "콘텐츠 형식 / Content Format",
+      "audience": "타겟 오디언스 / Target Audience",
+      "goals": "콘텐츠 목표 / Content Goals",
+      "hooks": "후크 / Hook Analysis",
+      "titles": "제목 후보 / Title Candidates",
+      "outline": "콘텐츠 구성 / Content Outline",
+      "references": "경쟁 사례 / Competitive References"
+    },
+    "format": {
+      "duration_label": "길이",
+      "duration_unit": "초",
+      "aspect_ratio_label": "화면 비율",
+      "aspect_ratio_placeholder": "화면 비율 선택",
+      "notes_label": "형식 메모",
+      "notes_placeholder": "형식, 스타일, 제작 요건에 관한 메모…"
+    },
+    "audience": {
+      "age_range_label": "연령대",
+      "age_range_placeholder": "예: 18-25",
+      "persona_tags_label": "페르소나 태그",
+      "persona_tags_placeholder": "입력 후 Enter",
+      "pain_points_label": "페인 포인트",
+      "pain_points_placeholder": "이 오디언스가 겪는 문제는?",
+      "reach_scenario_label": "접촉 시나리오",
+      "reach_scenario_placeholder": "어디서, 언제 이 콘텐츠를 보는가?",
+      "save_template": "템플릿으로 저장",
+      "load_template": "템플릿 불러오기",
+      "no_templates": "저장된 템플릿 없음",
+      "save_template_modal_title": "오디언스 템플릿 저장",
+      "template_name_placeholder": "템플릿 이름",
+      "save_template_confirm": "저장"
+    },
+    "goals": {
+      "goals_label": "콘텐츠 목표",
+      "grow_followers": "팔로워 증가",
+      "convert": "전환",
+      "traffic": "트래픽 유도",
+      "branding": "브랜드 인지도",
+      "description_label": "목표 설명",
+      "description_placeholder": "이 콘텐츠의 성공 기준을 설명하세요…",
+      "kpi_label": "KPI 목표",
+      "kpi_likes": "좋아요",
+      "kpi_comments": "댓글",
+      "kpi_shares": "공유",
+      "kpi_followers": "신규 팔로워"
+    },
+    "hooks": {
+      "core_hook_label": "핵심 후크",
+      "core_hook_placeholder": "가장 강력한 매력 포인트…",
+      "conflict_label": "갈등 / 대비",
+      "conflict_placeholder": "어떤 긴장감이나 대비가 관심을 끄는가?",
+      "golden_opening_label": "황금 3초 오프닝",
+      "golden_opening_placeholder": "스크롤을 멈추게 하는 첫 3초…",
+      "memory_anchor_label": "기억 앵커",
+      "memory_anchor_placeholder": "시청 후 기억에 남는 것은?"
+    },
+    "titles": {
+      "title_placeholder": "제목 후보 입력…",
+      "add_title": "제목 추가",
+      "set_primary": "메인 제목으로 설정",
+      "remove_title": "제목 삭제"
+    },
+    "outline": {
+      "section_placeholder": "섹션 설명…",
+      "note_placeholder": "이 섹션에 대한 메모…",
+      "add_section": "섹션 추가",
+      "drag_to_reorder": "드래그로 순서 변경",
+      "toggle_note": "메모 열기/닫기",
+      "remove_section": "섹션 삭제"
+    },
+    "references": {
+      "add_reference": "참고 사례 추가",
+      "add_reference_modal_title": "경쟁 참고 사례 추가",
+      "author_name_label": "작성자",
+      "content_title_label": "콘텐츠 제목",
+      "platform_label": "플랫폼",
+      "views_label": "조회수",
+      "likes_label": "좋아요 수",
+      "comments_label": "댓글 수",
+      "takeaway_label": "핵심 인사이트",
+      "add_reference_confirm": "추가"
+    }
+  },
+  "card": {
+    "scheduled": "예약 {{date}}",
+    "tags_more": "+{{count}}개",
+    "no_date": "날짜 미설정"
+  },
+  "drawer": {
+    "title_label": "제목",
+    "stage_label": "단계",
+    "content_type_label": "콘텐츠 유형",
+    "platforms_label": "타겟 플랫폼",
+    "tags_label": "태그",
+    "scheduled_label": "예약 발행 일시",
+    "notes_label": "메모",
+    "idea_link": "원본 아이디어",
+    "close": "닫기",
+    "add_tag": "태그 추가",
+    "open_brief": "기획서 열기 ✍️",
+    "tab_details": "상세",
+    "tab_publish": "발행"
+  },
+  "create": {
+    "title": "새 콘텐츠",
+    "title_label": "제목",
+    "title_placeholder": "콘텐츠 제목 입력",
+    "content_type_label": "콘텐츠 유형",
+    "platforms_label": "타겟 플랫폼",
+    "submit": "만들기",
+    "cancel": "취소"
+  },
+  "content_types": {
+    "video_short": "숏폼 영상",
+    "video_long": "롱폼 영상",
+    "image_text": "이미지+텍스트",
+    "article": "기사",
+    "podcast": "팟캐스트",
+    "live": "라이브 스트리밍"
+  },
+  "platforms": {
+    "douyin": "TikTok",
+    "xiaohongshu": "Xiaohongshu",
+    "weixin": "WeChat 공식 계정",
+    "weixin_video": "WeChat 비디오",
+    "bilibili": "Bilibili",
+    "x": "X (Twitter)",
+    "youtube": "YouTube",
+    "instagram": "Instagram"
   }
 }

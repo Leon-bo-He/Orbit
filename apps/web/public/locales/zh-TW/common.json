@@ -1,31 +1,45 @@
 {
   "nav": {
-    "dashboard": "",
-    "ideas": "",
-    "board": "",
-    "calendar": "",
-    "publications": "",
-    "analytics": "",
-    "settings": ""
+    "dashboard": "總覽",
+    "ideas": "靈感庫",
+    "board": "內容看板",
+    "calendar": "排期日曆",
+    "publications": "發佈管理",
+    "analytics": "數據分析",
+    "settings": "設定",
+    "workspaces": "工作空間"
   },
   "action": {
-    "save": "",
-    "cancel": "",
-    "delete": "",
-    "edit": "",
-    "create": "",
-    "confirm": "",
-    "add": ""
+    "save": "儲存",
+    "cancel": "取消",
+    "delete": "刪除",
+    "edit": "編輯",
+    "create": "新建",
+    "confirm": "確認",
+    "add": "新增"
   },
   "status": {
-    "loading": "",
-    "error": "",
-    "empty": "",
-    "saved": ""
+    "loading": "載入中…",
+    "error": "發生錯誤",
+    "empty": "暫無資料",
+    "saved": "已儲存"
   },
   "workspace": {
-    "switcher_label": "",
-    "create": "",
-    "no_workspace": ""
+    "switcher_label": "切換工作空間",
+    "create": "建立工作空間",
+    "no_workspace": "尚無工作空間"
+  },
+  "calendar": {
+    "month_view": "月檢視",
+    "week_view": "週檢視",
+    "list_view": "清單",
+    "prev": "上個月",
+    "next": "下個月",
+    "today": "今天",
+    "no_content": "暫無內容",
+    "goal_banner": "本週：已排期 {{scheduled}} / 目標 {{goal}} 篇",
+    "on_track": "進度正常",
+    "behind": "進度落後",
+    "add_content": "新增內容"
   }
 }

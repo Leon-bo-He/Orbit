@@ -1,22 +1,153 @@
 {
-  "title": "",
-  "create": "",
+  "title": "コンテンツボード",
+  "create": "コンテンツを作成",
   "stages": {
-    "planned": "",
-    "planning": "",
-    "creating": "",
-    "ready": "",
-    "publishing": "",
-    "published": "",
-    "reviewed": ""
+    "planned": "企画確定",
+    "planning": "コンテンツ設計",
+    "creating": "制作中",
+    "ready": "配信待ち",
+    "publishing": "配信管理",
+    "published": "配信済み",
+    "reviewed": "振り返り完了"
   },
   "brief": {
-    "title": "",
-    "audience": "",
-    "goals": "",
-    "hooks": "",
-    "titles": "",
-    "outline": "",
-    "references": ""
+    "title": "コンテンツ企画書",
+    "audience": "ターゲット",
+    "goals": "目標",
+    "hooks": "フック分析",
+    "titles": "タイトル候補",
+    "outline": "コンテンツ構成",
+    "references": "参考事例",
+    "back_to_board": "ボードに戻る",
+    "sections": {
+      "format": "コンテンツ形式 / Content Format",
+      "audience": "ターゲット / Target Audience",
+      "goals": "目標 / Content Goals",
+      "hooks": "フック / Hook Analysis",
+      "titles": "タイトル候補 / Title Candidates",
+      "outline": "構成 / Content Outline",
+      "references": "参考事例 / Competitive References"
+    },
+    "format": {
+      "duration_label": "尺",
+      "duration_unit": "秒",
+      "aspect_ratio_label": "アスペクト比",
+      "aspect_ratio_placeholder": "アスペクト比を選択",
+      "notes_label": "形式メモ",
+      "notes_placeholder": "フォーマット、スタイル、制作要件に関するメモ…"
+    },
+    "audience": {
+      "age_range_label": "年齢層",
+      "age_range_placeholder": "例：18〜25",
+      "persona_tags_label": "ペルソナタグ",
+      "persona_tags_placeholder": "入力して Enter",
+      "pain_points_label": "課題・悩み",
+      "pain_points_placeholder": "ターゲットが抱える問題は？",
+      "reach_scenario_label": "接触シーン",
+      "reach_scenario_placeholder": "どこで・いつ見るか？",
+      "save_template": "テンプレートとして保存",
+      "load_template": "テンプレートを読み込む",
+      "no_templates": "保存済みテンプレートなし",
+      "save_template_modal_title": "ターゲットテンプレートを保存",
+      "template_name_placeholder": "テンプレート名",
+      "save_template_confirm": "保存"
+    },
+    "goals": {
+      "goals_label": "コンテンツ目標",
+      "grow_followers": "フォロワー獲得",
+      "convert": "コンバージョン",
+      "traffic": "集客",
+      "branding": "ブランド認知",
+      "description_label": "目標の説明",
+      "description_placeholder": "このコンテンツの成功イメージを記述…",
+      "kpi_label": "KPI目標",
+      "kpi_likes": "いいね",
+      "kpi_comments": "コメント",
+      "kpi_shares": "シェア",
+      "kpi_followers": "新規フォロワー"
+    },
+    "hooks": {
+      "core_hook_label": "核心フック",
+      "core_hook_placeholder": "最も視聴者を引きつける要素…",
+      "conflict_label": "コンフリクト／対比",
+      "conflict_placeholder": "どんな緊張感や対比が関心を生むか？",
+      "golden_opening_label": "ゴールデン3秒オープニング",
+      "golden_opening_placeholder": "スクロールを止める最初の3秒…",
+      "memory_anchor_label": "記憶のアンカー",
+      "memory_anchor_placeholder": "視聴後に覚えていることは？"
+    },
+    "titles": {
+      "title_placeholder": "タイトル候補を入力…",
+      "add_title": "タイトルを追加",
+      "set_primary": "メインタイトルに設定",
+      "remove_title": "タイトルを削除"
+    },
+    "outline": {
+      "section_placeholder": "セクションの説明…",
+      "note_placeholder": "このセクションのメモ…",
+      "add_section": "セクションを追加",
+      "drag_to_reorder": "ドラッグで並び替え",
+      "toggle_note": "メモを開閉",
+      "remove_section": "セクションを削除"
+    },
+    "references": {
+      "add_reference": "参考事例を追加",
+      "add_reference_modal_title": "競合参考事例を追加",
+      "author_name_label": "投稿者",
+      "content_title_label": "コンテンツタイトル",
+      "platform_label": "プラットフォーム",
+      "views_label": "再生数",
+      "likes_label": "いいね数",
+      "comments_label": "コメント数",
+      "takeaway_label": "学んだこと",
+      "add_reference_confirm": "追加"
+    }
+  },
+  "card": {
+    "scheduled": "予定 {{date}}",
+    "tags_more": "+{{count}} 件",
+    "no_date": "日程未設定"
+  },
+  "drawer": {
+    "title_label": "タイトル",
+    "stage_label": "ステージ",
+    "content_type_label": "コンテンツタイプ",
+    "platforms_label": "配信プラットフォーム",
+    "tags_label": "タグ",
+    "scheduled_label": "配信予定日時",
+    "notes_label": "メモ",
+    "idea_link": "元のアイデア",
+    "close": "閉じる",
+    "add_tag": "タグを追加",
+    "open_brief": "企画書を開く ✍️",
+    "tab_details": "詳細",
+    "tab_publish": "配信"
+  },
+  "create": {
+    "title": "コンテンツを作成",
+    "title_label": "タイトル",
+    "title_placeholder": "コンテンツのタイトルを入力",
+    "content_type_label": "コンテンツタイプ",
+    "platforms_label": "配信プラットフォーム",
+    "submit": "作成",
+    "cancel": "キャンセル"
+  },
+  "content_types": {
+    "video_short": "ショート動画",
+    "video_long": "長尺動画",
+    "image_text": "画像＋テキスト",
+    "article": "記事",
+    "podcast": "ポッドキャスト",
+    "live": "ライブ配信"
+  },
+  "platforms": {
+    "douyin": "TikTok",
+    "xiaohongshu": "Xiaohongshu",
+    "weixin": "WeChat公式アカウント",
+    "weixin_video": "WeChatビデオ",
+    "bilibili": "Bilibili",
+    "x": "X (Twitter)",
+    "youtube": "YouTube",
+    "instagram": "Instagram"
   }
 }
