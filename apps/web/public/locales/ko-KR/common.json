@@ -59,5 +59,44 @@
     "email_taken": "이미 등록된 이메일입니다",
     "password_mismatch": "비밀번호가 일치하지 않습니다",
     "password_too_short": "비밀번호는 8자 이상이어야 합니다"
+  },
+  "settings": {
+    "sections": {
+      "general": "일반",
+      "notifications": "알림",
+      "workspaces": "워크스페이스",
+      "account": "계정"
+    },
+    "general": {
+      "language": "언어",
+      "timezone": "시간대",
+      "appearance": "외관",
+      "theme_system": "시스템 설정",
+      "theme_light": "라이트",
+      "theme_dark": "다크"
+    },
+    "notifications": {
+      "publish_reminders": "발행 알림",
+      "publish_reminders_desc": "예약된 발행 전에 알림을 받습니다",
+      "lead_time": "사전 알림 시간",
+      "lead_time_unit": "분 전",
+      "blocked": "알림이 브라우저에 의해 차단되었습니다. 브라우저 설정에서 활성화하세요."
+    },
+    "account": {
+      "name": "이름",
+      "email": "이메일",
+      "password": "비밀번호",
+      "change_password": "비밀번호 변경",
+      "delete_account": "계정 삭제…",
+      "delete_warning": "이 작업은 계정과 모든 관련 데이터를 영구적으로 삭제합니다. 이 작업은 되돌릴 수 없습니다.",
+      "confirm_password_label": "확인을 위해 비밀번호를 입력하세요",
+      "current_password": "현재 비밀번호",
+      "new_password": "새 비밀번호",
+      "confirm_new_password": "새 비밀번호 확인",
+      "update_password": "비밀번호 업데이트",
+      "passwords_mismatch": "새 비밀번호가 일치하지 않습니다",
+      "password_too_short": "비밀번호는 8자 이상이어야 합니다",
+      "delete_my_account": "내 계정 삭제"
+    }
   }
 }

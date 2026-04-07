@@ -59,5 +59,44 @@
     "email_taken": "このメールアドレスはすでに登録されています",
     "password_mismatch": "パスワードが一致しません",
     "password_too_short": "パスワードは8文字以上にしてください"
+  },
+  "settings": {
+    "sections": {
+      "general": "一般",
+      "notifications": "通知",
+      "workspaces": "ワークスペース",
+      "account": "アカウント"
+    },
+    "general": {
+      "language": "言語",
+      "timezone": "タイムゾーン",
+      "appearance": "外観",
+      "theme_system": "システム設定",
+      "theme_light": "ライト",
+      "theme_dark": "ダーク"
+    },
+    "notifications": {
+      "publish_reminders": "配信リマインダー",
+      "publish_reminders_desc": "予定された投稿の前に通知を受け取る",
+      "lead_time": "リマインダーの事前通知時間",
+      "lead_time_unit": "分前",
+      "blocked": "通知はブラウザによってブロックされています。ブラウザの設定で有効にしてください。"
+    },
+    "account": {
+      "name": "名前",
+      "email": "メールアドレス",
+      "password": "パスワード",
+      "change_password": "パスワードを変更",
+      "delete_account": "アカウントを削除…",
+      "delete_warning": "この操作はアカウントとすべての関連データを完全に削除します。この操作は元に戻せません。",
+      "confirm_password_label": "パスワードを入力して確認",
+      "current_password": "現在のパスワード",
+      "new_password": "新しいパスワード",
+      "confirm_new_password": "新しいパスワード（確認）",
+      "update_password": "パスワードを更新",
+      "passwords_mismatch": "新しいパスワードが一致しません",
+      "password_too_short": "パスワードは8文字以上にしてください",
+      "delete_my_account": "アカウントを削除する"
+    }
   }
 }

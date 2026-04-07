@@ -59,5 +59,44 @@
     "email_taken": "This email is already registered",
     "password_mismatch": "Passwords do not match",
     "password_too_short": "Password must be at least 8 characters"
+  },
+  "settings": {
+    "sections": {
+      "general": "General",
+      "notifications": "Notifications",
+      "workspaces": "Workspaces",
+      "account": "Account"
+    },
+    "general": {
+      "language": "Language",
+      "timezone": "Timezone",
+      "appearance": "Appearance",
+      "theme_system": "System",
+      "theme_light": "Light",
+      "theme_dark": "Dark"
+    },
+    "notifications": {
+      "publish_reminders": "Publish reminders",
+      "publish_reminders_desc": "Get notified before a scheduled publication",
+      "lead_time": "Reminder lead time",
+      "lead_time_unit": "min before",
+      "blocked": "Notifications are blocked. Enable them in your browser settings."
+    },
+    "account": {
+      "name": "Name",
+      "email": "Email",
+      "password": "Password",
+      "change_password": "Change password",
+      "delete_account": "Delete account…",
+      "delete_warning": "This will permanently delete your account and all associated data. This action cannot be undone.",
+      "confirm_password_label": "Confirm your password",
+      "current_password": "Current password",
+      "new_password": "New password",
+      "confirm_new_password": "Confirm new password",
+      "update_password": "Update password",
+      "passwords_mismatch": "New passwords do not match",
+      "password_too_short": "Password must be at least 8 characters",
+      "delete_my_account": "Delete my account"
+    }
   }
 }

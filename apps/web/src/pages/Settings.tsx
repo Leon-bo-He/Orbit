@@ -26,8 +26,6 @@ const LOCALE_META: Record<SupportedLocale, { flag: string; label: string }> = {
 
 const EMOJI_OPTIONS = ['🎬', '📸', '✍️', '🎙', '📺', '🎮', '💄', '👗', '🍜', '✈️', '💪', '🐱'];
 
-// ─── Shared row style ─────────────────────────────────────────────────────────
-
 const ROW = 'flex items-center justify-between py-3 border-b border-gray-100';
 const LABEL = 'text-sm font-medium text-gray-900';
 
@@ -53,7 +51,7 @@ function EditWorkspaceModal({ workspace, onClose }: { workspace: Workspace; onCl
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[60] p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md border border-gray-100">
+      <div className="bg-white rounded-lg border border-gray-200 shadow-xl w-full max-w-md">
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
           <h2 className="text-sm font-semibold text-gray-900">{t('edit_title')}</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-sm">✕</button>
@@ -104,20 +102,20 @@ function EditWorkspaceModal({ workspace, onClose }: { workspace: Workspace; onCl
   );
 }
 
-// ─── Panels ───────────────────────────────────────────────────────────────────
-
-const THEME_OPTIONS: { value: Theme; label: string }[] = [
-  { value: 'system', label: 'System' },
-  { value: 'light',  label: 'Light'  },
-  { value: 'dark',   label: 'Dark'   },
-];
+// ─── General Panel ────────────────────────────────────────────────────────────
 
 function GeneralPanel() {
-  const { t: tc } = useTranslation('common');
+  const { t } = useTranslation('common');
   const locale = useUiStore((s) => s.locale);
   const setLocale = useUiStore((s) => s.setLocale);
   const theme = useUiStore((s) => s.theme);
   const setTheme = useUiStore((s) => s.setTheme);
+
+  const THEME_OPTIONS: { value: Theme; label: string }[] = [
+    { value: 'system', label: t('settings.general.theme_system') },
+    { value: 'light',  label: t('settings.general.theme_light')  },
+    { value: 'dark',   label: t('settings.general.theme_dark')   },
+  ];
 
   function handleLocale(l: SupportedLocale) {
     setLocale(l);
@@ -127,7 +125,7 @@ function GeneralPanel() {
   return (
     <div>
       <div className={ROW}>
-        <span className={LABEL}>{tc('action.language') || 'Language'}</span>
+        <span className={LABEL}>{t('settings.general.language')}</span>
         <select
           value={locale}
           onChange={(e) => handleLocale(e.target.value as SupportedLocale)}
@@ -140,12 +138,12 @@ function GeneralPanel() {
       </div>
 
       <div className={ROW}>
-        <span className={LABEL}>Timezone</span>
+        <span className={LABEL}>{t('settings.general.timezone')}</span>
         <span className="text-sm text-gray-500">{Intl.DateTimeFormat().resolvedOptions().timeZone}</span>
       </div>
 
       <div className={ROW}>
-        <span className={LABEL}>Appearance</span>
+        <span className={LABEL}>{t('settings.general.appearance')}</span>
         <div className="flex rounded-md border border-gray-200 overflow-hidden text-sm">
           {THEME_OPTIONS.map((opt) => (
             <button
@@ -166,7 +164,10 @@ function GeneralPanel() {
   );
 }
 
+// ─── Notifications Panel ──────────────────────────────────────────────────────
+
 function NotificationsPanel() {
+  const { t } = useTranslation('common');
   const [enabled, setEnabled] = useState(
     typeof Notification !== 'undefined' && Notification.permission === 'granted'
   );
@@ -185,12 +186,12 @@ function NotificationsPanel() {
     <div>
       <div className={ROW}>
         <div>
-          <p className={LABEL}>Publish reminders</p>
-          <p className="text-xs text-gray-500 mt-0.5">Get notified before a scheduled publication</p>
+          <p className={LABEL}>{t('settings.notifications.publish_reminders')}</p>
+          <p className="text-xs text-gray-500 mt-0.5">{t('settings.notifications.publish_reminders_desc')}</p>
         </div>
         <button
           onClick={() => void handleToggle()}
-          className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors flex-shrink-0 ${enabled ? 'bg-indigo-600' : 'bg-gray-200'}`}
+          className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors flex-shrink-0 ml-4 ${enabled ? 'bg-indigo-600' : 'bg-gray-200'}`}
         >
           <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform ${enabled ? 'translate-x-4' : 'translate-x-1'}`} />
         </button>
@@ -198,28 +199,31 @@ function NotificationsPanel() {
 
       {enabled && (
         <div className={ROW}>
-          <span className={LABEL}>Reminder lead time</span>
+          <span className={LABEL}>{t('settings.notifications.lead_time')}</span>
           <select
             value={leadTime}
             onChange={(e) => setLeadTime(Number(e.target.value))}
             className="text-sm border border-gray-200 rounded-md px-2 py-1.5 outline-none focus:ring-2 focus:ring-indigo-200 bg-white"
           >
-            {[5, 10, 15, 30, 60].map((m) => <option key={m} value={m}>{m} min before</option>)}
+            {[5, 10, 15, 30, 60].map((m) => (
+              <option key={m} value={m}>{m} {t('settings.notifications.lead_time_unit')}</option>
+            ))}
           </select>
         </div>
       )}
 
       {typeof Notification !== 'undefined' && Notification.permission === 'denied' && (
-        <p className="text-xs text-red-500 pt-3">
-          Notifications are blocked. Enable them in your browser settings.
-        </p>
+        <p className="text-xs text-red-500 pt-3">{t('settings.notifications.blocked')}</p>
       )}
     </div>
   );
 }
 
+// ─── Workspaces Panel ─────────────────────────────────────────────────────────
+
 function WorkspacesPanel() {
   const { t } = useTranslation('workspaces');
+  const { t: tc } = useTranslation('common');
   const { data: workspaces = [], isLoading } = useWorkspaces();
   const [showCreate, setShowCreate] = useState(false);
   const [editing, setEditing] = useState<Workspace | null>(null);
@@ -227,7 +231,7 @@ function WorkspacesPanel() {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <p className="text-sm text-gray-500">{workspaces.length} workspace{workspaces.length !== 1 ? 's' : ''}</p>
+        <p className="text-sm text-gray-500">{workspaces.length} {workspaces.length !== 1 ? tc('nav.workspaces').toLowerCase() : tc('nav.workspaces').toLowerCase()}</p>
         <button
           onClick={() => setShowCreate(true)}
           className="text-sm px-3 py-1.5 rounded-md border border-gray-200 text-gray-600 bg-white hover:bg-gray-50 transition-colors"
@@ -236,7 +240,7 @@ function WorkspacesPanel() {
         </button>
       </div>
 
-      {isLoading && <p className="text-sm text-gray-400">Loading…</p>}
+      {isLoading && <p className="text-sm text-gray-400">{tc('status.loading')}</p>}
 
       {!isLoading && workspaces.length === 0 && (
         <div className="text-center py-10 border border-dashed border-gray-200 rounded-lg">
@@ -268,7 +272,7 @@ function WorkspacesPanel() {
             </div>
             <button onClick={() => setEditing(ws)}
               className="text-xs text-gray-500 hover:text-indigo-600 px-2 py-1 rounded hover:bg-gray-100 transition-colors flex-shrink-0">
-              {t('edit')}
+              {tc('action.edit')}
             </button>
           </div>
         ))}
@@ -280,28 +284,22 @@ function WorkspacesPanel() {
   );
 }
 
+// ─── Editable Field ───────────────────────────────────────────────────────────
+
 function EditableField({
-  label,
-  value,
-  type = 'text',
-  onSave,
-  saving,
+  label, value, type = 'text', onSave, saving,
 }: {
-  label: string;
-  value: string;
-  type?: string;
-  onSave: (val: string) => Promise<void>;
-  saving: boolean;
+  label: string; value: string; type?: string;
+  onSave: (val: string) => Promise<void>; saving: boolean;
 }) {
+  const { t } = useTranslation('common');
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(value);
   const [error, setError] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
   function startEdit() {
-    setDraft(value);
-    setError('');
-    setEditing(true);
+    setDraft(value); setError(''); setEditing(true);
     setTimeout(() => inputRef.current?.select(), 0);
   }
 
@@ -325,38 +323,25 @@ function EditableField({
     <div className={ROW}>
       <span className={LABEL}>{label}</span>
       {editing ? (
-        <div className="flex items-center gap-2">
-          <input
-            ref={inputRef}
-            type={type}
-            value={draft}
-            onChange={(e) => setDraft(e.target.value)}
-            onKeyDown={handleKey}
-            className="text-sm border border-gray-200 rounded-md px-2 py-1 w-44 outline-none focus:ring-2 focus:ring-indigo-200"
-          />
-          <button
-            onClick={() => void handleSave()}
-            disabled={saving || !draft.trim()}
-            className="text-xs px-2 py-1 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50"
-          >
-            {saving ? '…' : 'Save'}
+        <div className="flex items-center gap-2 flex-wrap justify-end">
+          <input ref={inputRef} type={type} value={draft}
+            onChange={(e) => setDraft(e.target.value)} onKeyDown={handleKey}
+            className="text-sm border border-gray-200 rounded-md px-2 py-1 w-44 outline-none focus:ring-2 focus:ring-indigo-200" />
+          <button onClick={() => void handleSave()} disabled={saving || !draft.trim()}
+            className="text-xs px-2 py-1 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50">
+            {saving ? '…' : t('action.save')}
           </button>
-          <button
-            onClick={() => setEditing(false)}
-            className="text-xs text-gray-500 hover:text-gray-700"
-          >
-            Cancel
+          <button onClick={() => setEditing(false)} className="text-xs text-gray-500 hover:text-gray-700">
+            {t('action.cancel')}
           </button>
-          {error && <span className="text-xs text-red-500">{error}</span>}
+          {error && <span className="text-xs text-red-500 w-full text-right">{error}</span>}
         </div>
       ) : (
         <div className="flex items-center gap-2">
           <span className="text-sm text-gray-500">{value}</span>
-          <button
-            onClick={startEdit}
-            className="text-xs text-gray-400 hover:text-indigo-600 px-1.5 py-0.5 rounded hover:bg-gray-100 transition-colors"
-          >
-            Edit
+          <button onClick={startEdit}
+            className="text-xs text-gray-400 hover:text-indigo-600 px-1.5 py-0.5 rounded hover:bg-gray-100 transition-colors">
+            {t('action.edit')}
           </button>
         </div>
       )}
@@ -367,6 +352,7 @@ function EditableField({
 // ─── Change Password Modal ────────────────────────────────────────────────────
 
 function ChangePasswordModal({ onClose }: { onClose: () => void }) {
+  const { t } = useTranslation('common');
   const changePassword = useChangePassword();
   const [current, setCurrent] = useState('');
   const [next, setNext] = useState('');
@@ -376,51 +362,45 @@ function ChangePasswordModal({ onClose }: { onClose: () => void }) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
-    if (next !== confirm) { setError('New passwords do not match'); return; }
-    if (next.length < 8) { setError('Password must be at least 8 characters'); return; }
+    if (next !== confirm) { setError(t('settings.account.passwords_mismatch')); return; }
+    if (next.length < 8) { setError(t('settings.account.password_too_short')); return; }
     try {
       await changePassword.mutateAsync({ currentPassword: current, newPassword: next });
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to change password');
+      setError(err instanceof Error ? err.message : 'Failed');
     }
   }
+
+  const fields = [
+    { label: t('settings.account.current_password'),  value: current,  set: setCurrent  },
+    { label: t('settings.account.new_password'),       value: next,     set: setNext     },
+    { label: t('settings.account.confirm_new_password'), value: confirm, set: setConfirm },
+  ];
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[60] p-4">
       <div className="bg-white rounded-lg border border-gray-200 shadow-xl w-full max-w-sm">
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-          <h2 className="text-sm font-semibold text-gray-900">Change Password</h2>
+          <h2 className="text-sm font-semibold text-gray-900">{t('settings.account.change_password')}</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-sm">✕</button>
         </div>
         <form onSubmit={(e) => void handleSubmit(e)} className="px-5 py-4 space-y-3">
-          {[
-            { label: 'Current password', value: current, onChange: setCurrent },
-            { label: 'New password',     value: next,    onChange: setNext    },
-            { label: 'Confirm new',      value: confirm, onChange: setConfirm },
-          ].map(({ label, value, onChange }) => (
+          {fields.map(({ label, value, set }) => (
             <div key={label}>
               <label className="block text-xs font-medium text-gray-700 mb-1">{label}</label>
-              <input
-                type="password"
-                value={value}
-                onChange={(e) => onChange(e.target.value)}
-                required
-                className="w-full text-sm border border-gray-200 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-200"
-              />
+              <input type="password" value={value} onChange={(e) => set(e.target.value)} required
+                className="w-full text-sm border border-gray-200 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-200" />
             </div>
           ))}
           {error && <p className="text-xs text-red-500">{error}</p>}
           <div className="flex justify-end gap-2 pt-1">
             <button type="button" onClick={onClose} className="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900">
-              Cancel
+              {t('action.cancel')}
             </button>
-            <button
-              type="submit"
-              disabled={changePassword.isPending}
-              className="px-3 py-1.5 text-sm bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50"
-            >
-              {changePassword.isPending ? '…' : 'Update password'}
+            <button type="submit" disabled={changePassword.isPending}
+              className="px-3 py-1.5 text-sm bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50">
+              {changePassword.isPending ? '…' : t('settings.account.update_password')}
             </button>
           </div>
         </form>
@@ -432,6 +412,7 @@ function ChangePasswordModal({ onClose }: { onClose: () => void }) {
 // ─── Delete Account Modal ─────────────────────────────────────────────────────
 
 function DeleteAccountModal({ onClose }: { onClose: () => void }) {
+  const { t } = useTranslation('common');
   const deleteAccount = useDeleteAccount();
   const clearAuth = useAuthStore((s) => s.clearAuth);
   const navigate = useNavigate();
@@ -446,7 +427,7 @@ function DeleteAccountModal({ onClose }: { onClose: () => void }) {
       clearAuth();
       void navigate('/login', { replace: true });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete account');
+      setError(err instanceof Error ? err.message : 'Failed');
     }
   }
 
@@ -454,35 +435,26 @@ function DeleteAccountModal({ onClose }: { onClose: () => void }) {
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[60] p-4">
       <div className="bg-white rounded-lg border border-gray-200 shadow-xl w-full max-w-sm">
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-          <h2 className="text-sm font-semibold text-gray-900">Delete Account</h2>
+          <h2 className="text-sm font-semibold text-gray-900">{t('settings.account.delete_account')}</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-sm">✕</button>
         </div>
         <form onSubmit={(e) => void handleDelete(e)} className="px-5 py-4 space-y-4">
-          <p className="text-sm text-gray-600">
-            This will permanently delete your account and all associated data. This action cannot be undone.
-          </p>
+          <p className="text-sm text-gray-600">{t('settings.account.delete_warning')}</p>
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">Confirm your password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              placeholder="Enter your password to confirm"
-              className="w-full text-sm border border-gray-200 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-red-200"
-            />
+            <label className="block text-xs font-medium text-gray-700 mb-1">
+              {t('settings.account.confirm_password_label')}
+            </label>
+            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required
+              className="w-full text-sm border border-gray-200 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-red-200" />
           </div>
           {error && <p className="text-xs text-red-500">{error}</p>}
           <div className="flex justify-end gap-2 pt-1">
             <button type="button" onClick={onClose} className="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900">
-              Cancel
+              {t('action.cancel')}
             </button>
-            <button
-              type="submit"
-              disabled={deleteAccount.isPending || !password}
-              className="px-3 py-1.5 text-sm bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50"
-            >
-              {deleteAccount.isPending ? '…' : 'Delete my account'}
+            <button type="submit" disabled={deleteAccount.isPending || !password}
+              className="px-3 py-1.5 text-sm bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50">
+              {deleteAccount.isPending ? '…' : t('settings.account.delete_my_account')}
             </button>
           </div>
         </form>
@@ -494,6 +466,7 @@ function DeleteAccountModal({ onClose }: { onClose: () => void }) {
 // ─── Account Panel ────────────────────────────────────────────────────────────
 
 function AccountPanel() {
+  const { t } = useTranslation('common');
   const user = useAuthStore((s) => s.user);
   const updateUser = useAuthStore((s) => s.updateUser);
   const updateProfile = useUpdateProfile();
@@ -501,15 +474,8 @@ function AccountPanel() {
   const [showDeleteAccount, setShowDeleteAccount] = useState(false);
   const initial = user?.name ? (user.name[0]?.toUpperCase() ?? 'U') : 'U';
 
-  async function saveName(name: string) {
-    const updated = await updateProfile.mutateAsync({ name });
-    updateUser(updated);
-  }
-
-  async function saveEmail(email: string) {
-    const updated = await updateProfile.mutateAsync({ email });
-    updateUser(updated);
-  }
+  async function saveName(name: string) { updateUser(await updateProfile.mutateAsync({ name })); }
+  async function saveEmail(email: string) { updateUser(await updateProfile.mutateAsync({ email })); }
 
   return (
     <div>
@@ -523,25 +489,19 @@ function AccountPanel() {
         </div>
       </div>
 
-      <EditableField label="Name" value={user?.name ?? ''} onSave={saveName} saving={updateProfile.isPending} />
-      <EditableField label="Email" type="email" value={user?.email ?? ''} onSave={saveEmail} saving={updateProfile.isPending} />
+      <EditableField label={t('settings.account.name')}  value={user?.name ?? ''}  onSave={saveName}  saving={updateProfile.isPending} />
+      <EditableField label={t('settings.account.email')} value={user?.email ?? ''} onSave={saveEmail} saving={updateProfile.isPending} type="email" />
 
       <div className={ROW}>
-        <span className={LABEL}>Password</span>
-        <button
-          onClick={() => setShowChangePassword(true)}
-          className="text-sm text-indigo-600 hover:text-indigo-700"
-        >
-          Change password
+        <span className={LABEL}>{t('settings.account.password')}</span>
+        <button onClick={() => setShowChangePassword(true)} className="text-sm text-indigo-600 hover:text-indigo-700">
+          {t('settings.account.change_password')}
         </button>
       </div>
 
       <div className="pt-5">
-        <button
-          onClick={() => setShowDeleteAccount(true)}
-          className="text-sm text-red-500 hover:text-red-600"
-        >
-          Delete account…
+        <button onClick={() => setShowDeleteAccount(true)} className="text-sm text-red-500 hover:text-red-600">
+          {t('settings.account.delete_account')}
         </button>
       </div>
 
@@ -553,21 +513,17 @@ function AccountPanel() {
 
 // ─── Main modal ───────────────────────────────────────────────────────────────
 
-const NAV_ITEMS: { id: Section; label: string }[] = [
-  { id: 'general',       label: 'General'       },
-  { id: 'notifications', label: 'Notifications' },
-  { id: 'workspaces',    label: 'Workspaces'    },
-  { id: 'account',       label: 'Account'       },
-];
-
-const SECTION_TITLES: Record<Section, string> = {
-  general: 'General', notifications: 'Notifications',
-  workspaces: 'Workspaces', account: 'Account',
-};
-
 export default function Settings() {
+  const { t } = useTranslation('common');
   const navigate = useNavigate();
   const [section, setSection] = useState<Section>('general');
+
+  const NAV_ITEMS: { id: Section; label: string }[] = [
+    { id: 'general',       label: t('settings.sections.general')       },
+    { id: 'notifications', label: t('settings.sections.notifications') },
+    { id: 'workspaces',    label: t('settings.sections.workspaces')    },
+    { id: 'account',       label: t('settings.sections.account')       },
+  ];
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) { if (e.key === 'Escape') navigate(-1); }
@@ -576,10 +532,8 @@ export default function Settings() {
   }, [navigate]);
 
   return (
-    <div
-      className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4"
-      onClick={() => navigate(-1)}
-    >
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4"
+      onClick={() => navigate(-1)}>
       <div
         className="bg-white w-full max-w-2xl flex overflow-hidden rounded-xl border border-gray-200"
         style={{ height: 500, boxShadow: '0 16px 48px rgba(0,0,0,0.16)' }}
@@ -587,25 +541,19 @@ export default function Settings() {
       >
         {/* Left nav */}
         <div className="w-44 flex-shrink-0 bg-gray-50 border-r border-gray-100 flex flex-col pt-4 pb-3">
-          <button
-            onClick={() => navigate(-1)}
+          <button onClick={() => navigate(-1)}
             className="mx-3 mb-3 w-6 h-6 flex items-center justify-center rounded-md text-gray-400 hover:bg-gray-200 hover:text-gray-600 text-xs transition-colors"
-            aria-label="Close settings"
-          >
+            aria-label="Close">
             ✕
           </button>
-
           <nav className="flex-1 px-2 space-y-[1px]">
             {NAV_ITEMS.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => setSection(item.id)}
+              <button key={item.id} onClick={() => setSection(item.id)}
                 className={`w-full text-left px-3 py-[6px] rounded-md text-[13px] transition-colors ${
                   section === item.id
                     ? 'bg-gray-200 text-gray-900 font-medium'
                     : 'text-gray-600 hover:bg-gray-100'
-                }`}
-              >
+                }`}>
                 {item.label}
               </button>
             ))}
@@ -615,7 +563,9 @@ export default function Settings() {
         {/* Right content */}
         <div className="flex-1 flex flex-col overflow-hidden bg-white">
           <div className="px-6 pt-5 pb-3 border-b border-gray-100 flex-shrink-0">
-            <h2 className="text-sm font-semibold text-gray-900">{SECTION_TITLES[section]}</h2>
+            <h2 className="text-sm font-semibold text-gray-900">
+              {NAV_ITEMS.find((n) => n.id === section)?.label}
+            </h2>
           </div>
           <div className="flex-1 overflow-y-auto px-6 py-4">
             {section === 'general'       && <GeneralPanel />}

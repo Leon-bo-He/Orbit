@@ -59,5 +59,44 @@
     "email_taken": "该邮箱已被注册",
     "password_mismatch": "两次密码不一致",
     "password_too_short": "密码至少需要 8 位字符"
+  },
+  "settings": {
+    "sections": {
+      "general": "通用",
+      "notifications": "通知",
+      "workspaces": "工作空间",
+      "account": "账号"
+    },
+    "general": {
+      "language": "语言",
+      "timezone": "时区",
+      "appearance": "外观",
+      "theme_system": "跟随系统",
+      "theme_light": "浅色",
+      "theme_dark": "深色"
+    },
+    "notifications": {
+      "publish_reminders": "发布提醒",
+      "publish_reminders_desc": "在排期发布前收到通知",
+      "lead_time": "提前提醒",
+      "lead_time_unit": "分钟前",
+      "blocked": "通知已被浏览器拦截，请在浏览器设置中开启"
+    },
+    "account": {
+      "name": "姓名",
+      "email": "邮箱",
+      "password": "密码",
+      "change_password": "修改密码",
+      "delete_account": "删除账号…",
+      "delete_warning": "此操作将永久删除您的账号及所有相关数据，无法撤销。",
+      "confirm_password_label": "请输入密码以确认",
+      "current_password": "当前密码",
+      "new_password": "新密码",
+      "confirm_new_password": "确认新密码",
+      "update_password": "更新密码",
+      "passwords_mismatch": "两次密码不一致",
+      "password_too_short": "密码至少需要 8 位字符",
+      "delete_my_account": "删除我的账号"
+    }
   }
 }

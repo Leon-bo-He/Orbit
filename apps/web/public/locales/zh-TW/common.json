@@ -59,5 +59,44 @@
     "email_taken": "此電子郵件已被註冊",
     "password_mismatch": "兩次密碼不一致",
     "password_too_short": "密碼至少需要 8 個字元"
+  },
+  "settings": {
+    "sections": {
+      "general": "一般",
+      "notifications": "通知",
+      "workspaces": "工作空間",
+      "account": "帳號"
+    },
+    "general": {
+      "language": "語言",
+      "timezone": "時區",
+      "appearance": "外觀",
+      "theme_system": "跟隨系統",
+      "theme_light": "淺色",
+      "theme_dark": "深色"
+    },
+    "notifications": {
+      "publish_reminders": "發布提醒",
+      "publish_reminders_desc": "在排期發布前收到通知",
+      "lead_time": "提前提醒",
+      "lead_time_unit": "分鐘前",
+      "blocked": "通知已被瀏覽器攔截，請在瀏覽器設定中開啟"
+    },
+    "account": {
+      "name": "姓名",
+      "email": "電子郵件",
+      "password": "密碼",
+      "change_password": "修改密碼",
+      "delete_account": "刪除帳號…",
+      "delete_warning": "此操作將永久刪除您的帳號及所有相關資料，無法復原。",
+      "confirm_password_label": "請輸入密碼以確認",
+      "current_password": "目前密碼",
+      "new_password": "新密碼",
+      "confirm_new_password": "確認新密碼",
+      "update_password": "更新密碼",
+      "passwords_mismatch": "兩次密碼不一致",
+      "password_too_short": "密碼至少需要 8 個字元",
+      "delete_my_account": "刪除我的帳號"
+    }
   }
 }
