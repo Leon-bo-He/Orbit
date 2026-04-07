@@ -16,7 +16,10 @@ const COOKIE_OPTS = {
 
 export const authRoutes: FastifyPluginAsync = async (app) => {
   // POST /api/auth/login
-  app.post<{ Body: { email: string; password: string } }>('/api/auth/login', async (req, reply) => {
+  app.post<{ Body: { email: string; password: string } }>('/api/auth/login', {
+    config: { rateLimit: { max: 10, timeWindow: '1 minute' } },
+    onRequest: [],
+  }, async (req, reply) => {
     const { email, password } = req.body;
     const [user] = await db.select().from(users).where(eq(users.email, email)).limit(1);
     if (!user?.passwordHash) return reply.code(401).send({ error: 'Invalid credentials' });
