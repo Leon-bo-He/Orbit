@@ -5,6 +5,7 @@ import { RouterProvider } from 'react-router-dom';
 import { queryClient } from './api/query-client.js';
 import { router } from './router/index.js';
 import { FullPageSpinner } from './components/ui/FullPageSpinner.js';
+import { AuthProvider } from './components/auth/AuthProvider.js';
 import './i18n/index.js';
 import './index.css';
 
@@ -15,7 +16,9 @@ createRoot(root).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <Suspense fallback={<FullPageSpinner />}>
-        <RouterProvider router={router} />
+        <AuthProvider>
+          <RouterProvider router={router} />
+        </AuthProvider>
       </Suspense>
     </QueryClientProvider>
   </React.StrictMode>

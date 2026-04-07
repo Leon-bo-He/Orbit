@@ -41,5 +41,22 @@
     "on_track": "On track",
     "behind": "Behind",
     "add_content": "Add content"
+  },
+  "auth": {
+    "sign_in": "Sign In",
+    "sign_up": "Sign Up",
+    "sign_out": "Sign Out",
+    "email": "Email",
+    "password": "Password",
+    "name": "Name",
+    "confirm_password": "Confirm Password",
+    "welcome_back": "Welcome back",
+    "create_account": "Create your account",
+    "no_account": "Don't have an account?",
+    "have_account": "Already have an account?",
+    "invalid_credentials": "Invalid email or password",
+    "email_taken": "This email is already registered",
+    "password_mismatch": "Passwords do not match",
+    "password_too_short": "Password must be at least 8 characters"
   }
 }

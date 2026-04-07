@@ -41,5 +41,22 @@
     "on_track": "順調",
     "behind": "遅れあり",
     "add_content": "コンテンツを追加"
+  },
+  "auth": {
+    "sign_in": "ログイン",
+    "sign_up": "新規登録",
+    "sign_out": "ログアウト",
+    "email": "メールアドレス",
+    "password": "パスワード",
+    "name": "名前",
+    "confirm_password": "パスワード確認",
+    "welcome_back": "おかえりなさい",
+    "create_account": "アカウントを作成",
+    "no_account": "アカウントをお持ちでない方は",
+    "have_account": "すでにアカウントをお持ちの方は",
+    "invalid_credentials": "メールアドレスまたはパスワードが間違っています",
+    "email_taken": "このメールアドレスはすでに登録されています",
+    "password_mismatch": "パスワードが一致しません",
+    "password_too_short": "パスワードは8文字以上にしてください"
   }
 }

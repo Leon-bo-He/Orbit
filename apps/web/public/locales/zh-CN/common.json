@@ -41,5 +41,22 @@
     "on_track": "进度正常",
     "behind": "进度落后",
     "add_content": "添加内容"
+  },
+  "auth": {
+    "sign_in": "登录",
+    "sign_up": "注册",
+    "sign_out": "退出登录",
+    "email": "邮箱",
+    "password": "密码",
+    "name": "姓名",
+    "confirm_password": "确认密码",
+    "welcome_back": "欢迎回来",
+    "create_account": "创建账号",
+    "no_account": "还没有账号？",
+    "have_account": "已有账号？",
+    "invalid_credentials": "邮箱或密码错误",
+    "email_taken": "该邮箱已被注册",
+    "password_mismatch": "两次密码不一致",
+    "password_too_short": "密码至少需要 8 位字符"
   }
 }

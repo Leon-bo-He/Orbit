@@ -3,6 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { WorkspaceSwitcher } from './WorkspaceSwitcher.js';
 import { useUiStore } from '../../store/ui.store.js';
 import { useWorkspaces } from '../../api/workspaces.js';
+import { useAuthStore } from '../../store/auth.store.js';
+import { useLogout } from '../../api/auth.js';
+import { toast } from '../../store/toast.store.js';
 import i18n, { SUPPORTED_LOCALES, type SupportedLocale } from '../../i18n/index.js';
 
 const LOCALE_META: Record<SupportedLocale, { flag: string; code: string }> = {
@@ -33,6 +36,10 @@ export function Sidebar() {
   const setLocale = useUiStore((s) => s.setLocale);
   const navigate = useNavigate();
 
+  const user = useAuthStore((s) => s.user);
+  const clearAuth = useAuthStore((s) => s.clearAuth);
+  const logoutMutation = useLogout();
+
   const { data: workspaces = [] } = useWorkspaces();
 
   function handleLocaleChange(newLocale: SupportedLocale) {
@@ -43,6 +50,21 @@ export function Sidebar() {
   function handleWorkspaceSelect(id: string) {
     setActiveWorkspace(id);
     void navigate(`/workspaces/${id}/board`);
+  }
+
+  function handleSignOut() {
+    logoutMutation.mutate(undefined, {
+      onSuccess: () => {
+        clearAuth();
+        toast.success(t('auth.sign_out'));
+        void navigate('/login', { replace: true });
+      },
+      onError: () => {
+        // Clear client-side auth even if server call fails
+        clearAuth();
+        void navigate('/login', { replace: true });
+      },
+    });
   }
 
   return (
@@ -215,12 +237,28 @@ export function Sidebar() {
           </div>
         )}
 
-        {/* User avatar placeholder */}
-        <div className="pt-2 px-1 flex items-center gap-2">
-          <div className="w-7 h-7 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs font-semibold flex-shrink-0">
-            U
+        {/* User info + sign out */}
+        <div className="pt-2 px-1">
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs font-semibold flex-shrink-0">
+              {user?.name ? user.name[0]?.toUpperCase() ?? 'U' : 'U'}
+            </div>
+            {!collapsed && (
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-medium text-gray-700 truncate">{user?.name ?? ''}</p>
+                <p className="text-xs text-gray-400 truncate">{user?.email ?? ''}</p>
+              </div>
+            )}
           </div>
-          {!collapsed && <span className="text-xs text-gray-500 truncate">User</span>}
+          <button
+            onClick={handleSignOut}
+            disabled={logoutMutation.isPending}
+            className={`mt-2 w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-sm text-gray-600 hover:bg-gray-100 transition-colors disabled:opacity-50 ${collapsed ? 'justify-center' : ''}`}
+            title={t('auth.sign_out')}
+          >
+            <span>↩</span>
+            {!collapsed && <span>{t('auth.sign_out')}</span>}
+          </button>
         </div>
       </div>
     </div>

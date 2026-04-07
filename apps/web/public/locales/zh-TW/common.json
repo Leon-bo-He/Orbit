@@ -41,5 +41,22 @@
     "on_track": "進度正常",
     "behind": "進度落後",
     "add_content": "新增內容"
+  },
+  "auth": {
+    "sign_in": "登入",
+    "sign_up": "註冊",
+    "sign_out": "登出",
+    "email": "電子郵件",
+    "password": "密碼",
+    "name": "姓名",
+    "confirm_password": "確認密碼",
+    "welcome_back": "歡迎回來",
+    "create_account": "建立帳號",
+    "no_account": "還沒有帳號？",
+    "have_account": "已有帳號？",
+    "invalid_credentials": "電子郵件或密碼錯誤",
+    "email_taken": "此電子郵件已被註冊",
+    "password_mismatch": "兩次密碼不一致",
+    "password_too_short": "密碼至少需要 8 個字元"
   }
 }
