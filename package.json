@@ -1,0 +1,26 @@
+{
+  "name": "content-creator",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --parallel --filter=api --filter=web dev",
+    "dev:api": "pnpm --filter api dev",
+    "dev:web": "pnpm --filter web dev",
+    "build": "pnpm --recursive build",
+    "test": "pnpm --recursive test",
+    "migrate": "pnpm --filter api migrate",
+    "lint": "eslint .",
+    "typecheck": "pnpm --recursive typecheck"
+  },
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=9"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint": "^9.0.0",
+    "eslint-config-prettier": "^9.0.0",
+    "prettier": "^3.0.0",
+    "typescript-eslint": "^8.0.0"
+  }
+}
