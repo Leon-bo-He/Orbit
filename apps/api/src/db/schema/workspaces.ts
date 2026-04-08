@@ -8,8 +8,6 @@ export const workspaces = pgTable('workspaces', {
   icon: text('icon').notNull(),
   color: text('color').notNull(),
   about: text('about'),
-  contentType: text('content_type').notNull(),
-  defaultLocale: text('default_locale').notNull().default('zh-CN'),
   publishGoal: jsonb('publish_goal'),
   timezone: text('timezone').notNull().default('Asia/Shanghai'),
   stageConfig: jsonb('stage_config').notNull().default([]),

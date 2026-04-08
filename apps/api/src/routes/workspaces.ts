@@ -20,8 +20,6 @@ export const workspacesRoutes: FastifyPluginAsync = async (app) => {
         icon: body.icon,
         color: body.color,
         about: body.about ?? null,
-        contentType: body.contentType,
-        defaultLocale: body.defaultLocale,
         timezone: body.timezone,
         publishGoal: body.publishGoal ?? null,
         stageConfig: [],
@@ -55,7 +53,6 @@ export const workspacesRoutes: FastifyPluginAsync = async (app) => {
     if (body.icon !== undefined) updateData.icon = body.icon;
     if (body.about !== undefined) updateData.about = body.about ?? null;
     if (body.publishGoal !== undefined) updateData.publishGoal = body.publishGoal ?? null;
-    if (body.defaultLocale !== undefined) updateData.defaultLocale = body.defaultLocale;
     if (body.timezone !== undefined) updateData.timezone = body.timezone;
     if (body.stageConfig !== undefined) updateData.stageConfig = body.stageConfig;
 

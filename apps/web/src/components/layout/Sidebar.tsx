@@ -104,21 +104,26 @@ export function Sidebar() {
             {item.icon}
           </NavLink>
         ))}
+        {workspaces.length > 0 && (
+          <>
+            <div className="w-5 border-t border-[var(--cf-border)] my-1" />
+            {workspaces.map((ws) => (
+              <button
+                key={ws.id}
+                onClick={() => handleWorkspaceSelect(ws.id)}
+                title={ws.name}
+                className={`w-7 h-7 rounded-md text-base transition-colors ${
+                  ws.id === activeWorkspaceId
+                    ? 'bg-[var(--cf-active)]'
+                    : 'hover:bg-[var(--cf-hover)]'
+                }`}
+              >
+                {ws.icon}
+              </button>
+            ))}
+          </>
+        )}
         <div className="flex-1" />
-        {workspaces.map((ws) => (
-          <button
-            key={ws.id}
-            onClick={() => handleWorkspaceSelect(ws.id)}
-            title={ws.name}
-            className={`w-7 h-7 rounded-md text-base transition-colors ${
-              ws.id === activeWorkspaceId
-                ? 'bg-[var(--cf-active)]'
-                : 'hover:bg-[var(--cf-hover)]'
-            }`}
-          >
-            {ws.icon}
-          </button>
-        ))}
         <button
           onClick={() => setPopoutOpen((o) => !o)}
           className="w-7 h-7 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs font-semibold mt-1"
