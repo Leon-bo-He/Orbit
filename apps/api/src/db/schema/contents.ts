@@ -11,8 +11,6 @@ export const contents = pgTable('contents', {
   stage: text('stage').notNull().default('planned'),
   tags: jsonb('tags').notNull().default([]),
   targetPlatforms: jsonb('target_platforms').notNull().default([]),
-  locale: text('locale').notNull().default('zh-CN'),
-  localeVariants: jsonb('locale_variants').notNull().default([]),
   scheduledAt: timestamp('scheduled_at', { withTimezone: true }),
   publishedAt: timestamp('published_at', { withTimezone: true }),
   notes: text('notes'),

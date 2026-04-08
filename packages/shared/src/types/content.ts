@@ -7,11 +7,6 @@ export interface StageHistoryEntry {
   timestamp: string; // ISO 8601
 }
 
-export interface LocaleVariant {
-  locale: string;
-  contentId: string;
-}
-
 export interface ContentAttachment {
   type: 'image' | 'video' | 'link' | 'file';
   url: string;
@@ -28,8 +23,6 @@ export interface Content {
   stage: Stage;
   tags: string[];
   targetPlatforms: Platform[];
-  locale: string;
-  localeVariants: LocaleVariant[];
   scheduledAt: Date | null;
   publishedAt: Date | null;
   notes: string | null;
@@ -45,7 +38,6 @@ export type CreateContentInput = Pick<Content, 'workspaceId' | 'title' | 'conten
   description?: string;
   tags?: string[];
   targetPlatforms?: Platform[];
-  locale?: string;
   scheduledAt?: Date;
   notes?: string;
 };
@@ -59,7 +51,6 @@ export type UpdateContentInput = Partial<
     | 'stage'
     | 'tags'
     | 'targetPlatforms'
-    | 'locale'
     | 'scheduledAt'
     | 'notes'
     | 'reviewNotes'

@@ -91,8 +91,6 @@ export const contentsRoutes: FastifyPluginAsync = async (app) => {
         description: body.description ?? null,
         tags: body.tags,
         targetPlatforms: body.targetPlatforms,
-        locale: body.locale,
-        localeVariants: [],
         scheduledAt: body.scheduledAt ?? null,
         notes: body.notes ?? null,
         attachments: [],
@@ -218,7 +216,6 @@ export const contentsRoutes: FastifyPluginAsync = async (app) => {
     }
     if (body.tags !== undefined) updateData.tags = body.tags;
     if (body.targetPlatforms !== undefined) updateData.targetPlatforms = body.targetPlatforms;
-    if (body.locale !== undefined) updateData.locale = body.locale;
     if (body.scheduledAt !== undefined) updateData.scheduledAt = body.scheduledAt ?? null;
     if (body.notes !== undefined) updateData.notes = body.notes ?? null;
     if (body.reviewNotes !== undefined) updateData.reviewNotes = body.reviewNotes ?? null;

@@ -1,0 +1,2 @@
+ALTER TABLE contents DROP COLUMN IF EXISTS locale;
+ALTER TABLE contents DROP COLUMN IF EXISTS locale_variants;

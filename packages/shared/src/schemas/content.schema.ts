@@ -16,7 +16,6 @@ export const createContentSchema = z.object({
   description: z.string().optional(),
   tags: z.array(z.string()).default([]),
   targetPlatforms: z.array(z.string()).default([]),
-  locale: z.string().default('zh-CN'),
   scheduledAt: z.coerce.date().optional(),
   notes: z.string().optional(),
 });
@@ -28,7 +27,6 @@ export const updateContentSchema = z.object({
   stage: z.enum(stageValues).optional(),
   tags: z.array(z.string()).optional(),
   targetPlatforms: z.array(z.string()).optional(),
-  locale: z.string().optional(),
   scheduledAt: z.coerce.date().nullable().optional(),
   notes: z.string().nullable().optional(),
   reviewNotes: z.string().nullable().optional(),
