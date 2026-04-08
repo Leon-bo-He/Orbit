@@ -31,6 +31,19 @@
     "converted": "已转化",
     "archived": "已归档"
   },
+  "convert_dialog": {
+    "title": "从灵感创建内容",
+    "description": "将在所选工作区中创建一个新内容项。",
+    "content_title": "内容标题",
+    "workspace": "工作区",
+    "confirm": "创建内容"
+  },
+  "revert_dialog": {
+    "title": "恢复为活跃？",
+    "description": "此灵感将重新标记为活跃。",
+    "description_with_content": "这将永久删除关联内容并将灵感标记为活跃。",
+    "confirm": "恢复为活跃"
+  },
   "edit_title": "编辑灵感",
   "action": {
     "save": "保存",

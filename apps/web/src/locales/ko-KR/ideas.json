@@ -31,6 +31,19 @@
     "converted": "전환됨",
     "archived": "보관됨"
   },
+  "convert_dialog": {
+    "title": "아이디어에서 콘텐츠 만들기",
+    "description": "선택한 워크스페이스에 새 콘텐츠가 생성됩니다.",
+    "content_title": "콘텐츠 제목",
+    "workspace": "워크스페이스",
+    "confirm": "콘텐츠 만들기"
+  },
+  "revert_dialog": {
+    "title": "활성으로 되돌리겠습니까?",
+    "description": "이 아이디어는 다시 활성으로 표시됩니다.",
+    "description_with_content": "연결된 콘텐츠가 영구적으로 삭제되고 아이디어가 활성으로 표시됩니다.",
+    "confirm": "활성으로 되돌리기"
+  },
   "edit_title": "아이디어 편집",
   "action": {
     "save": "저장",

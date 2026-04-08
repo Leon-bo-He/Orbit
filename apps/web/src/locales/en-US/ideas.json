@@ -31,6 +31,19 @@
     "converted": "Converted",
     "archived": "Archived"
   },
+  "convert_dialog": {
+    "title": "Create Content from Idea",
+    "description": "A new content item will be created in the selected workspace.",
+    "content_title": "Content title",
+    "workspace": "Workspace",
+    "confirm": "Create Content"
+  },
+  "revert_dialog": {
+    "title": "Revert to Active?",
+    "description": "This idea will be marked as active again.",
+    "description_with_content": "This will permanently delete the linked content and mark the idea as active.",
+    "confirm": "Revert to Active"
+  },
   "edit_title": "Edit Idea",
   "action": {
     "save": "Save",

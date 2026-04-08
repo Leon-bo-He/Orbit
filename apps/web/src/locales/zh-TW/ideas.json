@@ -31,6 +31,19 @@
     "converted": "已轉化",
     "archived": "已封存"
   },
+  "convert_dialog": {
+    "title": "從靈感建立內容",
+    "description": "將在所選工作區中建立一個新內容項目。",
+    "content_title": "內容標題",
+    "workspace": "工作區",
+    "confirm": "建立內容"
+  },
+  "revert_dialog": {
+    "title": "恢復為活躍？",
+    "description": "此靈感將重新標記為活躍。",
+    "description_with_content": "這將永久刪除關聯內容並將靈感標記為活躍。",
+    "confirm": "恢復為活躍"
+  },
   "edit_title": "編輯靈感",
   "action": {
     "save": "儲存",

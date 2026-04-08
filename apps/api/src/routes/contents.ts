@@ -3,6 +3,7 @@ import { eq, and, inArray, gte, lte } from 'drizzle-orm';
 import { db } from '../db/client.js';
 import { contents } from '../db/schema/contents.js';
 import { workspaces } from '../db/schema/workspaces.js';
+import { ideas } from '../db/schema/ideas.js';
 import { createContentSchema, updateContentSchema } from '@contentflow/shared';
 import type { ContentRow } from '../db/schema/contents.js';
 
@@ -228,6 +229,14 @@ export const contentsRoutes: FastifyPluginAsync = async (app) => {
 
     if (!updated) {
       return reply.code(404).send({ error: 'Content not found' });
+    }
+
+    // When content is archived, also archive the idea that converted to it
+    if (body.stage === 'archived') {
+      await db
+        .update(ideas)
+        .set({ status: 'archived' })
+        .where(and(eq(ideas.convertedTo, id), eq(ideas.userId, user.sub)));
     }
 
     return reply.send(updated);

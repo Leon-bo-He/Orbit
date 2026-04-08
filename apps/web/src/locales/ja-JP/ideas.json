@@ -31,6 +31,19 @@
     "converted": "変換済み",
     "archived": "アーカイブ"
   },
+  "convert_dialog": {
+    "title": "アイデアからコンテンツを作成",
+    "description": "選択したワークスペースに新しいコンテンツが作成されます。",
+    "content_title": "コンテンツタイトル",
+    "workspace": "ワークスペース",
+    "confirm": "コンテンツを作成"
+  },
+  "revert_dialog": {
+    "title": "アクティブに戻しますか？",
+    "description": "このアイデアは再びアクティブとしてマークされます。",
+    "description_with_content": "リンクされたコンテンツが完全に削除され、アイデアがアクティブになります。",
+    "confirm": "アクティブに戻す"
+  },
   "edit_title": "アイデアを編集",
   "action": {
     "save": "保存",
