@@ -36,6 +36,9 @@ export default function LoginPage() {
         setLocale(result.user.locale as Parameters<typeof setLocale>[0]);
         void i18n.changeLanguage(result.user.locale);
       }
+      if (result.user.appearance) {
+        setTheme(result.user.appearance as Parameters<typeof setTheme>[0]);
+      }
       toast.clear();
       const redirect = searchParams.get('redirect') ?? '/';
       void navigate(redirect, { replace: true });

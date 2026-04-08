@@ -27,6 +27,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const clearAuth = useAuthStore((s) => s.clearAuth);
   const storedToken = useAuthStore((s) => s.accessToken);
   const setLocale = useUiStore((s) => s.setLocale);
+  const setTheme = useUiStore((s) => s.setTheme);
 
   const [isLoading, setIsLoading] = useState(true);
   // refreshedToken is the token obtained from the refresh call (may differ from stored)
@@ -89,6 +90,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       if (meQuery.data.locale) {
         setLocale(meQuery.data.locale as Parameters<typeof setLocale>[0]);
         void i18n.changeLanguage(meQuery.data.locale);
+      }
+      if (meQuery.data.appearance) {
+        setTheme(meQuery.data.appearance as Parameters<typeof setTheme>[0]);
       }
     } else if (meQuery.isError) {
       clearAuth();

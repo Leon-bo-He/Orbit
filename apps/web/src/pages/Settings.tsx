@@ -245,7 +245,7 @@ function GeneralPanel() {
           {THEME_OPTIONS.map((opt) => (
             <button
               key={opt.value}
-              onClick={() => setTheme(opt.value)}
+              onClick={() => { setTheme(opt.value); updateProfile.mutate({ appearance: opt.value }); }}
               className={`px-2.5 py-1.5 transition-colors text-xs sm:text-sm ${
                 theme === opt.value
                   ? 'bg-indigo-600 text-white font-medium'
