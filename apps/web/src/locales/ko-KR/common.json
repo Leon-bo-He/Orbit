@@ -92,7 +92,9 @@
       "appearance": "외관",
       "theme_system": "시스템 설정",
       "theme_light": "라이트",
-      "theme_dark": "다크"
+      "theme_dark": "다크",
+      "export_data": "데이터 내보내기",
+      "exporting": "내보내는 중…"
     },
     "notifications": {
       "publish_reminders": "발행 알림",
@@ -119,10 +121,6 @@
       "profile": "프로필",
       "security": "보안",
       "password_desc": "계정을 보호하는 강력한 비밀번호 설정",
-      "data": "데이터",
-      "export_data": "데이터 내보내기",
-      "export_desc": "모든 데이터를 JSON 파일로 다운로드",
-      "exporting": "내보내는 중…",
       "danger_zone": "위험 구역",
       "sign_out_desc": "이 기기에서 계정 로그아웃",
       "delete_desc": "계정 및 모든 데이터를 영구적으로 삭제"

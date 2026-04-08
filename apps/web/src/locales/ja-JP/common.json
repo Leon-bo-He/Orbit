@@ -92,7 +92,9 @@
       "appearance": "外観",
       "theme_system": "システム設定",
       "theme_light": "ライト",
-      "theme_dark": "ダーク"
+      "theme_dark": "ダーク",
+      "export_data": "データをエクスポート",
+      "exporting": "エクスポート中…"
     },
     "notifications": {
       "publish_reminders": "配信リマインダー",
@@ -119,10 +121,6 @@
       "profile": "プロフィール",
       "security": "セキュリティ",
       "password_desc": "アカウントを守る強力なパスワードを設定",
-      "data": "データ",
-      "export_data": "データをエクスポート",
-      "export_desc": "すべてのデータを JSON ファイルとしてダウンロード",
-      "exporting": "エクスポート中…",
       "danger_zone": "危険な操作",
       "sign_out_desc": "このデバイスのアカウントからサインアウト",
       "delete_desc": "アカウントとすべてのデータを完全に削除"

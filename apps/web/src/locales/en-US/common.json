@@ -92,7 +92,9 @@
       "appearance": "Appearance",
       "theme_system": "System",
       "theme_light": "Light",
-      "theme_dark": "Dark"
+      "theme_dark": "Dark",
+      "export_data": "Export Data",
+      "exporting": "Exporting…"
     },
     "notifications": {
       "publish_reminders": "Publish reminders",
@@ -119,10 +121,6 @@
       "profile": "Profile",
       "security": "Security",
       "password_desc": "Set a strong password to protect your account",
-      "data": "Data",
-      "export_data": "Export Data",
-      "export_desc": "Download all your data as a JSON file",
-      "exporting": "Exporting…",
       "danger_zone": "Danger Zone",
       "sign_out_desc": "Sign out of your account on this device",
       "delete_desc": "Permanently delete your account and all data"

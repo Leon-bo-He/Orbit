@@ -92,7 +92,9 @@
       "appearance": "外觀",
       "theme_system": "跟隨系統",
       "theme_light": "淺色",
-      "theme_dark": "深色"
+      "theme_dark": "深色",
+      "export_data": "匯出資料",
+      "exporting": "匯出中…"
     },
     "notifications": {
       "publish_reminders": "發布提醒",
@@ -119,10 +121,6 @@
       "profile": "個人資料",
       "security": "安全",
       "password_desc": "設定強密碼以保護您的帳號",
-      "data": "資料",
-      "export_data": "匯出資料",
-      "export_desc": "將所有資料匯出為 JSON 檔案",
-      "exporting": "匯出中…",
       "danger_zone": "危險操作",
       "sign_out_desc": "登出此裝置上的帳號",
       "delete_desc": "永久刪除帳號及所有資料"

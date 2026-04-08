@@ -181,6 +181,23 @@ function GeneralPanel() {
   const setLocale = useUiStore((s) => s.setLocale);
   const theme = useUiStore((s) => s.theme);
   const setTheme = useUiStore((s) => s.setTheme);
+  const [exporting, setExporting] = useState(false);
+
+  async function handleExport() {
+    setExporting(true);
+    try {
+      const res = await apiFetch<Blob>('/api/export', { headers: { Accept: 'application/json' } });
+      const blob = new Blob([JSON.stringify(res, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `contentflow-export-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } finally {
+      setExporting(false);
+    }
+  }
 
   const THEME_OPTIONS: { value: Theme; label: string }[] = [
     { value: 'system', label: t('settings.general.theme_system') },
@@ -230,6 +247,17 @@ function GeneralPanel() {
             </button>
           ))}
         </div>
+      </div>
+
+      <div className={ROW} style={{ borderBottom: 'none' }}>
+        <span className={LABEL}>{t('settings.general.export_data')}</span>
+        <button
+          onClick={handleExport}
+          disabled={exporting}
+          className="text-xs px-3 py-1.5 rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors flex-shrink-0 disabled:opacity-50"
+        >
+          {exporting ? t('settings.general.exporting') : t('settings.general.export_data')}
+        </button>
       </div>
     </div>
   );
@@ -542,24 +570,7 @@ function AccountPanel() {
   const navigate = useNavigate();
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [showDeleteAccount, setShowDeleteAccount] = useState(false);
-  const [exporting, setExporting] = useState(false);
   const initial = user?.name ? (user.name[0]?.toUpperCase() ?? 'U') : 'U';
-
-  async function handleExport() {
-    setExporting(true);
-    try {
-      const res = await apiFetch<Blob>('/api/export', { headers: { Accept: 'application/json' } });
-      const blob = new Blob([JSON.stringify(res, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `contentflow-export-${new Date().toISOString().slice(0, 10)}.json`;
-      a.click();
-      URL.revokeObjectURL(url);
-    } finally {
-      setExporting(false);
-    }
-  }
 
   function handleSignOut() {
     logoutMutation.mutate(undefined, {
@@ -625,26 +636,6 @@ function AccountPanel() {
             className="text-xs px-3 py-1.5 rounded-md border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex-shrink-0 disabled:opacity-50"
           >
             {t('auth.sign_out')}
-          </button>
-        </div>
-      </div>
-
-      {/* Data export */}
-      <div className="rounded-xl border border-gray-100 dark:border-gray-700 overflow-hidden">
-        <div className="px-4 py-2 bg-gray-50 dark:bg-gray-700/50 border-b border-gray-100 dark:border-gray-700">
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">{t('settings.account.data')}</p>
-        </div>
-        <div className="flex items-center justify-between px-4 py-3">
-          <div>
-            <p className="text-sm font-medium text-gray-900 dark:text-white">{t('settings.account.export_data')}</p>
-            <p className="text-xs text-gray-400 mt-0.5">{t('settings.account.export_desc')}</p>
-          </div>
-          <button
-            onClick={handleExport}
-            disabled={exporting}
-            className="text-xs px-3 py-1.5 rounded-md border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex-shrink-0 disabled:opacity-50"
-          >
-            {exporting ? t('settings.account.exporting') : t('settings.account.export_data')}
           </button>
         </div>
       </div>

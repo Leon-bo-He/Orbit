@@ -92,7 +92,9 @@
       "appearance": "外观",
       "theme_system": "跟随系统",
       "theme_light": "浅色",
-      "theme_dark": "深色"
+      "theme_dark": "深色",
+      "export_data": "导出数据",
+      "exporting": "导出中…"
     },
     "notifications": {
       "publish_reminders": "发布提醒",
@@ -119,10 +121,6 @@
       "profile": "个人资料",
       "security": "安全",
       "password_desc": "设置强密码以保护您的账号",
-      "data": "数据",
-      "export_data": "导出数据",
-      "export_desc": "将所有数据导出为 JSON 文件",
-      "exporting": "导出中…",
       "danger_zone": "危险操作",
       "sign_out_desc": "退出当前设备上的账号",
       "delete_desc": "永久删除账号及所有数据"
