@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { useMe } from '../../api/auth.js';
 import { useAuthStore } from '../../store/auth.store.js';
+import { useUiStore } from '../../store/ui.store.js';
 import { apiFetch, setAccessToken } from '../../api/client.js';
 import { FullPageSpinner } from '../ui/FullPageSpinner.js';
 import { useTheme } from '../../hooks/useTheme.js';
+import i18n from '../../i18n/index.js';
 
 /** Decode a JWT and check whether its exp claim is in the future. */
 function isTokenValid(token: string): boolean {
@@ -24,6 +26,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const setAuth = useAuthStore((s) => s.setAuth);
   const clearAuth = useAuthStore((s) => s.clearAuth);
   const storedToken = useAuthStore((s) => s.accessToken);
+  const setLocale = useUiStore((s) => s.setLocale);
 
   const [isLoading, setIsLoading] = useState(true);
   // refreshedToken is the token obtained from the refresh call (may differ from stored)
@@ -83,6 +86,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     if (meQuery.data) {
       setAuth(meQuery.data, refreshedToken);
+      if (meQuery.data.locale) {
+        setLocale(meQuery.data.locale as Parameters<typeof setLocale>[0]);
+        void i18n.changeLanguage(meQuery.data.locale);
+      }
     } else if (meQuery.isError) {
       clearAuth();
     }
