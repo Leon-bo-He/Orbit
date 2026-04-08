@@ -13,7 +13,7 @@ interface ReferencesSectionProps {
 
 const BUILTIN_PLATFORM_OPTIONS = [
   { value: 'douyin',       label: 'Douyin'       },
-  { value: 'xiaohongshu',  label: 'Xiaohongshu'  },
+  { value: 'xiaohongshu',  label: 'RedNote'       },
   { value: 'weixin',       label: 'WeChat OA'     },
   { value: 'weixin_video', label: 'WeChat Video'  },
   { value: 'bilibili',     label: 'Bilibili'      },
@@ -40,13 +40,10 @@ const EMPTY_FORM: CreateContentReferenceInput & {
 
 export function ReferencesSection({ references, onAdd, onDelete }: ReferencesSectionProps) {
   const { t } = useTranslation('contents');
-  const { customPlatforms, disabledBuiltinPlatforms, addCustomPlatform } = useUiStore();
+  const { customPlatforms, disabledBuiltinPlatforms, openSettings } = useUiStore();
   const [showModal, setShowModal] = useState(false);
   const [form, setForm] = useState({ ...EMPTY_FORM });
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [addingPlatform, setAddingPlatform] = useState(false);
-  const [newPlatformName, setNewPlatformName] = useState('');
-  const [newPlatformEmoji, setNewPlatformEmoji] = useState('');
 
   const platformOptions = [
     ...BUILTIN_PLATFORM_OPTIONS.filter((p) => !disabledBuiltinPlatforms.includes(p.value)),
@@ -58,21 +55,6 @@ export function ReferencesSection({ references, onAdd, onDelete }: ReferencesSec
   function openModal() {
     setForm({ ...EMPTY_FORM, platform: platformOptions[0]?.value ?? '' });
     setShowModal(true);
-  }
-
-  function closeDropdown() {
-    setDropdownOpen(false);
-    setAddingPlatform(false);
-    setNewPlatformName('');
-    setNewPlatformEmoji('');
-  }
-
-  function handleAddPlatform() {
-    const name = newPlatformName.trim();
-    if (!name) return;
-    const newPlatform = addCustomPlatform(name, newPlatformEmoji.trim() || '📌');
-    setForm((f) => ({ ...f, platform: newPlatform.id }));
-    closeDropdown();
   }
 
   function handleAdd() {
@@ -206,7 +188,7 @@ export function ReferencesSection({ references, onAdd, onDelete }: ReferencesSec
                   {dropdownOpen && (
                     <>
                       {/* Backdrop */}
-                      <div className="fixed inset-0 z-10" onClick={closeDropdown} />
+                      <div className="fixed inset-0 z-10" onClick={() => setDropdownOpen(false)} />
 
                       {/* Options list */}
                       <div className="absolute z-20 mt-1 w-full bg-white border border-gray-200 rounded shadow-lg max-h-52 overflow-y-auto">
@@ -214,7 +196,7 @@ export function ReferencesSection({ references, onAdd, onDelete }: ReferencesSec
                           <button
                             key={p.value}
                             type="button"
-                            onClick={() => { setForm((f) => ({ ...f, platform: p.value })); closeDropdown(); }}
+                            onClick={() => { setForm((f) => ({ ...f, platform: p.value })); setDropdownOpen(false); }}
                             className={`w-full flex items-center gap-2 px-2 py-1.5 text-sm text-left hover:bg-indigo-50 ${form.platform === p.value ? 'bg-indigo-50 text-indigo-700' : 'text-gray-700'}`}
                           >
                             <PlatformIcon platform={p.value} className="w-4 h-4 flex-shrink-0" />
@@ -224,43 +206,14 @@ export function ReferencesSection({ references, onAdd, onDelete }: ReferencesSec
 
                         <div className="border-t border-gray-100" />
 
-                        {/* Inline add platform */}
-                        {!addingPlatform ? (
-                          <button
-                            type="button"
-                            onClick={(e) => { e.stopPropagation(); setAddingPlatform(true); }}
-                            className="w-full flex items-center gap-2 px-2 py-1.5 text-sm text-indigo-600 hover:bg-indigo-50 text-left"
-                          >
-                            <span className="w-4 h-4 flex items-center justify-center text-base leading-none">+</span>
-                            <span>Add platform</span>
-                          </button>
-                        ) : (
-                          <div className="px-2 py-2 flex gap-1.5" onClick={(e) => e.stopPropagation()}>
-                            <input
-                              autoFocus
-                              type="text"
-                              placeholder="Name"
-                              value={newPlatformName}
-                              onChange={(e) => setNewPlatformName(e.target.value)}
-                              onKeyDown={(e) => { if (e.key === 'Enter') handleAddPlatform(); if (e.key === 'Escape') closeDropdown(); }}
-                              className="flex-1 text-sm border border-gray-300 rounded px-1.5 py-1 outline-none focus:ring-2 focus:ring-indigo-200"
-                            />
-                            <input
-                              type="text"
-                              placeholder="📌"
-                              value={newPlatformEmoji}
-                              onChange={(e) => setNewPlatformEmoji(e.target.value)}
-                              className="w-10 text-sm border border-gray-300 rounded px-1.5 py-1 outline-none focus:ring-2 focus:ring-indigo-200 text-center"
-                              maxLength={2}
-                            />
-                            <button
-                              type="button"
-                              onClick={handleAddPlatform}
-                              disabled={!newPlatformName.trim()}
-                              className="text-xs bg-indigo-600 text-white px-2 py-1 rounded hover:bg-indigo-700 disabled:opacity-50"
-                            >Add</button>
-                          </div>
-                        )}
+                        <button
+                          type="button"
+                          onClick={() => { setDropdownOpen(false); openSettings('platforms'); }}
+                          className="w-full flex items-center gap-2 px-2 py-1.5 text-sm text-indigo-600 hover:bg-indigo-50 text-left"
+                        >
+                          <span className="w-4 h-4 flex items-center justify-center text-base leading-none">+</span>
+                          <span>Add platform</span>
+                        </button>
                       </div>
                     </>
                   )}
