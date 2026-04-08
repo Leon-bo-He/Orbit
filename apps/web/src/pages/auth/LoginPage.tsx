@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useLogin } from '../../api/auth.js';
 import { useAuthStore } from '../../store/auth.store.js';
 import { useUiStore } from '../../store/ui.store.js';
+import i18n from '../../i18n/index.js';
 import { toast } from '../../store/toast.store.js';
 import { ApiError } from '../../api/client.js';
 import LanguageSwitcher from '../../components/auth/LanguageSwitcher.js';
@@ -23,7 +24,7 @@ export default function LoginPage() {
   const [errorMsg, setErrorMsg] = useState('');
 
   const loginMutation = useLogin();
-  const { theme, setTheme } = useUiStore();
+  const { theme, setTheme, setLocale } = useUiStore();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -31,6 +32,10 @@ export default function LoginPage() {
     try {
       const result = await loginMutation.mutateAsync({ email, password });
       setAuth(result.user, result.accessToken);
+      if (result.user.locale) {
+        setLocale(result.user.locale as Parameters<typeof setLocale>[0]);
+        void i18n.changeLanguage(result.user.locale);
+      }
       toast.clear();
       const redirect = searchParams.get('redirect') ?? '/';
       void navigate(redirect, { replace: true });
