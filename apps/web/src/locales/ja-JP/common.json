@@ -119,6 +119,10 @@
       "profile": "プロフィール",
       "security": "セキュリティ",
       "password_desc": "アカウントを守る強力なパスワードを設定",
+      "data": "データ",
+      "export_data": "データをエクスポート",
+      "export_desc": "すべてのデータを JSON ファイルとしてダウンロード",
+      "exporting": "エクスポート中…",
       "danger_zone": "危険な操作",
       "sign_out_desc": "このデバイスのアカウントからサインアウト",
       "delete_desc": "アカウントとすべてのデータを完全に削除"

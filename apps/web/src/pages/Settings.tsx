@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import type { Workspace } from '@contentflow/shared';
 import { useWorkspaces, useUpdateWorkspace } from '../api/workspaces.js';
 import { useUpdateProfile, useChangePassword, useDeleteAccount, useLogout } from '../api/auth.js';
+import { apiFetch } from '../api/client.js';
 import { useAuthStore } from '../store/auth.store.js';
 import { useUiStore, type Theme, type CustomPlatform } from '../store/ui.store.js';
 import { CreateWorkspaceModal } from '../components/workspaces/CreateWorkspaceModal.js';
@@ -541,7 +542,24 @@ function AccountPanel() {
   const navigate = useNavigate();
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [showDeleteAccount, setShowDeleteAccount] = useState(false);
+  const [exporting, setExporting] = useState(false);
   const initial = user?.name ? (user.name[0]?.toUpperCase() ?? 'U') : 'U';
+
+  async function handleExport() {
+    setExporting(true);
+    try {
+      const res = await apiFetch<Blob>('/api/export', { headers: { Accept: 'application/json' } });
+      const blob = new Blob([JSON.stringify(res, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `contentflow-export-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } finally {
+      setExporting(false);
+    }
+  }
 
   function handleSignOut() {
     logoutMutation.mutate(undefined, {
@@ -607,6 +625,26 @@ function AccountPanel() {
             className="text-xs px-3 py-1.5 rounded-md border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex-shrink-0 disabled:opacity-50"
           >
             {t('auth.sign_out')}
+          </button>
+        </div>
+      </div>
+
+      {/* Data export */}
+      <div className="rounded-xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+        <div className="px-4 py-2 bg-gray-50 dark:bg-gray-700/50 border-b border-gray-100 dark:border-gray-700">
+          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">{t('settings.account.data')}</p>
+        </div>
+        <div className="flex items-center justify-between px-4 py-3">
+          <div>
+            <p className="text-sm font-medium text-gray-900 dark:text-white">{t('settings.account.export_data')}</p>
+            <p className="text-xs text-gray-400 mt-0.5">{t('settings.account.export_desc')}</p>
+          </div>
+          <button
+            onClick={handleExport}
+            disabled={exporting}
+            className="text-xs px-3 py-1.5 rounded-md border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex-shrink-0 disabled:opacity-50"
+          >
+            {exporting ? t('settings.account.exporting') : t('settings.account.export_data')}
           </button>
         </div>
       </div>
