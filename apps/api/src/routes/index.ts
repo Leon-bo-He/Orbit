@@ -8,6 +8,7 @@ import { contentPlansRoutes } from './content-plans';
 import { publicationsRoutes } from './publications';
 import { metricsRoutes } from './metrics';
 import { dashboardRoutes } from './dashboard';
+import { exportRoutes } from './export';
 
 export async function registerRoutes(app: FastifyInstance) {
   await app.register(healthRoutes);
@@ -19,4 +20,5 @@ export async function registerRoutes(app: FastifyInstance) {
   await app.register(publicationsRoutes);
   await app.register(metricsRoutes);
   await app.register(dashboardRoutes);
+  await app.register(exportRoutes);
 }
