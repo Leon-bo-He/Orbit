@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { ContentReference, CreateContentReferenceInput } from '@contentflow/shared';
+import { useUiStore } from '../../store/ui.store';
+import { PlatformIcon } from '../ui/PlatformIcon';
 
 interface ReferencesSectionProps {
   contentId: string;
@@ -9,20 +11,17 @@ interface ReferencesSectionProps {
   onDelete: (refId: string) => void;
 }
 
-const PLATFORM_OPTIONS = [
-  { value: 'douyin', label: '🎵 Douyin', emoji: '🎵' },
-  { value: 'xiaohongshu', label: '📕 Xiaohongshu', emoji: '📕' },
-  { value: 'weixin', label: '📰 WeChat OA', emoji: '📰' },
-  { value: 'weixin_video', label: '📱 WeChat Video', emoji: '📱' },
-  { value: 'bilibili', label: '🎬 Bilibili', emoji: '🎬' },
-  { value: 'x', label: '🐦 X', emoji: '🐦' },
-  { value: 'youtube', label: '▶️ YouTube', emoji: '▶️' },
-  { value: 'instagram', label: '📷 Instagram', emoji: '📷' },
+const BUILTIN_PLATFORM_OPTIONS = [
+  { value: 'douyin',       label: 'Douyin'       },
+  { value: 'xiaohongshu',  label: 'Xiaohongshu'  },
+  { value: 'weixin',       label: 'WeChat OA'     },
+  { value: 'weixin_video', label: 'WeChat Video'  },
+  { value: 'bilibili',     label: 'Bilibili'      },
+  { value: 'x',            label: 'X'             },
+  { value: 'youtube',      label: 'YouTube'       },
+  { value: 'instagram',    label: 'Instagram'     },
+  { value: 'tiktok',       label: 'TikTok'        },
 ];
-
-function getPlatformEmoji(platform: string): string {
-  return PLATFORM_OPTIONS.find((p) => p.value === platform)?.emoji ?? '🌐';
-}
 
 const EMPTY_FORM: CreateContentReferenceInput & {
   views: string;
@@ -31,7 +30,7 @@ const EMPTY_FORM: CreateContentReferenceInput & {
 } = {
   authorName: '',
   contentTitle: '',
-  platform: 'douyin',
+  platform: '',
   url: '',
   takeaway: '',
   views: '',
@@ -41,8 +40,40 @@ const EMPTY_FORM: CreateContentReferenceInput & {
 
 export function ReferencesSection({ references, onAdd, onDelete }: ReferencesSectionProps) {
   const { t } = useTranslation('contents');
+  const { customPlatforms, disabledBuiltinPlatforms, addCustomPlatform } = useUiStore();
   const [showModal, setShowModal] = useState(false);
   const [form, setForm] = useState({ ...EMPTY_FORM });
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [addingPlatform, setAddingPlatform] = useState(false);
+  const [newPlatformName, setNewPlatformName] = useState('');
+  const [newPlatformEmoji, setNewPlatformEmoji] = useState('');
+
+  const platformOptions = [
+    ...BUILTIN_PLATFORM_OPTIONS.filter((p) => !disabledBuiltinPlatforms.includes(p.value)),
+    ...customPlatforms.map((p) => ({ value: p.id, label: p.name })),
+  ];
+
+  const selectedPlatform = platformOptions.find((p) => p.value === form.platform);
+
+  function openModal() {
+    setForm({ ...EMPTY_FORM, platform: platformOptions[0]?.value ?? '' });
+    setShowModal(true);
+  }
+
+  function closeDropdown() {
+    setDropdownOpen(false);
+    setAddingPlatform(false);
+    setNewPlatformName('');
+    setNewPlatformEmoji('');
+  }
+
+  function handleAddPlatform() {
+    const name = newPlatformName.trim();
+    if (!name) return;
+    const newPlatform = addCustomPlatform(name, newPlatformEmoji.trim() || '📌');
+    setForm((f) => ({ ...f, platform: newPlatform.id }));
+    closeDropdown();
+  }
 
   function handleAdd() {
     if (!form.authorName.trim() || !form.contentTitle.trim()) return;
@@ -58,7 +89,7 @@ export function ReferencesSection({ references, onAdd, onDelete }: ReferencesSec
       takeaway: form.takeaway.trim(),
       metricsSnapshot: metrics,
     });
-    setForm({ ...EMPTY_FORM });
+    setForm({ ...EMPTY_FORM, platform: platformOptions[0]?.value ?? '' });
     setShowModal(false);
   }
 
@@ -70,7 +101,7 @@ export function ReferencesSection({ references, onAdd, onDelete }: ReferencesSec
           <div className="flex items-start justify-between gap-2">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-1.5 text-sm font-medium text-gray-900">
-                <span>{getPlatformEmoji(ref.platform)}</span>
+                <PlatformIcon platform={ref.platform} className="w-4 h-4 flex-shrink-0" />
                 <span className="truncate">{ref.contentTitle}</span>
               </div>
               <div className="text-xs text-gray-400 mt-0.5">@{ref.authorName}</div>
@@ -116,7 +147,7 @@ export function ReferencesSection({ references, onAdd, onDelete }: ReferencesSec
       ))}
 
       <button
-        onClick={() => setShowModal(true)}
+        onClick={openModal}
         className="text-xs text-indigo-600 border border-dashed border-indigo-300 rounded px-3 py-1.5 hover:bg-indigo-50 w-full"
       >
         + {t('brief.references.add_reference')}
@@ -160,15 +191,80 @@ export function ReferencesSection({ references, onAdd, onDelete }: ReferencesSec
                 <label className="block text-xs font-medium text-gray-500 mb-1">
                   {t('brief.references.platform_label')}
                 </label>
-                <select
-                  value={form.platform}
-                  onChange={(e) => setForm((f) => ({ ...f, platform: e.target.value }))}
-                  className="w-full text-sm border border-gray-300 rounded px-2 py-1.5 outline-none focus:ring-2 focus:ring-indigo-200"
-                >
-                  {PLATFORM_OPTIONS.map((p) => (
-                    <option key={p.value} value={p.value}>{p.label}</option>
-                  ))}
-                </select>
+                <div className="relative">
+                  {/* Dropdown trigger */}
+                  <button
+                    type="button"
+                    onClick={() => setDropdownOpen((v) => !v)}
+                    className="w-full flex items-center gap-2 text-sm border border-gray-300 rounded px-2 py-1.5 outline-none focus:ring-2 focus:ring-indigo-200 text-left bg-white"
+                  >
+                    <PlatformIcon platform={form.platform} className="w-4 h-4 flex-shrink-0" />
+                    <span className="flex-1 text-gray-800">{selectedPlatform?.label ?? form.platform}</span>
+                    <span className="text-gray-400 text-xs">▾</span>
+                  </button>
+
+                  {dropdownOpen && (
+                    <>
+                      {/* Backdrop */}
+                      <div className="fixed inset-0 z-10" onClick={closeDropdown} />
+
+                      {/* Options list */}
+                      <div className="absolute z-20 mt-1 w-full bg-white border border-gray-200 rounded shadow-lg max-h-52 overflow-y-auto">
+                        {platformOptions.map((p) => (
+                          <button
+                            key={p.value}
+                            type="button"
+                            onClick={() => { setForm((f) => ({ ...f, platform: p.value })); closeDropdown(); }}
+                            className={`w-full flex items-center gap-2 px-2 py-1.5 text-sm text-left hover:bg-indigo-50 ${form.platform === p.value ? 'bg-indigo-50 text-indigo-700' : 'text-gray-700'}`}
+                          >
+                            <PlatformIcon platform={p.value} className="w-4 h-4 flex-shrink-0" />
+                            <span>{p.label}</span>
+                          </button>
+                        ))}
+
+                        <div className="border-t border-gray-100" />
+
+                        {/* Inline add platform */}
+                        {!addingPlatform ? (
+                          <button
+                            type="button"
+                            onClick={(e) => { e.stopPropagation(); setAddingPlatform(true); }}
+                            className="w-full flex items-center gap-2 px-2 py-1.5 text-sm text-indigo-600 hover:bg-indigo-50 text-left"
+                          >
+                            <span className="w-4 h-4 flex items-center justify-center text-base leading-none">+</span>
+                            <span>Add platform</span>
+                          </button>
+                        ) : (
+                          <div className="px-2 py-2 flex gap-1.5" onClick={(e) => e.stopPropagation()}>
+                            <input
+                              autoFocus
+                              type="text"
+                              placeholder="Name"
+                              value={newPlatformName}
+                              onChange={(e) => setNewPlatformName(e.target.value)}
+                              onKeyDown={(e) => { if (e.key === 'Enter') handleAddPlatform(); if (e.key === 'Escape') closeDropdown(); }}
+                              className="flex-1 text-sm border border-gray-300 rounded px-1.5 py-1 outline-none focus:ring-2 focus:ring-indigo-200"
+                            />
+                            <input
+                              type="text"
+                              placeholder="📌"
+                              value={newPlatformEmoji}
+                              onChange={(e) => setNewPlatformEmoji(e.target.value)}
+                              className="w-10 text-sm border border-gray-300 rounded px-1.5 py-1 outline-none focus:ring-2 focus:ring-indigo-200 text-center"
+                              maxLength={2}
+                            />
+                            <button
+                              type="button"
+                              onClick={handleAddPlatform}
+                              disabled={!newPlatformName.trim()}
+                              className="text-xs bg-indigo-600 text-white px-2 py-1 rounded hover:bg-indigo-700 disabled:opacity-50"
+                            >Add</button>
+                          </div>
+                        )}
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
 
               <div>
@@ -216,7 +312,7 @@ export function ReferencesSection({ references, onAdd, onDelete }: ReferencesSec
 
             <div className="flex justify-end gap-2 mt-4">
               <button
-                onClick={() => { setShowModal(false); setForm({ ...EMPTY_FORM }); }}
+                onClick={() => { setShowModal(false); setForm({ ...EMPTY_FORM, platform: platformOptions[0]?.value ?? '' }); }}
                 className="text-xs text-gray-500 px-3 py-1.5 rounded hover:bg-gray-100"
               >
                 {t('create.cancel')}
