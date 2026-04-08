@@ -181,7 +181,15 @@ function GeneralPanel() {
   const setLocale = useUiStore((s) => s.setLocale);
   const theme = useUiStore((s) => s.theme);
   const setTheme = useUiStore((s) => s.setTheme);
+  const updateProfile = useUpdateProfile();
   const [exporting, setExporting] = useState(false);
+
+  // Sync browser timezone to DB once on mount
+  useEffect(() => {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    updateProfile.mutate({ timezone: tz });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function handleExport() {
     setExporting(true);
@@ -208,6 +216,7 @@ function GeneralPanel() {
   function handleLocale(l: SupportedLocale) {
     setLocale(l);
     void i18n.changeLanguage(l);
+    updateProfile.mutate({ locale: l });
   }
 
   return (

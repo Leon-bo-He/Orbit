@@ -150,9 +150,11 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
     { onRequest: [app.authenticate] },
     async (req, reply) => {
       const schema = z.object({
-        name:  z.string().min(1).max(100).optional(),
-        email: z.string().email().optional(),
-      }).refine((d) => d.name !== undefined || d.email !== undefined, {
+        name:     z.string().min(1).max(100).optional(),
+        email:    z.string().email().optional(),
+        locale:   z.string().optional(),
+        timezone: z.string().optional(),
+      }).refine((d) => Object.values(d).some((v) => v !== undefined), {
         message: 'At least one field required',
       });
 
