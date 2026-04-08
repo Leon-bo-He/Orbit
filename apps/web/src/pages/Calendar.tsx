@@ -489,7 +489,7 @@ function GoalAlertBar({ workspace, weeklyActual, monthlyActual, yearlyActual }: 
                   className={`h-full rounded-full transition-all duration-700 ${
                     done ? 'bg-emerald-500' : pct >= 70 ? 'bg-indigo-500' : pct >= 40 ? 'bg-amber-400' : 'bg-red-400'
                   }`}
-                  style={{ width: `${Math.max(pct, 2)}%` }}
+                  style={{ width: `${pct > 0 ? Math.max(pct, 2) : 0}%` }}
                 />
               </div>
             </div>
