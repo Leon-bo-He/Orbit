@@ -20,7 +20,6 @@ export const workspacesRoutes: FastifyPluginAsync = async (app) => {
         icon: body.icon,
         color: body.color,
         about: body.about ?? null,
-        platform: body.platform,
         contentType: body.contentType,
         defaultLocale: body.defaultLocale,
         timezone: body.timezone,

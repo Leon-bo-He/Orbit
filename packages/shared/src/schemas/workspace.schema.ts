@@ -1,10 +1,5 @@
 import { z } from 'zod';
 
-const platformValues = [
-  'douyin', 'xiaohongshu', 'weixin', 'weixin_video',
-  'bilibili', 'x', 'youtube', 'instagram',
-] as const;
-
 const contentTypeValues = [
   'video_short', 'video_long', 'image_text', 'article', 'podcast', 'live',
 ] as const;
@@ -19,8 +14,6 @@ export const createWorkspaceSchema = z.object({
   icon: z.string().min(1).max(10),
   color: z.string().regex(/^#[0-9a-fA-F]{6}$/),
   about: z.string().max(500).optional(),
-  // Legacy fields — kept for DB compatibility, defaulted automatically
-  platform: z.enum(platformValues).default('douyin'),
   contentType: z.enum(contentTypeValues).default('video_short'),
   defaultLocale: z.string().default('en-US'),
   timezone: z.string().default('Asia/Shanghai'),
