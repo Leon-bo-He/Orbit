@@ -154,12 +154,17 @@ function DrawerBody({ content, workspaceId, onClose }: DrawerBodyProps) {
   const [activeTab, setActiveTab] = useState<DrawerTab>('details');
   const [editingTitle, setEditingTitle] = useState(false);
   const [title, setTitle] = useState(content.title);
+  const [scheduledAt, setScheduledAt] = useState(content.scheduledAt ? new Date(content.scheduledAt).toISOString() : '');
   const [newTag, setNewTag] = useState('');
 
   useEffect(() => {
     setTitle(content.title);
     setEditingTitle(false);
   }, [content.id, content.title]);
+
+  useEffect(() => {
+    setScheduledAt(content.scheduledAt ? new Date(content.scheduledAt).toISOString() : '');
+  }, [content.id, content.scheduledAt]);
 
   function debouncedUpdate(data: Record<string, unknown>) {
     if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -405,15 +410,10 @@ function DrawerBody({ content, workspaceId, onClose }: DrawerBodyProps) {
                     value={newTag}
                     onChange={(e) => setNewTag(e.target.value)}
                     onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddTag(); } }}
+                    onBlur={handleAddTag}
                     placeholder={t('drawer.add_tag')}
                     className="flex-1 text-xs border border-gray-200 rounded px-2 py-1 outline-none focus:ring-1 focus:ring-indigo-300"
                   />
-                  <button
-                    onClick={handleAddTag}
-                    className="text-xs bg-indigo-500 text-white px-2 py-1 rounded hover:bg-indigo-600"
-                  >
-                    +
-                  </button>
                 </div>
               </div>
 
@@ -423,8 +423,11 @@ function DrawerBody({ content, workspaceId, onClose }: DrawerBodyProps) {
                   {t('drawer.scheduled_label')}
                 </label>
                 <DateTimePicker
-                  value={content.scheduledAt ? new Date(content.scheduledAt).toISOString() : ''}
-                  onChange={(iso) => immediateUpdate({ scheduledAt: iso ?? null })}
+                  value={scheduledAt}
+                  onChange={(iso) => {
+                    setScheduledAt(iso ?? '');
+                    immediateUpdate({ scheduledAt: iso ?? null });
+                  }}
                   compact
                 />
               </div>

@@ -38,6 +38,7 @@
     "workspace": "Workspace",
     "confirm": "Create Content"
   },
+  "convert_error": "Failed to create content",
   "revert_dialog": {
     "title": "Revert to Active?",
     "description": "This idea will be marked as active again.",

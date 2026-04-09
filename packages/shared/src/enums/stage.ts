@@ -12,5 +12,5 @@ export const Stage = {
 export type Stage = (typeof Stage)[keyof typeof Stage];
 
 export const STAGE_ORDER: Stage[] = [
-  'planned', 'planning', 'creating', 'ready', 'publishing', 'published', 'reviewed',
+  'planned', 'planning', 'creating', 'ready', 'publishing', 'published', 'reviewed', 'archived',
 ];

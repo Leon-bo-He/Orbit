@@ -13,9 +13,15 @@ export class ApiError extends Error {
 export const QUEUED_OFFLINE = Symbol('QUEUED_OFFLINE');
 
 let accessToken: string | null = null;
+let onUnauthorized: (() => void) | null = null;
 
 export function setAccessToken(token: string | null) {
   accessToken = token;
+}
+
+/** Register a callback invoked when any non-auth API call returns 401. */
+export function registerUnauthorizedHandler(fn: () => void) {
+  onUnauthorized = fn;
 }
 
 export async function apiFetch<T>(
@@ -58,6 +64,9 @@ export async function apiFetch<T>(
 
   if (!res.ok) {
     const body = await res.json().catch(() => ({ error: res.statusText }));
+    if (res.status === 401 && !path.startsWith('/api/auth')) {
+      onUnauthorized?.();
+    }
     throw new ApiError(res.status, (body as { error: string }).error ?? res.statusText);
   }
 

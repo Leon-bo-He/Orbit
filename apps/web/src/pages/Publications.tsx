@@ -82,7 +82,7 @@ export default function Publications() {
   };
   if (statusFilter) queueFilters.status = statusFilter;
 
-  const { data: queueItems = [], isLoading, error } = usePublishQueue(queueFilters);
+  const { data: queueItems = [], isLoading, isFetching, error } = usePublishQueue(queueFilters);
 
   // Group by date
   const grouped: Record<string, typeof queueItems> = {};
@@ -160,6 +160,13 @@ export default function Publications() {
         </div>
       )}
 
+      {/* Refetch indicator */}
+      {!isLoading && isFetching && (
+        <div className="flex justify-center mb-2">
+          <div className="w-4 h-4 rounded-full border-2 border-indigo-400 border-t-transparent animate-spin" />
+        </div>
+      )}
+
       {/* Error */}
       {error && (
         <div className="text-center py-12">
@@ -177,7 +184,7 @@ export default function Publications() {
 
       {/* Date groups */}
       {!isLoading && !error && (
-        <div className="space-y-6">
+        <div className={`space-y-6 transition-opacity duration-150 ${isFetching ? 'opacity-50' : 'opacity-100'}`}>
           {sortedDates.map((dateStr) => (
             <div key={dateStr}>
               <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">

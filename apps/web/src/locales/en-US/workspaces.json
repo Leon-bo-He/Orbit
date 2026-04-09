@@ -6,21 +6,19 @@
   "name_placeholder": "Workspace name",
   "icon_label": "Icon",
   "color_label": "Color",
-  "platform": "Platform",
-  "content_type": "Content Type",
   "publish_goal": "Publish Goal",
   "publish_goal_unit": "posts",
+  "publish_goal_summary": "{{count}} {{unit}} / {{period}}",
   "publish_period": {
     "day": "Daily",
     "week": "Weekly",
     "month": "Monthly"
   },
-  "timezone": "Timezone",
-  "step1_title": "Basic Info",
-  "step2_title": "Platform & Type",
-  "step3_title": "Goals",
-  "next": "Next",
-  "prev": "Back",
+  "publish_period_short": {
+    "day": "day",
+    "week": "week",
+    "month": "month"
+  },
   "submit": "Create Workspace",
   "save": "Save",
   "cancel": "Cancel",
@@ -28,24 +26,6 @@
   "edit": "Edit",
   "no_workspaces": "No workspaces yet",
   "no_workspaces_desc": "Create your first workspace to start managing content",
-  "content_types": {
-    "video_short": "Short Video",
-    "video_long": "Long Video",
-    "image_text": "Image + Text",
-    "article": "Article",
-    "podcast": "Podcast",
-    "live": "Live Stream"
-  },
-  "platforms": {
-    "douyin": "Douyin",
-    "xiaohongshu": "RedNote",
-    "weixin": "WeChat OA",
-    "weixin_video": "WeChat Video",
-    "bilibili": "Bilibili",
-    "x": "X (Twitter)",
-    "youtube": "YouTube",
-    "instagram": "Instagram"
-  },
   "name_required": "Workspace name is required",
   "icon_custom_placeholder": "Custom icon (text, emoji)",
   "color_custom": "Custom color",

@@ -13,15 +13,3 @@ export const Platform = {
 
 export type Platform = (typeof Platform)[keyof typeof Platform];
 
-export const PLATFORM_LABELS: Record<Platform, string> = {
-  douyin: 'Douyin',
-  xiaohongshu: 'Red Note',
-  weixin: 'WeChat OA',
-  weixin_video: 'WeChat Video',
-  bilibili: 'Bilibili',
-  x: 'X (Twitter)',
-  youtube: 'YouTube',
-  instagram: 'Instagram',
-  tiktok: 'TikTok',
-  custom: 'Custom',
-};

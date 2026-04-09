@@ -1,5 +1,5 @@
 import type { FastifyPluginAsync } from 'fastify';
-import { eq, and, ilike, isNull } from 'drizzle-orm';
+import { eq, and, ilike, isNull, gte, lte } from 'drizzle-orm';
 import { db } from '../db/client.js';
 import { ideas } from '../db/schema/ideas.js';
 import { contents } from '../db/schema/contents.js';
@@ -68,6 +68,61 @@ export const ideasRoutes: FastifyPluginAsync = async (app) => {
     return reply.send(rows.reverse());
   });
 
+  // GET /api/ideas/archived/export
+  app.get('/api/ideas/archived/export', { onRequest: [app.authenticate] }, async (req, reply) => {
+    const user = req.user as { sub: string };
+    const query = req.query as { workspace?: string; from?: string; to?: string };
+
+    const conditions = [
+      eq(ideas.userId, user.sub),
+      eq(ideas.status, 'archived'),
+    ];
+
+    if (query.workspace === 'global') {
+      conditions.push(isNull(ideas.workspaceId));
+    } else if (query.workspace) {
+      conditions.push(eq(ideas.workspaceId, query.workspace));
+    }
+
+    if (query.from) conditions.push(gte(ideas.createdAt, new Date(query.from)));
+    if (query.to) conditions.push(lte(ideas.createdAt, new Date(query.to)));
+
+    const rows = await db
+      .select()
+      .from(ideas)
+      .where(and(...conditions))
+      .orderBy(ideas.createdAt);
+
+    return reply.send(rows);
+  });
+
+  // DELETE /api/ideas/archived
+  app.delete('/api/ideas/archived', { onRequest: [app.authenticate] }, async (req, reply) => {
+    const user = req.user as { sub: string };
+    const query = req.query as { workspace?: string; from?: string; to?: string };
+
+    const conditions = [
+      eq(ideas.userId, user.sub),
+      eq(ideas.status, 'archived'),
+    ];
+
+    if (query.workspace === 'global') {
+      conditions.push(isNull(ideas.workspaceId));
+    } else if (query.workspace) {
+      conditions.push(eq(ideas.workspaceId, query.workspace));
+    }
+
+    if (query.from) conditions.push(gte(ideas.createdAt, new Date(query.from)));
+    if (query.to) conditions.push(lte(ideas.createdAt, new Date(query.to)));
+
+    const deleted = await db
+      .delete(ideas)
+      .where(and(...conditions))
+      .returning({ id: ideas.id });
+
+    return reply.send({ deleted: deleted.length });
+  });
+
   // PATCH /api/ideas/:id
   app.patch('/api/ideas/:id', { onRequest: [app.authenticate] }, async (req, reply) => {
     const user = req.user as { sub: string };
@@ -123,9 +178,11 @@ export const ideasRoutes: FastifyPluginAsync = async (app) => {
         stage: 'planned',
         tags: idea.tags,
         targetPlatforms: [],
-        locale: 'zh-CN',
-        localeVariants: [],
         attachments: [],
+        stageHistory: [
+          { stage: 'idea', timestamp: idea.createdAt.toISOString() },
+          { stage: 'planned', timestamp: new Date().toISOString() },
+        ],
       })
       .returning();
 

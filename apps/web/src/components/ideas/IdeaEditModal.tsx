@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useUpdateIdea, useConvertIdea } from '../../api/ideas.js';
 import { useDeleteContent } from '../../api/contents.js';
 import { useWorkspaces } from '../../api/workspaces.js';
+import { toast } from '../../store/toast.store.js';
 import type { Idea } from '@contentflow/shared';
 
 interface IdeaEditModalProps {
@@ -87,18 +88,22 @@ export function IdeaEditModal({ idea, onClose }: IdeaEditModalProps) {
 
   async function handleConfirmConvert() {
     if (!convertWorkspaceId) return;
-    await convertIdea.mutateAsync({
-      id: idea.id,
-      data: { workspaceId: convertWorkspaceId, title: convertTitle.trim() || undefined },
-    });
-    setShowConvertDialog(false);
-    onClose();
+    try {
+      await convertIdea.mutateAsync({
+        id: idea.id,
+        data: { workspaceId: convertWorkspaceId, title: convertTitle.trim() || undefined },
+      });
+      setShowConvertDialog(false);
+      onClose();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : t('convert_error'));
+    }
   }
 
   async function handleConfirmRevert() {
     // Delete linked content if present
     if (idea.convertedTo) {
-      await deleteContent.mutateAsync(idea.convertedTo);
+      await deleteContent.mutateAsync({ id: idea.convertedTo, workspaceId: idea.workspaceId ?? '' });
     }
     await updateIdea.mutateAsync({
       id: idea.id,
@@ -125,16 +130,16 @@ export function IdeaEditModal({ idea, onClose }: IdeaEditModalProps) {
     onClose();
   }
 
-  const priorityOptions: { value: Priority; label: string; classes: string; activeClasses: string }[] = [
-    { value: 'low',    label: t('priority.low'),    classes: 'border-gray-300 text-gray-600',     activeClasses: 'bg-gray-600 text-white border-gray-600' },
-    { value: 'medium', label: t('priority.medium'), classes: 'border-yellow-400 text-yellow-700', activeClasses: 'bg-yellow-500 text-white border-yellow-500' },
-    { value: 'high',   label: t('priority.high'),   classes: 'border-red-400 text-red-700',       activeClasses: 'bg-red-500 text-white border-red-500' },
+  const priorityOptions: { value: Priority; label: string; dot: string; activeBg: string; activeText: string }[] = [
+    { value: 'low',    label: t('priority.low'),    dot: 'bg-gray-400',  activeBg: 'bg-white shadow-sm', activeText: 'text-gray-700' },
+    { value: 'medium', label: t('priority.medium'), dot: 'bg-amber-400', activeBg: 'bg-white shadow-sm', activeText: 'text-amber-600' },
+    { value: 'high',   label: t('priority.high'),   dot: 'bg-red-500',   activeBg: 'bg-white shadow-sm', activeText: 'text-red-600' },
   ];
 
-  const statusOptions: { value: Status; label: string; activeClasses: string }[] = [
-    { value: 'active',    label: t('status.active'),    activeClasses: 'bg-indigo-600 text-white border-indigo-600' },
-    { value: 'converted', label: t('status.converted'), activeClasses: 'bg-green-600 text-white border-green-600' },
-    { value: 'archived',  label: t('status.archived'),  activeClasses: 'bg-gray-500 text-white border-gray-500' },
+  const statusOptions: { value: Status; label: string; dot: string; activeBg: string; activeText: string }[] = [
+    { value: 'active',    label: t('status.active'),    dot: 'bg-indigo-500', activeBg: 'bg-white shadow-sm', activeText: 'text-indigo-600' },
+    { value: 'converted', label: t('status.converted'), dot: 'bg-green-500',  activeBg: 'bg-white shadow-sm', activeText: 'text-green-600' },
+    { value: 'archived',  label: t('status.archived'),  dot: 'bg-gray-400',   activeBg: 'bg-white shadow-sm', activeText: 'text-gray-600' },
   ];
 
   return (
@@ -205,19 +210,20 @@ export function IdeaEditModal({ idea, onClose }: IdeaEditModalProps) {
 
               {/* Status */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t('fields.status')}</label>
-                <div className="flex gap-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('fields.status')}</label>
+                <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
                   {statusOptions.map((opt) => (
                     <button
                       key={opt.value}
                       type="button"
                       onClick={() => handleStatusClick(opt.value)}
-                      className={`flex-1 py-1.5 text-sm font-medium rounded-lg border transition-colors ${
+                      className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150 ${
                         status === opt.value
-                          ? opt.activeClasses
-                          : 'border-gray-300 text-gray-600 hover:border-gray-400'
+                          ? `${opt.activeBg} ${opt.activeText}`
+                          : 'text-gray-400 hover:text-gray-600'
                       }`}
                     >
+                      <span className={`w-2 h-2 rounded-full flex-shrink-0 ${opt.dot} ${status !== opt.value ? 'opacity-50' : ''}`} />
                       {opt.label}
                     </button>
                   ))}
@@ -226,17 +232,20 @@ export function IdeaEditModal({ idea, onClose }: IdeaEditModalProps) {
 
               {/* Priority */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t('fields.priority')}</label>
-                <div className="flex gap-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('fields.priority')}</label>
+                <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
                   {priorityOptions.map((opt) => (
                     <button
                       key={opt.value}
                       type="button"
                       onClick={() => setPriority(opt.value)}
-                      className={`flex-1 py-1.5 text-sm font-medium rounded-lg border transition-colors ${
-                        priority === opt.value ? opt.activeClasses : opt.classes
+                      className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150 ${
+                        priority === opt.value
+                          ? `${opt.activeBg} ${opt.activeText}`
+                          : 'text-gray-400 hover:text-gray-600'
                       }`}
                     >
+                      <span className={`w-2 h-2 rounded-full flex-shrink-0 ${opt.dot} ${priority !== opt.value ? 'opacity-50' : ''}`} />
                       {opt.label}
                     </button>
                   ))}

@@ -46,7 +46,7 @@ export function useRefreshToken() {
 }
 
 export function useUpdateProfile() {
-  return useMutation<AuthUser, ApiError, { name?: string; email?: string; locale?: string; timezone?: string; appearance?: string }>({
+  return useMutation<AuthUser, ApiError, { name?: string; email?: string; locale?: string; timezone?: string }>({
     mutationFn: (body) =>
       apiFetch<AuthUser>('/api/auth/profile', {
         method: 'PATCH',

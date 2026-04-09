@@ -38,6 +38,7 @@ interface UiState {
   theme: Theme;
   customPlatforms: CustomPlatform[];
   disabledBuiltinPlatforms: string[];
+  disabledCustomPlatforms: string[];
   publicationTemplates: PublicationTemplate[];
   platformBundles: PlatformBundle[];
   settingsSection: string | null; // null = closed
@@ -48,6 +49,7 @@ interface UiState {
   addCustomPlatform: (name: string, icon: string) => CustomPlatform;
   removeCustomPlatform: (id: string) => void;
   toggleBuiltinPlatform: (id: string) => void;
+  toggleCustomPlatform: (id: string) => void;
   openSettings: (section?: string) => void;
   closeSettings: () => void;
   savePublicationTemplate: (tpl: Omit<PublicationTemplate, 'id'>) => PublicationTemplate;
@@ -65,6 +67,7 @@ export const useUiStore = create<UiState>()(
       theme: 'system',
       customPlatforms: [],
       disabledBuiltinPlatforms: [],
+      disabledCustomPlatforms: [],
       publicationTemplates: [],
       platformBundles: [],
       settingsSection: null,
@@ -88,6 +91,12 @@ export const useUiStore = create<UiState>()(
           disabledBuiltinPlatforms: s.disabledBuiltinPlatforms.includes(id)
             ? s.disabledBuiltinPlatforms.filter((p) => p !== id)
             : [...s.disabledBuiltinPlatforms, id],
+        })),
+      toggleCustomPlatform: (id) =>
+        set((s) => ({
+          disabledCustomPlatforms: s.disabledCustomPlatforms.includes(id)
+            ? s.disabledCustomPlatforms.filter((p) => p !== id)
+            : [...s.disabledCustomPlatforms, id],
         })),
       openSettings: (section = 'account') => set({ settingsSection: section }),
       closeSettings: () => set({ settingsSection: null }),

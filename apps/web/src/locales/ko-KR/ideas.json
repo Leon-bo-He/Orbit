@@ -38,6 +38,7 @@
     "workspace": "워크스페이스",
     "confirm": "콘텐츠 만들기"
   },
+  "convert_error": "콘텐츠 생성에 실패했습니다",
   "revert_dialog": {
     "title": "활성으로 되돌리겠습니까?",
     "description": "이 아이디어는 다시 활성으로 표시됩니다.",

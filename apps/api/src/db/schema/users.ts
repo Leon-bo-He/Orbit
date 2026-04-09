@@ -5,9 +5,8 @@ export const users = pgTable('users', {
   email: text('email').notNull().unique(),
   name: text('name').notNull(),
   avatar: text('avatar'),
-  locale: text('locale').notNull().default('zh-CN'),
-  timezone: text('timezone').notNull().default('Asia/Shanghai'),
-  appearance: text('appearance').notNull().default('system'),
+  locale: text('locale').notNull().default('en-US'),
+  timezone: text('timezone').notNull().default('America/Los_Angeles'),
   passwordHash: text('password_hash'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 });

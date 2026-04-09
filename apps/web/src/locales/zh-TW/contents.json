@@ -3,6 +3,7 @@
   "stage_updated": "階段已更新為「{{stage}}」",
   "new_content": "新建內容",
   "stages": {
+    "idea": "靈感建立",
     "planned": "選題確認",
     "planning": "內容規劃",
     "creating": "製作中",

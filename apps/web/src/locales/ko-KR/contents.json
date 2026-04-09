@@ -3,6 +3,7 @@
   "stage_updated": "단계가 「{{stage}}」로 업데이트되었습니다",
   "new_content": "새 콘텐츠",
   "stages": {
+    "idea": "아이디어 생성",
     "planned": "기획 확정",
     "planning": "콘텐츠 설계",
     "creating": "제작 중",

@@ -40,14 +40,14 @@ const EMPTY_FORM: CreateContentReferenceInput & {
 
 export function ReferencesSection({ references, onAdd, onDelete }: ReferencesSectionProps) {
   const { t } = useTranslation('contents');
-  const { customPlatforms, disabledBuiltinPlatforms, openSettings } = useUiStore();
+  const { customPlatforms, disabledBuiltinPlatforms, disabledCustomPlatforms, openSettings } = useUiStore();
   const [showModal, setShowModal] = useState(false);
   const [form, setForm] = useState({ ...EMPTY_FORM });
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const platformOptions = [
     ...BUILTIN_PLATFORM_OPTIONS.filter((p) => !disabledBuiltinPlatforms.includes(p.value)),
-    ...customPlatforms.map((p) => ({ value: p.id, label: p.name })),
+    ...customPlatforms.filter((p) => !disabledCustomPlatforms.includes(p.id)).map((p) => ({ value: p.id, label: p.name })),
   ];
 
   const selectedPlatform = platformOptions.find((p) => p.value === form.platform);

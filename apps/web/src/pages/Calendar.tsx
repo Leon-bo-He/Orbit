@@ -122,8 +122,6 @@ function usePeriodCount(workspaceId: string, from: Date, to: Date, key: string) 
       return Object.values(data).reduce((sum, items) => sum + items.length, 0);
     },
     enabled: Boolean(workspaceId),
-    staleTime: 3 * 60 * 1000,
-    placeholderData: keepPreviousData,
   });
 }
 
@@ -532,17 +530,16 @@ export default function Calendar() {
 
   const { data: contentsByDate = {}, isLoading } = useCalendarContents(workspaceId ?? '', from, to);
 
-  const today = new Date();
-  const monthFrom = new Date(today.getFullYear(), today.getMonth(), 1);
-  const monthTo = new Date(today.getFullYear(), today.getMonth() + 1, 0, 23, 59, 59, 999);
-  const yearFrom = new Date(today.getFullYear(), 0, 1);
-  const yearTo = new Date(today.getFullYear(), 11, 31, 23, 59, 59, 999);
-
-  const { data: monthlyActual = 0 } = usePeriodCount(workspaceId ?? '', monthFrom, monthTo, `month-${today.getFullYear()}-${today.getMonth()}`);
-  const { data: yearlyActual = 0 } = usePeriodCount(workspaceId ?? '', yearFrom, yearTo, `year-${today.getFullYear()}`);
-
   const weeklyActual = Array.from({ length: 7 }, (_, i) => isoDate(addDays(weekStart, i)))
     .reduce((sum, ds) => sum + (contentsByDate[ds]?.length ?? 0), 0);
+
+  const monthFrom = new Date(current.getFullYear(), current.getMonth(), 1);
+  const monthTo = new Date(current.getFullYear(), current.getMonth() + 1, 0, 23, 59, 59, 999);
+  const yearFrom = new Date(current.getFullYear(), 0, 1);
+  const yearTo = new Date(current.getFullYear(), 11, 31, 23, 59, 59, 999);
+
+  const { data: monthlyActual = 0 } = usePeriodCount(workspaceId ?? '', monthFrom, monthTo, `month-${current.getFullYear()}-${current.getMonth()}`);
+  const { data: yearlyActual = 0 } = usePeriodCount(workspaceId ?? '', yearFrom, yearTo, `year-${current.getFullYear()}`);
 
   const contentsById = useCallback((): Map<string, Content> => {
     const map = new Map<string, Content>();

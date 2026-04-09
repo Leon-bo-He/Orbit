@@ -1,13 +1,14 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { setAccessToken } from '../api/client.js';
+import { useUiStore } from './ui.store.js';
+import { queryClient } from '../api/query-client.js';
 
 export interface AuthUser {
   id: string;
   email: string;
   name: string;
   locale: string;
-  appearance?: string;
 }
 
 interface AuthState {
@@ -33,6 +34,8 @@ export const useAuthStore = create<AuthState>()(
       clearAuth: () => {
         setAccessToken(null);
         set({ user: null, accessToken: null, isAuthenticated: false });
+        useUiStore.getState().setActiveWorkspace(null);
+        queryClient.clear();
       },
     }),
     {

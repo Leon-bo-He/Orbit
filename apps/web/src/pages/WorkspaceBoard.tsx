@@ -10,6 +10,9 @@ import { ContentDrawer } from '../components/kanban/ContentDrawer.js';
 import { CreateContentModal } from '../components/kanban/CreateContentModal.js';
 import { Skeleton } from '../components/ui/Skeleton.js';
 
+// Module-level set survives StrictMode double-invocation; prevents duplicate auto-archive mutations
+const _autoArchivingIds = new Set<string>();
+
 export default function WorkspaceBoard() {
   const { workspaceId } = useParams<{ workspaceId: string }>();
   const { t } = useTranslation('contents');
@@ -27,17 +30,21 @@ export default function WorkspaceBoard() {
   useEffect(() => {
     if (!contents.length) return;
     const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
-    contents
-      .filter((c) => {
-        if (c.stage !== 'reviewed') return false;
-        const reviewedEntries = (c.stageHistory ?? []).filter((e) => e.stage === 'reviewed');
-        if (!reviewedEntries.length) return false;
-        const lastReviewedAt = Math.max(...reviewedEntries.map((e) => new Date(e.timestamp).getTime()));
-        return lastReviewedAt < sevenDaysAgo;
-      })
-      .forEach((c) => {
-        updateContent.mutate({ id: c.id, workspaceId: workspaceId ?? '', data: { stage: 'archived' } });
-      });
+    const toArchive = contents.filter((c) => {
+      if (c.stage !== 'reviewed') return false;
+      if (_autoArchivingIds.has(c.id)) return false;
+      const reviewedEntries = (c.stageHistory ?? []).filter((e) => e.stage === 'reviewed');
+      if (!reviewedEntries.length) return false;
+      const lastReviewedAt = Math.max(...reviewedEntries.map((e) => new Date(e.timestamp).getTime()));
+      return lastReviewedAt < sevenDaysAgo;
+    });
+    toArchive.forEach((c) => {
+      _autoArchivingIds.add(c.id);
+      updateContent.mutate(
+        { id: c.id, workspaceId: workspaceId ?? '', data: { stage: 'archived' }, silent: true },
+        { onSettled: (_d, err) => { if (err) _autoArchivingIds.delete(c.id); } },
+      );
+    });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [contents]);
 
@@ -180,7 +187,7 @@ export default function WorkspaceBoard() {
           onMouseLeave={onBoardMouseUp}
         >
           <div className="flex gap-4 p-6 h-full min-w-max">
-            {STAGE_ORDER.map((stage) => {
+            {STAGE_ORDER.filter((stage) => stage !== 'archived').map((stage) => {
               const stageContents = contents.filter((c) => c.stage === stage);
               return (
                 <KanbanColumn
@@ -189,7 +196,7 @@ export default function WorkspaceBoard() {
                   contents={stageContents}
                   onCardClick={handleCardClick}
                   onDrop={handleDrop}
-                  onDoubleClick={stage !== 'archived' ? () => setShowCreateModal(true) : undefined}
+                  onDoubleClick={() => setShowCreateModal(true)}
                 />
               );
             })}

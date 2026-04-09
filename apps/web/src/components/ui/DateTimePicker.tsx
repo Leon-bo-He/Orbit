@@ -11,6 +11,8 @@ interface DateTimePickerProps {
   triggerClassName?: string;
   /** Renders a smaller calendar popup */
   compact?: boolean;
+  /** Hides the time row — picks midnight of the selected date */
+  dateOnly?: boolean;
 }
 
 const DAYS_SHORT = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
@@ -34,7 +36,14 @@ function isoToLocal(iso: string) {
   return d;
 }
 
-export function DateTimePicker({ value, onChange, placeholder, className = '', triggerClassName, compact }: DateTimePickerProps) {
+function formatDateOnly(iso: string): string {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return '';
+  return d.toLocaleString(navigator.language, { year: 'numeric', month: 'short', day: 'numeric' });
+}
+
+export function DateTimePicker({ value, onChange, placeholder, className = '', triggerClassName, compact, dateOnly }: DateTimePickerProps) {
   const { t } = useTranslation('common');
   const [open, setOpen] = useState(false);
   const [popupStyle, setPopupStyle] = useState<React.CSSProperties>({});
@@ -110,7 +119,7 @@ export function DateTimePicker({ value, onChange, placeholder, className = '', t
   function commit(date: Date | null, h: string, m: string) {
     if (!date) { onChange(null); return; }
     const d = new Date(date);
-    d.setHours(parseInt(h) || 0, parseInt(m) || 0, 0, 0);
+    d.setHours(dateOnly ? 0 : (parseInt(h) || 0), dateOnly ? 0 : (parseInt(m) || 0), 0, 0);
     onChange(d.toISOString());
   }
 
@@ -224,28 +233,30 @@ export function DateTimePicker({ value, onChange, placeholder, className = '', t
       </div>
 
       {/* Time */}
-      <div className={`${compact ? 'mt-2.5 pt-2.5' : 'mt-3 pt-3'} border-t border-gray-100 flex items-center justify-center gap-2`}>
-        <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        <input
-          type="number" min={0} max={23} value={hour}
-          onChange={(e) => {
-            const v = pad(Math.min(23, Math.max(0, parseInt(e.target.value) || 0)));
-            setHour(v); commit(selDate, v, minute);
-          }}
-          className={`${compact ? 'w-10 text-xs py-1' : 'w-12 text-sm py-1.5'} text-center font-mono border border-gray-200 rounded-xl px-1 outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300`}
-        />
-        <span className="text-gray-300 font-bold text-sm">:</span>
-        <input
-          type="number" min={0} max={59} value={minute}
-          onChange={(e) => {
-            const v = pad(Math.min(59, Math.max(0, parseInt(e.target.value) || 0)));
-            setMinute(v); commit(selDate, hour, v);
-          }}
-          className={`${compact ? 'w-10 text-xs py-1' : 'w-12 text-sm py-1.5'} text-center font-mono border border-gray-200 rounded-xl px-1 outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300`}
-        />
-      </div>
+      {!dateOnly && (
+        <div className={`${compact ? 'mt-2.5 pt-2.5' : 'mt-3 pt-3'} border-t border-gray-100 flex items-center justify-center gap-2`}>
+          <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <input
+            type="number" min={0} max={23} value={hour}
+            onChange={(e) => {
+              const v = pad(Math.min(23, Math.max(0, parseInt(e.target.value) || 0)));
+              setHour(v); commit(selDate, v, minute);
+            }}
+            className={`${compact ? 'w-10 text-xs py-1' : 'w-12 text-sm py-1.5'} text-center font-mono border border-gray-200 rounded-xl px-1 outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300`}
+          />
+          <span className="text-gray-300 font-bold text-sm">:</span>
+          <input
+            type="number" min={0} max={59} value={minute}
+            onChange={(e) => {
+              const v = pad(Math.min(59, Math.max(0, parseInt(e.target.value) || 0)));
+              setMinute(v); commit(selDate, hour, v);
+            }}
+            className={`${compact ? 'w-10 text-xs py-1' : 'w-12 text-sm py-1.5'} text-center font-mono border border-gray-200 rounded-xl px-1 outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300`}
+          />
+        </div>
+      )}
 
       {/* Footer */}
       <div className={`${compact ? 'mt-2.5' : 'mt-3'} flex justify-between items-center`}>
@@ -277,7 +288,7 @@ export function DateTimePicker({ value, onChange, placeholder, className = '', t
         className={triggerClassName ?? 'w-full text-left text-sm border border-gray-200 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-200 flex items-center justify-between gap-2 hover:border-gray-300 transition-colors bg-white'}
       >
         <span className={triggerClassName ? undefined : (value ? 'text-gray-800' : 'text-gray-400')}>
-          {value ? formatDisplay(value) : (placeholder ?? t('calendar.no_content'))}
+          {value ? (dateOnly ? formatDateOnly(value) : formatDisplay(value)) : (placeholder ?? t('calendar.no_content'))}
         </span>
         {!triggerClassName && (
           <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">

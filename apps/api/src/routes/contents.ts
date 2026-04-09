@@ -140,6 +140,100 @@ export const contentsRoutes: FastifyPluginAsync = async (app) => {
     return reply.send(rows.reverse());
   });
 
+  // GET /api/contents/archived/export
+  app.get('/api/contents/archived/export', { onRequest: [app.authenticate] }, async (req, reply) => {
+    const user = req.user as { sub: string };
+    const query = req.query as { workspace?: string; from?: string; to?: string; includeIdeas?: string };
+
+    // Resolve workspace IDs — either a specific one (verified) or all belonging to the user
+    let wsIds: string[];
+    if (query.workspace) {
+      const [ws] = await db
+        .select({ id: workspaces.id })
+        .from(workspaces)
+        .where(and(eq(workspaces.id, query.workspace), eq(workspaces.userId, user.sub)));
+      if (!ws) return reply.code(403).send({ error: 'Forbidden' });
+      wsIds = [ws.id];
+    } else {
+      const userWs = await db
+        .select({ id: workspaces.id })
+        .from(workspaces)
+        .where(eq(workspaces.userId, user.sub));
+      wsIds = userWs.map((w) => w.id);
+      if (wsIds.length === 0) return reply.send([]);
+    }
+
+    const conditions = [
+      inArray(contents.workspaceId, wsIds),
+      eq(contents.stage, 'archived'),
+    ];
+
+    if (query.from) conditions.push(gte(contents.updatedAt, new Date(query.from)));
+    if (query.to) conditions.push(lte(contents.updatedAt, new Date(query.to)));
+
+    const rows = await db
+      .select()
+      .from(contents)
+      .where(and(...conditions))
+      .orderBy(contents.updatedAt);
+
+    if (query.includeIdeas === 'true') {
+      const contentIds = rows.map((r) => r.id);
+      const linkedIdeas = contentIds.length > 0
+        ? await db.select().from(ideas).where(inArray(ideas.convertedTo, contentIds))
+        : [];
+      return reply.send({ contents: rows, ideas: linkedIdeas });
+    }
+
+    return reply.send(rows);
+  });
+
+  // DELETE /api/contents/archived
+  app.delete('/api/contents/archived', { onRequest: [app.authenticate] }, async (req, reply) => {
+    const user = req.user as { sub: string };
+    const query = req.query as { workspace?: string; from?: string; to?: string; includeIdeas?: string };
+
+    // Resolve workspace IDs — either a specific one (verified) or all belonging to the user
+    let wsIds: string[];
+    if (query.workspace) {
+      const [ws] = await db
+        .select({ id: workspaces.id })
+        .from(workspaces)
+        .where(and(eq(workspaces.id, query.workspace), eq(workspaces.userId, user.sub)));
+      if (!ws) return reply.code(403).send({ error: 'Forbidden' });
+      wsIds = [ws.id];
+    } else {
+      const userWs = await db
+        .select({ id: workspaces.id })
+        .from(workspaces)
+        .where(eq(workspaces.userId, user.sub));
+      wsIds = userWs.map((w) => w.id);
+      if (wsIds.length === 0) return reply.send({ deleted: 0 });
+    }
+
+    const conditions = [
+      inArray(contents.workspaceId, wsIds),
+      eq(contents.stage, 'archived'),
+    ];
+
+    if (query.from) conditions.push(gte(contents.updatedAt, new Date(query.from)));
+    if (query.to) conditions.push(lte(contents.updatedAt, new Date(query.to)));
+
+    const deleted = await db
+      .delete(contents)
+      .where(and(...conditions))
+      .returning({ id: contents.id });
+
+    if (query.includeIdeas === 'true' && deleted.length > 0) {
+      const deletedIds = deleted.map((r) => r.id);
+      await db.delete(ideas).where(
+        and(inArray(ideas.convertedTo, deletedIds), eq(ideas.userId, user.sub))
+      );
+    }
+
+    return reply.send({ deleted: deleted.length });
+  });
+
   // DELETE /api/contents/:id
   app.delete('/api/contents/:id', { onRequest: [app.authenticate] }, async (req, reply) => {
     const user = req.user as { sub: string };
@@ -196,11 +290,13 @@ export const contentsRoutes: FastifyPluginAsync = async (app) => {
     if (body.title !== undefined) updateData.title = body.title;
     if (body.description !== undefined) updateData.description = body.description ?? null;
     if (body.contentType !== undefined) updateData.contentType = body.contentType;
+    let previousStage: string | undefined;
     if (body.stage !== undefined) {
       updateData.stage = body.stage;
       updateData.updatedAt = new Date();
       // Append to stage history
-      const [current] = await db.select({ stageHistory: contents.stageHistory }).from(contents).where(eq(contents.id, id));
+      const [current] = await db.select({ stage: contents.stage, stageHistory: contents.stageHistory }).from(contents).where(eq(contents.id, id));
+      previousStage = current?.stage ?? undefined;
       const history = (current?.stageHistory as { stage: string; timestamp: string }[] ?? []);
       history.push({ stage: body.stage, timestamp: new Date().toISOString() });
       updateData.stageHistory = history;
@@ -231,11 +327,16 @@ export const contentsRoutes: FastifyPluginAsync = async (app) => {
       return reply.code(404).send({ error: 'Content not found' });
     }
 
-    // When content is archived, also archive the idea that converted to it
+    // Sync linked idea status when content is archived or unarchived
     if (body.stage === 'archived') {
       await db
         .update(ideas)
         .set({ status: 'archived' })
+        .where(and(eq(ideas.convertedTo, id), eq(ideas.userId, user.sub)));
+    } else if (body.stage !== undefined && previousStage === 'archived') {
+      await db
+        .update(ideas)
+        .set({ status: 'converted' })
         .where(and(eq(ideas.convertedTo, id), eq(ideas.userId, user.sub)));
     }
 

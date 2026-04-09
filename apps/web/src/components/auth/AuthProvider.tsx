@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useMe } from '../../api/auth.js';
 import { useAuthStore } from '../../store/auth.store.js';
 import { useUiStore } from '../../store/ui.store.js';
-import { apiFetch, setAccessToken } from '../../api/client.js';
+import { apiFetch, setAccessToken, registerUnauthorizedHandler } from '../../api/client.js';
 import { FullPageSpinner } from '../ui/FullPageSpinner.js';
 import { useTheme } from '../../hooks/useTheme.js';
 import i18n from '../../i18n/index.js';
@@ -27,7 +27,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const clearAuth = useAuthStore((s) => s.clearAuth);
   const storedToken = useAuthStore((s) => s.accessToken);
   const setLocale = useUiStore((s) => s.setLocale);
-  const setTheme = useUiStore((s) => s.setTheme);
 
   const [isLoading, setIsLoading] = useState(true);
   // refreshedToken is the token obtained from the refresh call (may differ from stored)
@@ -37,6 +36,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const meQuery = useMe(refreshedToken);
 
   const initialized = useRef(false);
+
+  // Register once: any non-auth 401 clears the session.
+  // RequireAuth will then redirect to /login automatically.
+  useEffect(() => {
+    registerUnauthorizedHandler(clearAuth);
+  }, [clearAuth]);
 
   useEffect(() => {
     if (initialized.current) return;
@@ -90,9 +95,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
       if (meQuery.data.locale) {
         setLocale(meQuery.data.locale as Parameters<typeof setLocale>[0]);
         void i18n.changeLanguage(meQuery.data.locale);
-      }
-      if (meQuery.data.appearance) {
-        setTheme(meQuery.data.appearance as Parameters<typeof setTheme>[0]);
       }
     } else if (meQuery.isError) {
       clearAuth();

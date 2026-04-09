@@ -6,6 +6,8 @@ import { PlatformConfigForm } from './PlatformConfigForm.js';
 import { AddPlatformModal } from './AddPlatformModal.js';
 import { MarkPublishedModal } from './MarkPublishedModal.js';
 import { PlatformIcon } from '../ui/PlatformIcon.js';
+import { DateTimePicker } from '../ui/DateTimePicker.js';
+import { TimePicker } from '../ui/TimePicker.js';
 import { useUiStore, type PlatformBundle, type PlatformBundleItem } from '../../store/ui.store.js';
 
 const BUILTIN_PLATFORMS = [
@@ -55,10 +57,10 @@ function BundleModal({ contentId, existingPlatforms, currentPubs, onClose }: Bun
   const [view, setView] = useState<BundleView>('list');
   const [deleteConfirmBundle, setDeleteConfirmBundle] = useState<PlatformBundle | null>(null);
   const [applyTarget, setApplyTarget] = useState<PlatformBundle | null>(null);
-  const [applyDate, setApplyDate] = useState(() => {
-    const d = new Date();
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  const [applyDateIso, setApplyDateIso] = useState(() => {
+    const d = new Date(); d.setHours(0, 0, 0, 0); return d.toISOString();
   });
+  const [applyTimes, setApplyTimes] = useState<Record<string, string>>({});
   const [applying, setApplying] = useState(false);
 
   // Create form state
@@ -111,14 +113,15 @@ function BundleModal({ contentId, existingPlatforms, currentPubs, onClose }: Bun
   async function handleApplyBundle() {
     if (!applyTarget) return;
     setApplying(true);
+    const baseDate = new Date(applyDateIso);
     try {
       for (const item of applyTarget.items) {
         if (existingPlatforms.includes(item.platform)) continue;
         let scheduledAt: string | undefined;
-        if (item.time) {
-          const [h, m] = item.time.split(':').map(Number);
-          const d = new Date(applyDate);
-          d.setHours(h ?? 0, m ?? 0, 0, 0);
+        const timeStr = applyTimes[item.platform] ?? item.time;
+        if (timeStr) {
+          const [h, m] = timeStr.split(':').map(Number);
+          const d = new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate(), h ?? 0, m ?? 0, 0, 0);
           scheduledAt = d.toISOString();
         }
         await createPublication.mutateAsync({
@@ -172,7 +175,11 @@ function BundleModal({ contentId, existingPlatforms, currentPubs, onClose }: Bun
                       <div className="flex items-center gap-1.5">
                         <button
                           type="button"
-                          onClick={() => { setApplyTarget(bundle); setView('apply'); }}
+                          onClick={() => {
+                            setApplyTarget(bundle);
+                            setApplyTimes(Object.fromEntries(bundle.items.map((i) => [i.platform, i.time])));
+                            setView('apply');
+                          }}
                           className="text-xs px-2.5 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700"
                         >
                           {t('bundle.apply')}
@@ -247,11 +254,10 @@ function BundleModal({ contentId, existingPlatforms, currentPubs, onClose }: Bun
                         <div key={item.platform} className="flex items-center gap-2">
                           <PlatformIcon platform={item.platform} className="w-4 h-4 flex-shrink-0" />
                           <span className="text-xs text-gray-600 flex-1 truncate">{platform?.label}</span>
-                          <input
-                            type="time"
+                          <TimePicker
                             value={item.time}
-                            onChange={(e) => updateItemTime(item.platform, e.target.value)}
-                            className="text-xs border border-gray-200 rounded px-2 py-1 outline-none focus:ring-1 focus:ring-indigo-300 w-28"
+                            onChange={(time) => updateItemTime(item.platform, time)}
+                            className="w-28"
                           />
                         </div>
                       );
@@ -267,11 +273,11 @@ function BundleModal({ contentId, existingPlatforms, currentPubs, onClose }: Bun
             <div className="p-4 space-y-4">
               <div>
                 <label className="block text-xs font-medium text-gray-600 mb-1">{t('bundle.apply_date')}</label>
-                <input
-                  type="date"
-                  value={applyDate}
-                  onChange={(e) => setApplyDate(e.target.value)}
-                  className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-200"
+                <DateTimePicker
+                  value={applyDateIso}
+                  onChange={(iso) => { if (iso) { const d = new Date(iso); d.setHours(0, 0, 0, 0); setApplyDateIso(d.toISOString()); } }}
+                  dateOnly
+                  compact
                 />
               </div>
 
@@ -282,13 +288,14 @@ function BundleModal({ contentId, existingPlatforms, currentPubs, onClose }: Bun
                     <div key={item.platform} className={`flex items-center gap-2 p-2 rounded-lg ${alreadyAdded ? 'opacity-40' : 'bg-gray-50'}`}>
                       <PlatformIcon platform={item.platform} className="w-4 h-4 flex-shrink-0" />
                       <span className="text-xs text-gray-700 flex-1">{t(`platforms.${item.platform}`)}</span>
-                      {item.time ? (
-                        <span className="text-xs text-gray-500 font-medium">{item.time}</span>
-                      ) : (
-                        <span className="text-xs text-gray-400">{t('bundle.no_time')}</span>
-                      )}
-                      {alreadyAdded && (
+                      {alreadyAdded ? (
                         <span className="text-xs text-gray-400 italic">{t('bundle.skipped')}</span>
+                      ) : (
+                        <TimePicker
+                          value={applyTimes[item.platform] ?? ''}
+                          onChange={(time) => setApplyTimes((prev) => ({ ...prev, [item.platform]: time }))}
+                          className="w-28"
+                        />
                       )}
                     </div>
                   );

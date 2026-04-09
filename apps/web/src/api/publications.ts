@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { apiFetch, ApiError } from './client.js';
 import { toast } from '../store/toast.store.js';
 import i18n from '../i18n/index.js';
@@ -36,6 +36,7 @@ export function useCreatePublication(contentId: string) {
       }),
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: ['publications', contentId] });
+      void qc.invalidateQueries({ queryKey: ['dashboard'] });
       toast.success(i18n.t('toast_platform_added', { ns: 'publications' }));
     },
     onError: (err) => {
@@ -56,6 +57,7 @@ export function useUpdatePublication() {
     onSuccess: (_data, vars) => {
       void qc.invalidateQueries({ queryKey: ['publications', vars.contentId] });
       void qc.invalidateQueries({ queryKey: ['publishQueue'] });
+      void qc.invalidateQueries({ queryKey: ['dashboard'] });
     },
     onError: (err) => {
       toast.error(i18n.t('toast_update_failed', { ns: 'publications', message: err.message }));
@@ -79,6 +81,7 @@ export function useMarkPublished() {
     onSuccess: (_data, vars) => {
       void qc.invalidateQueries({ queryKey: ['publications', vars.contentId] });
       void qc.invalidateQueries({ queryKey: ['publishQueue'] });
+      void qc.invalidateQueries({ queryKey: ['dashboard'] });
       toast.success(i18n.t('toast_marked_published', { ns: 'publications' }));
     },
     onError: (err) => {
@@ -99,6 +102,7 @@ export function usePublishQueue(filters?: PublishQueueFilters) {
     queryKey: ['publishQueue', filters],
     queryFn: () => apiFetch<QueueItem[]>(`/api/publications/queue${qs ? `?${qs}` : ''}`),
     refetchOnWindowFocus: true,
+    placeholderData: keepPreviousData,
   });
 }
 
@@ -111,6 +115,7 @@ export function useDeletePublication() {
     onSuccess: (_data, vars) => {
       void qc.invalidateQueries({ queryKey: ['publications', vars.contentId] });
       void qc.invalidateQueries({ queryKey: ['publishQueue'] });
+      void qc.invalidateQueries({ queryKey: ['dashboard'] });
     },
     onError: (err) => {
       toast.error(i18n.t('toast_update_failed', { ns: 'publications', message: err.message }));
@@ -130,6 +135,7 @@ export function useBatchUpdatePublications() {
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: ['publishQueue'] });
       void qc.invalidateQueries({ queryKey: ['publications'] });
+      void qc.invalidateQueries({ queryKey: ['dashboard'] });
     },
   });
 }

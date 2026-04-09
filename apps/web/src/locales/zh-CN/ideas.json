@@ -38,6 +38,7 @@
     "workspace": "工作区",
     "confirm": "创建内容"
   },
+  "convert_error": "创建内容失败",
   "revert_dialog": {
     "title": "恢复为活跃？",
     "description": "此灵感将重新标记为活跃。",

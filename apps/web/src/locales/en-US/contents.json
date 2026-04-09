@@ -3,6 +3,7 @@
   "stage_updated": "Stage updated to {{stage}}",
   "new_content": "New Content",
   "stages": {
+    "idea": "Idea Created",
     "planned": "Planned",
     "planning": "Planning",
     "creating": "Creating",

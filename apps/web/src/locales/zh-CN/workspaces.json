@@ -11,21 +11,14 @@
   "color_custom": "自定义颜色",
   "about_label": "简介",
   "about_placeholder": "用一两句话描述这个工作空间…",
-  "platform": "平台",
-  "content_type": "内容类型",
   "publish_goal": "发布目标",
   "publish_goal_unit": "篇",
+  "publish_goal_summary": "{{period}}{{count}}{{unit}}",
   "publish_period": {
     "day": "每天",
     "week": "每周",
     "month": "每月"
   },
-  "timezone": "时区",
-  "step1_title": "基本信息",
-  "step2_title": "平台与类型",
-  "step3_title": "目标设置",
-  "next": "下一步",
-  "prev": "上一步",
   "submit": "创建工作空间",
   "save": "保存",
   "cancel": "取消",
@@ -33,24 +26,6 @@
   "edit": "编辑",
   "no_workspaces": "暂无工作空间",
   "no_workspaces_desc": "创建您的第一个工作空间开始管理内容",
-  "content_types": {
-    "video_short": "短视频",
-    "video_long": "长视频",
-    "image_text": "图文",
-    "article": "长文章",
-    "podcast": "播客",
-    "live": "直播"
-  },
-  "platforms": {
-    "douyin": "抖音",
-    "xiaohongshu": "小红书",
-    "weixin": "微信公众号",
-    "weixin_video": "微信视频号",
-    "bilibili": "哔哩哔哩",
-    "x": "X (Twitter)",
-    "youtube": "YouTube",
-    "instagram": "Instagram"
-  },
   "onboarding": {
     "welcome_title": "欢迎使用 ContentFlow",
     "welcome_desc": "一站式内容规划、排期与追踪平台，专为创作者打造。让我们先创建您的第一个工作空间。",

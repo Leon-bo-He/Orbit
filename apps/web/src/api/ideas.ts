@@ -108,8 +108,11 @@ export function useConvertIdea() {
         method: 'POST',
         body: JSON.stringify(data),
       }),
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       void qc.invalidateQueries({ queryKey: ['ideas'] });
+      void qc.invalidateQueries({ queryKey: ['contents', variables.data.workspaceId] });
+      void qc.invalidateQueries({ queryKey: ['calendarContents', variables.data.workspaceId] });
+      void qc.invalidateQueries({ queryKey: ['dashboard'] });
     },
   });
 }

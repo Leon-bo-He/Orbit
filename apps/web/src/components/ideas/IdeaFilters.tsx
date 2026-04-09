@@ -6,7 +6,7 @@ interface IdeaFiltersProps {
   onChange: (filters: IdeaFilters) => void;
 }
 
-const STATUS_TABS = ['', 'active', 'converted', 'archived'] as const;
+const STATUS_TABS = ['active', 'converted', 'archived', ''] as const;
 
 export function IdeaFiltersBar({ filters, onChange }: IdeaFiltersProps) {
   const { t } = useTranslation('ideas');

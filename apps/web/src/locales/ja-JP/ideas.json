@@ -38,6 +38,7 @@
     "workspace": "ワークスペース",
     "confirm": "コンテンツを作成"
   },
+  "convert_error": "コンテンツの作成に失敗しました",
   "revert_dialog": {
     "title": "アクティブに戻しますか？",
     "description": "このアイデアは再びアクティブとしてマークされます。",

@@ -50,7 +50,7 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
       .setCookie('refreshToken', refreshToken, { ...COOKIE_OPTS, maxAge: config.JWT_REFRESH_TTL })
       .send({
         accessToken,
-        user: { id: user.id, email: user.email, name: user.name, locale: user.locale, appearance: user.appearance },
+        user: { id: user.id, email: user.email, name: user.name, locale: user.locale },
       });
   });
 
@@ -140,7 +140,7 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
       .setCookie('refreshToken', refreshToken, { ...COOKIE_OPTS, maxAge: config.JWT_REFRESH_TTL })
       .send({
         accessToken,
-        user: { id: user.id, email: user.email, name: user.name, locale: user.locale, appearance: user.appearance },
+        user: { id: user.id, email: user.email, name: user.name, locale: user.locale },
       });
   });
 
@@ -154,7 +154,6 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
         email:      z.string().email().optional(),
         locale:     z.string().optional(),
         timezone:   z.string().optional(),
-        appearance: z.enum(['system', 'light', 'dark']).optional(),
       }).refine((d) => Object.values(d).some((v) => v !== undefined), {
         message: 'At least one field required',
       });
@@ -182,7 +181,7 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
         .update(users)
         .set(updates)
         .where(eq(users.id, sub))
-        .returning({ id: users.id, email: users.email, name: users.name, locale: users.locale, appearance: users.appearance });
+        .returning({ id: users.id, email: users.email, name: users.name, locale: users.locale });
 
       if (!updated) return reply.code(404).send({ error: 'User not found' });
       return reply.send(updated);
@@ -252,7 +251,7 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
     async (req, reply) => {
       const { sub } = req.user as { sub: string };
       const [user] = await db
-        .select({ id: users.id, email: users.email, name: users.name, locale: users.locale, timezone: users.timezone, appearance: users.appearance })
+        .select({ id: users.id, email: users.email, name: users.name, locale: users.locale, timezone: users.timezone })
         .from(users)
         .where(eq(users.id, sub))
         .limit(1);

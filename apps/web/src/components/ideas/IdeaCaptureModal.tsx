@@ -82,10 +82,10 @@ export function IdeaCaptureModal({ open, onClose }: IdeaCaptureModalProps) {
 
   if (!open) return null;
 
-  const priorityOptions: { value: Priority; label: string; classes: string; activeClasses: string }[] = [
-    { value: 'low', label: t('priority.low'), classes: 'border-gray-300 text-gray-600', activeClasses: 'bg-gray-600 text-white border-gray-600' },
-    { value: 'medium', label: t('priority.medium'), classes: 'border-yellow-400 text-yellow-700', activeClasses: 'bg-yellow-500 text-white border-yellow-500' },
-    { value: 'high', label: t('priority.high'), classes: 'border-red-400 text-red-700', activeClasses: 'bg-red-500 text-white border-red-500' },
+  const priorityOptions: { value: Priority; label: string; dot: string; activeBg: string; activeText: string }[] = [
+    { value: 'low',    label: t('priority.low'),    dot: 'bg-gray-400',   activeBg: 'bg-white shadow-sm', activeText: 'text-gray-700' },
+    { value: 'medium', label: t('priority.medium'), dot: 'bg-amber-400',  activeBg: 'bg-white shadow-sm', activeText: 'text-amber-600' },
+    { value: 'high',   label: t('priority.high'),   dot: 'bg-red-500',    activeBg: 'bg-white shadow-sm', activeText: 'text-red-600' },
   ];
 
   return (
@@ -166,19 +166,22 @@ export function IdeaCaptureModal({ open, onClose }: IdeaCaptureModalProps) {
 
             {/* Priority */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
                 {t('fields.priority')}
               </label>
-              <div className="flex gap-2">
+              <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
                 {priorityOptions.map((opt) => (
                   <button
                     key={opt.value}
                     type="button"
                     onClick={() => setPriority(opt.value)}
-                    className={`flex-1 py-1.5 text-sm font-medium rounded-lg border transition-colors ${
-                      priority === opt.value ? opt.activeClasses : opt.classes
+                    className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150 ${
+                      priority === opt.value
+                        ? `${opt.activeBg} ${opt.activeText}`
+                        : 'text-gray-400 hover:text-gray-600'
                     }`}
                   >
+                    <span className={`w-2 h-2 rounded-full flex-shrink-0 ${opt.dot} ${priority !== opt.value ? 'opacity-50' : ''}`} />
                     {opt.label}
                   </button>
                 ))}

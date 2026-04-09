@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tansta
 import { apiFetch, ApiError, QUEUED_OFFLINE } from './client.js';
 import { toast } from '../store/toast.store.js';
 import i18n from '../i18n/index.js';
-import type { Content } from '@contentflow/shared';
+import type { Content, Idea } from '@contentflow/shared';
 
 export interface ContentFilters {
   stage?: string;
@@ -38,6 +38,7 @@ export function useCreateContent() {
     onSuccess: (data, variables) => {
       void qc.invalidateQueries({ queryKey: ['contents', variables['workspaceId']] });
       void qc.invalidateQueries({ queryKey: ['calendarContents', variables['workspaceId']] });
+      void qc.invalidateQueries({ queryKey: ['dashboard'] });
       if ((data as unknown) !== QUEUED_OFFLINE) {
         toast.success(i18n.t('toast_created', { ns: 'contents' }));
       }
@@ -56,6 +57,7 @@ export function useDeleteContent() {
     onSuccess: (_data, vars) => {
       void qc.invalidateQueries({ queryKey: ['contents', vars.workspaceId] });
       void qc.invalidateQueries({ queryKey: ['calendarContents', vars.workspaceId] });
+      void qc.invalidateQueries({ queryKey: ['dashboard'] });
       toast.success(i18n.t('toast_deleted', { ns: 'contents' }));
     },
     onError: (err) => {
@@ -66,7 +68,7 @@ export function useDeleteContent() {
 
 export function useUpdateContent() {
   const qc = useQueryClient();
-  return useMutation<Content, ApiError, { id: string; workspaceId: string; data: Record<string, unknown> }>({
+  return useMutation<Content, ApiError, { id: string; workspaceId: string; data: Record<string, unknown>; silent?: boolean }>({
     mutationFn: ({ id, data }) =>
       apiFetch<Content>(`/api/contents/${id}`, {
         method: 'PATCH',
@@ -82,9 +84,12 @@ export function useUpdateContent() {
     },
     onSuccess: (_data, vars) => {
       if (vars.data['stage']) {
-        const stage = String(vars.data['stage']);
-        const stageName = i18n.t(`stages.${stage}`, { ns: 'contents' });
-        toast.success(i18n.t('stage_updated', { ns: 'contents', stage: stageName }));
+        if (!vars.silent) {
+          const stage = String(vars.data['stage']);
+          const stageName = i18n.t(`stages.${stage}`, { ns: 'contents' });
+          toast.success(i18n.t('stage_updated', { ns: 'contents', stage: stageName }));
+        }
+        void qc.invalidateQueries({ queryKey: ['ideas'] });
       }
     },
     onError: (err, _vars, ctx) => {
@@ -99,6 +104,8 @@ export function useUpdateContent() {
     onSettled: (_data, _err, vars) => {
       void qc.invalidateQueries({ queryKey: ['contents', vars.workspaceId] });
       void qc.invalidateQueries({ queryKey: ['calendarContents', vars.workspaceId] });
+      void qc.invalidateQueries({ queryKey: ['contentCount'] });
+      void qc.invalidateQueries({ queryKey: ['dashboard'] });
     },
   });
 }

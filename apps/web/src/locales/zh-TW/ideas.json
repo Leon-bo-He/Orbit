@@ -38,6 +38,7 @@
     "workspace": "工作區",
     "confirm": "建立內容"
   },
+  "convert_error": "建立內容失敗",
   "revert_dialog": {
     "title": "恢復為活躍？",
     "description": "此靈感將重新標記為活躍。",

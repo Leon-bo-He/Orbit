@@ -56,6 +56,7 @@ export function AppShell() {
       {settingsSection !== null && (
         <SettingsModal initialSection={settingsSection} onClose={closeSettings} />
       )}
+
     </div>
   );
 }
