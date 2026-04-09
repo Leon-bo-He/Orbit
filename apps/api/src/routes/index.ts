@@ -10,6 +10,7 @@ import { metricsRoutes } from './metrics';
 import { dashboardRoutes } from './dashboard';
 import { exportRoutes } from './export';
 import { importRoutes } from './import';
+import { customPlatformsRoutes } from './custom-platforms';
 
 export async function registerRoutes(app: FastifyInstance) {
   await app.register(healthRoutes);
@@ -23,4 +24,5 @@ export async function registerRoutes(app: FastifyInstance) {
   await app.register(dashboardRoutes);
   await app.register(exportRoutes);
   await app.register(importRoutes);
+  await app.register(customPlatformsRoutes);
 }

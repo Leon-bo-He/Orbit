@@ -1,6 +1,6 @@
 // SVG paths sourced from remixicon.com (RemixIcon, Apache 2.0)
 import type { ReactNode } from 'react';
-import { useUiStore } from '../../store/ui.store.js';
+import { useCustomPlatforms } from '../../api/custom-platforms.js';
 
 interface PlatformIconProps {
   platform: string;
@@ -53,7 +53,7 @@ const PATHS = {
 };
 
 export function PlatformIcon({ platform, className = 'w-5 h-5' }: PlatformIconProps) {
-  const customPlatforms = useUiStore((s) => s.customPlatforms);
+  const { data: customPlatforms = [] } = useCustomPlatforms();
   switch (platform) {
     case 'youtube':
       return <BrandIcon path={PATHS.youtube} bg="#FF0000" className={className} />;

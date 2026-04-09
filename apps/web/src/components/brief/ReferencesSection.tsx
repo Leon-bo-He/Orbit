@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { ContentReference, CreateContentReferenceInput } from '@contentflow/shared';
 import { useUiStore } from '../../store/ui.store';
+import { useCustomPlatforms } from '../../api/custom-platforms';
 import { PlatformIcon } from '../ui/PlatformIcon';
 
 interface ReferencesSectionProps {
@@ -40,7 +41,8 @@ const EMPTY_FORM: CreateContentReferenceInput & {
 
 export function ReferencesSection({ references, onAdd, onDelete }: ReferencesSectionProps) {
   const { t } = useTranslation('contents');
-  const { customPlatforms, disabledBuiltinPlatforms, disabledCustomPlatforms, openSettings } = useUiStore();
+  const { disabledBuiltinPlatforms, disabledCustomPlatforms, openSettings } = useUiStore();
+  const { data: customPlatforms = [] } = useCustomPlatforms();
   const [showModal, setShowModal] = useState(false);
   const [form, setForm] = useState({ ...EMPTY_FORM });
   const [dropdownOpen, setDropdownOpen] = useState(false);

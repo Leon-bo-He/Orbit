@@ -1,12 +1,13 @@
 import { useState } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useQueryClient } from '@tanstack/react-query';
 import { useLogin } from '../../api/auth.js';
 import { useAuthStore } from '../../store/auth.store.js';
 import { useUiStore } from '../../store/ui.store.js';
 import i18n from '../../i18n/index.js';
 import { toast } from '../../store/toast.store.js';
-import { ApiError } from '../../api/client.js';
+import { ApiError, apiFetch } from '../../api/client.js';
 import LanguageSwitcher from '../../components/auth/LanguageSwitcher.js';
 
 type Theme = 'system' | 'light' | 'dark';
@@ -15,8 +16,8 @@ const THEME_ICONS: Record<Theme, string> = { system: '💻', light: '☀️', da
 export default function LoginPage() {
   const { t } = useTranslation('common');
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
   const setAuth = useAuthStore((s) => s.setAuth);
+  const queryClient = useQueryClient();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -37,8 +38,25 @@ export default function LoginPage() {
         void i18n.changeLanguage(result.user.locale);
       }
       toast.clear();
-      const redirect = searchParams.get('redirect') ?? '/';
-      void navigate(redirect, { replace: true });
+      // Prefetch all first-page data before navigating.
+      // Awaiting workspaces + dashboard ensures AppShell finds them in cache
+      // immediately — no FullPageSpinner flash and no Dashboard skeleton on login.
+      // The remaining fetches (ideas, publications) run in parallel and finish
+      // in the background so those pages are instant too.
+      const pad = (n: number) => String(n).padStart(2, '0');
+      const fmt = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+      const today = new Date();
+      const end = new Date(today); end.setDate(end.getDate() + 14);
+      const pubFilters = { status: 'queued,ready', from: fmt(today), to: fmt(end) };
+      // These two are awaited so the transition is seamless (no spinner/skeleton flash)
+      await Promise.all([
+        queryClient.prefetchQuery({ queryKey: ['workspaces'], queryFn: () => apiFetch('/api/workspaces') }),
+        queryClient.prefetchQuery({ queryKey: ['dashboard'],  queryFn: () => apiFetch('/api/dashboard') }),
+      ]);
+      // The rest finish in the background before the user navigates away
+      void queryClient.prefetchQuery({ queryKey: ['ideas', { status: 'active' }], queryFn: () => apiFetch('/api/ideas?status=active') });
+      void queryClient.prefetchQuery({ queryKey: ['publishQueue', pubFilters],    queryFn: () => apiFetch(`/api/publications/queue?${new URLSearchParams(pubFilters).toString()}`) });
+      void navigate('/', { replace: true });
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {
         setErrorMsg(t('auth.invalid_credentials'));

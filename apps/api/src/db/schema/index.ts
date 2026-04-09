@@ -7,3 +7,4 @@ export * from './content-references';
 export * from './plan-templates';
 export * from './publications';
 export * from './metrics';
+export * from './custom-platforms';

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCreatePublication } from '../../api/publications.js';
+import { useCustomPlatforms } from '../../api/custom-platforms.js';
 import { DateTimePicker } from '../ui/DateTimePicker.js';
 import { PlatformIcon } from '../ui/PlatformIcon.js';
 import { useUiStore } from '../../store/ui.store.js';
@@ -25,7 +26,8 @@ export function AddPlatformModal({ contentId, existingPlatforms, onClose }: AddP
   const { t } = useTranslation('publications');
   const { t: tc } = useTranslation('contents');
   const createPublication = useCreatePublication(contentId);
-  const { customPlatforms, disabledBuiltinPlatforms, openSettings } = useUiStore();
+  const { data: customPlatforms = [] } = useCustomPlatforms();
+  const { disabledBuiltinPlatforms, openSettings } = useUiStore();
 
   const [selectedPlatform, setSelectedPlatform] = useState<string | null>(null);
   const [scheduledAt, setScheduledAt] = useState(toDatetimeLocal(new Date()));

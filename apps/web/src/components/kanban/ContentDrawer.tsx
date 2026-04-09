@@ -4,6 +4,7 @@ import type { Content, Stage, Platform, ContentType, StageHistoryEntry } from '@
 import { STAGE_ORDER } from '@contentflow/shared';
 import { useTranslation } from 'react-i18next';
 import { useUpdateContent, useDeleteContent } from '../../api/contents.js';
+import { useCustomPlatforms } from '../../api/custom-platforms.js';
 import { PublicationsPanel } from '../publications/PublicationsPanel.js';
 import { DateTimePicker } from '../ui/DateTimePicker.js';
 import { PlatformIcon } from '../ui/PlatformIcon.js';
@@ -149,7 +150,8 @@ function DrawerBody({ content, workspaceId, onClose }: DrawerBodyProps) {
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-  const { customPlatforms, openSettings, disabledBuiltinPlatforms } = useUiStore();
+  const { openSettings, disabledBuiltinPlatforms } = useUiStore();
+  const { data: customPlatforms = [] } = useCustomPlatforms();
 
   const [activeTab, setActiveTab] = useState<DrawerTab>('details');
   const [editingTitle, setEditingTitle] = useState(false);

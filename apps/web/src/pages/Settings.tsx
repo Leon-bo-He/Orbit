@@ -3,12 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import type { Workspace } from '@contentflow/shared';
 import { useWorkspaces, useUpdateWorkspace } from '../api/workspaces.js';
+import { useCustomPlatforms, useCreateCustomPlatform, useDeleteCustomPlatform } from '../api/custom-platforms.js';
+import type { CustomPlatform } from '../api/custom-platforms.js';
 import { useUpdateProfile, useChangePassword, useDeleteAccount, useLogout } from '../api/auth.js';
 import { apiFetch } from '../api/client.js';
 import { queryClient } from '../api/query-client.js';
 import { useAuthStore } from '../store/auth.store.js';
-import { useUiStore, type Theme, type CustomPlatform } from '../store/ui.store.js';
+import { useUiStore, type Theme } from '../store/ui.store.js';
 import { CreateWorkspaceModal } from '../components/workspaces/CreateWorkspaceModal.js';
+import { ColorPicker } from '../components/ui/ColorPicker.js';
 import { PlatformIcon } from '../components/ui/PlatformIcon.js';
 import { CalendarPicker } from '../components/ui/CalendarPicker.js';
 import i18n, { SUPPORTED_LOCALES, type SupportedLocale } from '../i18n/index.js';
@@ -42,6 +45,7 @@ function EditWorkspaceModal({ workspace, onClose }: { workspace: Workspace; onCl
   const updateWorkspace = useUpdateWorkspace();
   const [name, setName] = useState(workspace.name);
   const [icon, setIcon] = useState(workspace.icon);
+  const [color, setColor] = useState(workspace.color);
   const [about, setAbout] = useState((workspace as Workspace & { about?: string }).about ?? '');
   const [goalCount, setGoalCount] = useState(workspace.publishGoal?.count ?? 3);
   const [goalPeriod, setGoalPeriod] = useState<'day' | 'week' | 'month'>(workspace.publishGoal?.period ?? 'week');
@@ -54,6 +58,7 @@ function EditWorkspaceModal({ workspace, onClose }: { workspace: Workspace; onCl
       data: {
         name: name.trim(),
         icon,
+        color,
         about: about.trim() || undefined,
         publishGoal: { count: goalCount, period: goalPeriod },
       },
@@ -74,7 +79,7 @@ function EditWorkspaceModal({ workspace, onClose }: { workspace: Workspace; onCl
             <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-xl">
               <span
                 className="w-10 h-10 rounded-full flex items-center justify-center text-2xl flex-shrink-0"
-                style={{ backgroundColor: workspace.color + '33' }}
+                style={{ backgroundColor: color + '33' }}
               >
                 {icon}
               </span>
@@ -84,7 +89,7 @@ function EditWorkspaceModal({ workspace, onClose }: { workspace: Workspace; onCl
                 </p>
                 {about && <p className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">{about}</p>}
               </div>
-              <span className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: workspace.color }} />
+              <span className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: color }} />
             </div>
 
             {/* Name */}
@@ -117,6 +122,12 @@ function EditWorkspaceModal({ workspace, onClose }: { workspace: Workspace; onCl
                   </button>
                 ))}
               </div>
+            </div>
+
+            {/* Color */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('color_label')}</label>
+              <ColorPicker value={color} onChange={setColor} />
             </div>
 
             {/* About */}
@@ -1172,11 +1183,10 @@ const BUILTIN_PLATFORMS = [
 function PlatformsPanel() {
   const { t } = useTranslation('contents');
   const { t: tc } = useTranslation('common');
-  const {
-    customPlatforms, addCustomPlatform, removeCustomPlatform,
-    disabledBuiltinPlatforms, toggleBuiltinPlatform,
-    disabledCustomPlatforms, toggleCustomPlatform,
-  } = useUiStore();
+  const { disabledBuiltinPlatforms, toggleBuiltinPlatform, disabledCustomPlatforms, toggleCustomPlatform } = useUiStore();
+  const { data: customPlatforms = [] } = useCustomPlatforms();
+  const createCustomPlatform = useCreateCustomPlatform();
+  const deleteCustomPlatform = useDeleteCustomPlatform();
 
   const [adding, setAdding] = useState(false);
   const [icon, setIcon] = useState(''); // data URL (SVG) or emoji
@@ -1198,10 +1208,9 @@ function PlatformsPanel() {
   function handleAdd() {
     const n = name.trim();
     if (!n) return;
-    addCustomPlatform(n, icon || '📌');
-    setIcon('');
-    setName('');
-    setAdding(false);
+    createCustomPlatform.mutate({ name: n, icon: icon || '📌' }, {
+      onSuccess: () => { setIcon(''); setName(''); setAdding(false); },
+    });
   }
 
   return (
@@ -1264,7 +1273,7 @@ function PlatformsPanel() {
                       style={{ width: '18px', height: '18px' }} />
                   </button>
                   <button
-                    onClick={() => removeCustomPlatform(cp.id)}
+                    onClick={() => deleteCustomPlatform.mutate(cp.id)}
                     className="p-1.5 text-gray-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors"
                     title={tc('action.remove')}
                   >
@@ -1319,7 +1328,7 @@ function PlatformsPanel() {
                 placeholder={t('drawer.custom_platform_name')}
                 className="flex-1 text-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-300 dark:focus:ring-indigo-700 dark:text-gray-100 dark:placeholder-gray-500"
               />
-              <button onClick={handleAdd} disabled={!name.trim()} className="px-3 py-2 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
+              <button onClick={handleAdd} disabled={!name.trim() || createCustomPlatform.isPending} className="px-3 py-2 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
                 {tc('action.add')}
               </button>
               <button onClick={() => { setAdding(false); setIcon(''); setName(''); }} className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">

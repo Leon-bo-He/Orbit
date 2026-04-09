@@ -4,30 +4,34 @@ import { AppShell } from '../components/layout/AppShell.js';
 import { ErrorBoundary } from '../components/ui/ErrorBoundary.js';
 import { RequireAuth } from '../components/auth/RequireAuth.js';
 
-const Dashboard = lazy(() => import('../pages/Dashboard.js'));
-const Ideas = lazy(() => import('../pages/Ideas.js'));
-const WorkspaceBoard = lazy(() => import('../pages/WorkspaceBoard.js'));
-const Calendar = lazy(() => import('../pages/Calendar.js'));
-const Publications = lazy(() => import('../pages/Publications.js'));
-const Analytics = lazy(() => import('../pages/Analytics.js'));
-const ContentBrief = lazy(() => import('../pages/ContentBrief.js'));
-const WorkspaceArchive = lazy(() => import('../pages/WorkspaceArchive.js'));
-const NotFound = lazy(() => import('../pages/NotFound.js'));
-const LoginPage = lazy(() => import('../pages/auth/LoginPage.js'));
-const RegisterPage = lazy(() => import('../pages/auth/RegisterPage.js'));
+// App pages are imported eagerly so navigations are always instant.
+// Public auth pages (login / register) stay lazy — they are never needed
+// once the user is inside the app.
+import DashboardPage      from '../pages/Dashboard.js';
+import IdeasPage          from '../pages/Ideas.js';
+import WorkspaceBoardPage from '../pages/WorkspaceBoard.js';
+import CalendarPage       from '../pages/Calendar.js';
+import PublicationsPage   from '../pages/Publications.js';
+import AnalyticsPage      from '../pages/Analytics.js';
+import ContentBriefPage   from '../pages/ContentBrief.js';
+import WorkspaceArchivePage from '../pages/WorkspaceArchive.js';
+import NotFoundPage       from '../pages/NotFound.js';
 
-function Loading() {
-  return <div className="p-6 text-gray-400">Loading…</div>;
-}
+const LoginPage    = lazy(() => import('../pages/auth/LoginPage.js'));
+const RegisterPage = lazy(() => import('../pages/auth/RegisterPage.js'));
 
 function wrap(C: React.ComponentType) {
   return (
     <ErrorBoundary>
-      <Suspense fallback={<Loading />}>
+      <Suspense fallback={null}>
         <C />
       </Suspense>
     </ErrorBoundary>
   );
+}
+
+function page(C: React.ComponentType) {
+  return <ErrorBoundary><C /></ErrorBoundary>;
 }
 
 export const router: ReturnType<typeof createBrowserRouter> = createBrowserRouter([
@@ -48,15 +52,15 @@ export const router: ReturnType<typeof createBrowserRouter> = createBrowserRoute
         path: '/',
         element: <AppShell />,
         children: [
-          { index: true, element: wrap(Dashboard) },
-          { path: 'ideas', element: wrap(Ideas) },
-          { path: 'workspaces/:workspaceId/board', element: wrap(WorkspaceBoard) },
-          { path: 'workspaces/:workspaceId/calendar', element: wrap(Calendar) },
-          { path: 'workspaces/:workspaceId/analytics', element: wrap(Analytics) },
-          { path: 'workspaces/:workspaceId/contents/:contentId/brief', element: wrap(ContentBrief) },
-          { path: 'workspaces/:workspaceId/archive', element: wrap(WorkspaceArchive) },
-          { path: 'publications', element: wrap(Publications) },
-          { path: '*', element: wrap(NotFound) },
+          { index: true,                                                    element: page(DashboardPage) },
+          { path: 'ideas',                                                  element: page(IdeasPage) },
+          { path: 'workspaces/:workspaceId/board',                         element: page(WorkspaceBoardPage) },
+          { path: 'workspaces/:workspaceId/calendar',                      element: page(CalendarPage) },
+          { path: 'workspaces/:workspaceId/analytics',                     element: page(AnalyticsPage) },
+          { path: 'workspaces/:workspaceId/contents/:contentId/brief',     element: page(ContentBriefPage) },
+          { path: 'workspaces/:workspaceId/archive',                       element: page(WorkspaceArchivePage) },
+          { path: 'publications',                                           element: page(PublicationsPage) },
+          { path: '*',                                                      element: page(NotFoundPage) },
         ],
       },
     ],

@@ -9,6 +9,7 @@ import { PlatformIcon } from '../ui/PlatformIcon.js';
 import { DateTimePicker } from '../ui/DateTimePicker.js';
 import { TimePicker } from '../ui/TimePicker.js';
 import { useUiStore, type PlatformBundle, type PlatformBundleItem } from '../../store/ui.store.js';
+import { useCustomPlatforms } from '../../api/custom-platforms.js';
 
 const BUILTIN_PLATFORMS = [
   'douyin', 'xiaohongshu', 'weixin', 'weixin_video',
@@ -51,7 +52,8 @@ interface BundleModalProps {
 function BundleModal({ contentId, existingPlatforms, currentPubs, onClose }: BundleModalProps) {
   const { t } = useTranslation('publications');
   const { t: tc } = useTranslation('contents');
-  const { platformBundles, savePlatformBundle, removePlatformBundle, customPlatforms, disabledBuiltinPlatforms } = useUiStore();
+  const { platformBundles, savePlatformBundle, removePlatformBundle, disabledBuiltinPlatforms } = useUiStore();
+  const { data: customPlatforms = [] } = useCustomPlatforms();
   const createPublication = useCreatePublication(contentId);
 
   const [view, setView] = useState<BundleView>('list');

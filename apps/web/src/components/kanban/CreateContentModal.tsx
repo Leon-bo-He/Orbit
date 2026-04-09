@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { ContentType } from '@contentflow/shared';
 import { useCreateContent } from '../../api/contents.js';
+import { useCustomPlatforms } from '../../api/custom-platforms.js';
 import { PlatformIcon } from '../ui/PlatformIcon.js';
 import { useUiStore } from '../../store/ui.store.js';
 
@@ -22,7 +23,8 @@ interface CreateContentModalProps {
 export function CreateContentModal({ workspaceId, onClose }: CreateContentModalProps) {
   const { t } = useTranslation('contents');
   const createContent = useCreateContent();
-  const { customPlatforms, openSettings, disabledBuiltinPlatforms } = useUiStore();
+  const { openSettings, disabledBuiltinPlatforms } = useUiStore();
+  const { data: customPlatforms = [] } = useCustomPlatforms();
 
   const [title, setTitle] = useState('');
   const [contentType, setContentType] = useState<ContentType>('video_short');

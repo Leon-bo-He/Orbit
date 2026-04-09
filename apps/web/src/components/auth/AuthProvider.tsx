@@ -97,6 +97,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         void i18n.changeLanguage(meQuery.data.locale);
       }
     } else if (meQuery.isError) {
+      setRefreshedToken(null);
       clearAuth();
     }
     setIsLoading(false);

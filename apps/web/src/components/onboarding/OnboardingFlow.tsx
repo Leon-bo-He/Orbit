@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useCreateWorkspace } from '../../api/workspaces.js';
+import { useLogout } from '../../api/auth.js';
+import { useAuthStore } from '../../store/auth.store.js';
 import { useUiStore } from '../../store/ui.store.js';
 import { ColorPicker } from '../ui/ColorPicker.js';
 
@@ -16,9 +18,13 @@ type Step = 'welcome' | 'create';
 
 export function OnboardingFlow() {
   const { t } = useTranslation('workspaces');
+  const { t: tc } = useTranslation('common');
   const navigate = useNavigate();
   const createWorkspace = useCreateWorkspace();
   const setActiveWorkspace = useUiStore((s) => s.setActiveWorkspace);
+
+  const clearAuth = useAuthStore((s) => s.clearAuth);
+  const logoutMutation = useLogout();
 
   const [step, setStep] = useState<Step>('welcome');
   const [name, setName] = useState('');
@@ -27,6 +33,19 @@ export function OnboardingFlow() {
   const [goalCount, setGoalCount] = useState(3);
   const [goalPeriod, setGoalPeriod] = useState<'day' | 'week' | 'month'>('week');
   const [nameError, setNameError] = useState('');
+
+  function handleSignOut() {
+    logoutMutation.mutate(undefined, {
+      onSuccess: () => {
+        clearAuth();
+        void navigate('/login', { replace: true });
+      },
+      onError: () => {
+        clearAuth();
+        void navigate('/login', { replace: true });
+      },
+    });
+  }
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
@@ -44,6 +63,13 @@ export function OnboardingFlow() {
   if (step === 'welcome') {
     return (
       <div className="fixed inset-0 flex flex-col items-center justify-center p-8 text-center" style={{ background: 'var(--cf-bg)' }}>
+        <button
+          onClick={handleSignOut}
+          disabled={logoutMutation.isPending}
+          className="absolute top-4 right-4 text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors disabled:opacity-50"
+        >
+          {tc('auth.sign_out')}
+        </button>
         <div className="text-6xl mb-6 select-none">✦</div>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
           {t('onboarding.welcome_title')}
@@ -68,7 +94,7 @@ export function OnboardingFlow() {
     <div className="fixed inset-0 overflow-y-auto" style={{ background: 'var(--cf-bg)' }}>
       <div className="min-h-full flex items-start justify-center p-6 pt-10">
         <div className="w-full max-w-md pb-10">
-          {/* Back + progress */}
+          {/* Back + progress + sign out */}
           <div className="flex items-center gap-3 mb-8">
             <button
               onClick={() => setStep('welcome')}
@@ -82,6 +108,13 @@ export function OnboardingFlow() {
               <div className="w-2 h-2 rounded-full bg-gray-200 dark:bg-gray-600" />
               <div className="w-2 h-2 rounded-full bg-indigo-500" />
             </div>
+            <button
+              onClick={handleSignOut}
+              disabled={logoutMutation.isPending}
+              className="ml-auto text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors disabled:opacity-50"
+            >
+              {tc('auth.sign_out')}
+            </button>
           </div>
 
           <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-1">

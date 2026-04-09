@@ -4,12 +4,6 @@ import type { SupportedLocale } from '../i18n/index.js';
 
 export type Theme = 'system' | 'light' | 'dark';
 
-export interface CustomPlatform {
-  id: string;   // unique, e.g. "custom_abc123"
-  name: string;
-  icon: string; // emoji or SVG data URL
-}
-
 export interface PublicationTemplate {
   id: string;
   name: string;
@@ -36,7 +30,6 @@ interface UiState {
   locale: SupportedLocale;
   sidebarCollapsed: boolean;
   theme: Theme;
-  customPlatforms: CustomPlatform[];
   disabledBuiltinPlatforms: string[];
   disabledCustomPlatforms: string[];
   publicationTemplates: PublicationTemplate[];
@@ -46,8 +39,6 @@ interface UiState {
   setLocale: (locale: SupportedLocale) => void;
   toggleSidebar: () => void;
   setTheme: (theme: Theme) => void;
-  addCustomPlatform: (name: string, icon: string) => CustomPlatform;
-  removeCustomPlatform: (id: string) => void;
   toggleBuiltinPlatform: (id: string) => void;
   toggleCustomPlatform: (id: string) => void;
   openSettings: (section?: string) => void;
@@ -65,7 +56,6 @@ export const useUiStore = create<UiState>()(
       locale: 'en-US',
       sidebarCollapsed: false,
       theme: 'system',
-      customPlatforms: [],
       disabledBuiltinPlatforms: [],
       disabledCustomPlatforms: [],
       publicationTemplates: [],
@@ -75,17 +65,6 @@ export const useUiStore = create<UiState>()(
       setLocale: (locale) => set({ locale }),
       toggleSidebar: () => set((s) => ({ sidebarCollapsed: !s.sidebarCollapsed })),
       setTheme: (theme) => set({ theme }),
-      addCustomPlatform: (name, icon) => {
-        const platform: CustomPlatform = {
-          id: `custom_${Date.now()}`,
-          name,
-          icon,
-        };
-        set((s) => ({ customPlatforms: [...s.customPlatforms, platform] }));
-        return platform;
-      },
-      removeCustomPlatform: (id) =>
-        set((s) => ({ customPlatforms: s.customPlatforms.filter((p) => p.id !== id) })),
       toggleBuiltinPlatform: (id) =>
         set((s) => ({
           disabledBuiltinPlatforms: s.disabledBuiltinPlatforms.includes(id)
