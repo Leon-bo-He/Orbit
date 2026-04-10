@@ -90,7 +90,7 @@ function useCalendarContents(workspaceId: string, from: Date, to: Date) {
     from: from.toISOString(),
     to: to.toISOString(),
   });
-  return useQuery<Record<string, Content[]>, ApiError>({
+  const query = useQuery<Record<string, Content[]>, ApiError>({
     queryKey: ['calendarContents', workspaceId, isoDate(from), isoDate(to)],
     queryFn: async () => {
       const serverData = await apiFetch<Record<string, Content[]>>(`/api/contents/calendar?${params.toString()}`);
@@ -107,6 +107,10 @@ function useCalendarContents(workspaceId: string, from: Date, to: Date) {
     enabled: Boolean(workspaceId),
     placeholderData: keepPreviousData,
   });
+  // isLoading is true even when keepPreviousData has data to show. Only treat it
+  // as a "full screen" loading state on the very first fetch (no placeholder yet).
+  const firstLoad = query.isLoading && !query.isPlaceholderData;
+  return { ...query, firstLoad };
 }
 
 function usePeriodCount(workspaceId: string, from: Date, to: Date, key: string) {
@@ -528,7 +532,7 @@ export default function Calendar() {
 
   const weekStart = startOfWeek(current);
 
-  const { data: contentsByDate = {}, isLoading } = useCalendarContents(workspaceId ?? '', from, to);
+  const { data: contentsByDate = {}, firstLoad, isFetching } = useCalendarContents(workspaceId ?? '', from, to);
 
   const weeklyActual = Array.from({ length: 7 }, (_, i) => isoDate(addDays(weekStart, i)))
     .reduce((sum, ds) => sum + (contentsByDate[ds]?.length ?? 0), 0);
@@ -637,10 +641,16 @@ export default function Calendar() {
                 <path d="M15 18l-6-6 6-6"/>
               </svg>
             </button>
-            <span className="text-sm font-semibold text-gray-800 min-w-[148px] text-center capitalize select-none">
+            <span className="text-sm font-semibold text-gray-800 min-w-[148px] text-center capitalize select-none flex items-center justify-center gap-1.5">
               {view === 'month'
                 ? monthLabel(current, locale)
                 : `${dayLabel(weekStart, locale)} – ${dayLabel(addDays(weekStart, 6), locale)}`}
+              {isFetching && !firstLoad && (
+                <svg className="w-3 h-3 animate-spin text-gray-400 flex-shrink-0" viewBox="0 0 24 24" fill="none">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 000 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z"/>
+                </svg>
+              )}
             </span>
             <button
               type="button"
@@ -672,7 +682,7 @@ export default function Calendar() {
 
       {/* Calendar body */}
       <div className="flex-1 overflow-y-auto px-5 pb-5">
-        {isLoading ? (
+        {firstLoad ? (
           <div className="flex items-center justify-center h-40">
             <div className="flex items-center gap-2 text-sm text-gray-400">
               <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
