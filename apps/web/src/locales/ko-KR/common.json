@@ -156,7 +156,7 @@
       "telegram_desc": "Telegram으로 발행 알림을 받으세요.",
       "telegram_step1": "Telegram에서 @BotFather를 열고 새 봇을 만들어 Bot Token을 받습니다.",
       "telegram_step2": "봇에 아무 메시지나 보내 대화를 시작합니다.",
-      "telegram_step3": "아래에 Bot Token을 입력한 후 「가져오기」를 클릭하면 Chat ID가 자동으로 감지됩니다.",
+      "telegram_step3": "「연결」을 클릭하고 Bot Token을 입력한 후 「가져오기」를 클릭하면 Chat ID가 자동으로 감지됩니다.",
       "telegram_connect": "Telegram 연결",
       "telegram_edit": "편집",
       "telegram_disconnect": "연결 해제",

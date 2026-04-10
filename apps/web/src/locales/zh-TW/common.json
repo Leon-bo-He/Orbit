@@ -156,7 +156,7 @@
       "telegram_desc": "透過 Telegram 接收發布提醒和通知。",
       "telegram_step1": "在 Telegram 中開啟 @BotFather，建立新機器人以取得 Bot Token。",
       "telegram_step2": "向你的機器人傳送任意訊息，啟動對話。",
-      "telegram_step3": "在下方輸入 Bot Token，然後點擊「獲取」自動識別你的 Chat ID。",
+      "telegram_step3": "點擊「連接」，輸入 Bot Token，再點擊「獲取」自動識別你的 Chat ID。",
       "telegram_connect": "連接 Telegram",
       "telegram_edit": "編輯",
       "telegram_disconnect": "中斷連接",

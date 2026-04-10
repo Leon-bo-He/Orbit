@@ -156,7 +156,7 @@
       "telegram_desc": "Telegram で発行リマインダーと通知を受け取ります。",
       "telegram_step1": "Telegram で @BotFather を開き、新しいボットを作成して Bot Token を取得します。",
       "telegram_step2": "ボットに任意のメッセージを送信して会話を開始します。",
-      "telegram_step3": "下記に Bot Token を入力し、「取得」をクリックして Chat ID を自動検出します。",
+      "telegram_step3": "「接続」をクリックし、Bot Token を入力してから「取得」をクリックして Chat ID を自動検出します。",
       "telegram_connect": "Telegram を接続",
       "telegram_edit": "編集",
       "telegram_disconnect": "切断",
