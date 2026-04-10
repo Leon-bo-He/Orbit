@@ -28,10 +28,6 @@ services:
     volumes:
       - redis_data:/data
 
-  adminer:
-    image: adminer
-    ports: ["8080:8080"]
-    depends_on: [postgres]
 
 volumes:
   postgres_data:
