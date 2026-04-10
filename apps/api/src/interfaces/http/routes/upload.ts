@@ -6,7 +6,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const UPLOADS_DIR = path.join(__dirname, '../../../../../../uploads/workspace-icons');
+const UPLOADS_DIR = path.join(__dirname, '../../../../uploads/workspace-icons');
 
 const ALLOWED_MIME = new Set(['image/jpeg', 'image/png', 'image/gif', 'image/webp']);
 const EXT_MAP: Record<string, string> = {

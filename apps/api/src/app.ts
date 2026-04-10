@@ -7,7 +7,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const UPLOADS_ROOT = path.join(__dirname, '../../../uploads');
+const UPLOADS_ROOT = path.join(__dirname, '../uploads');
 import { config } from './config.js';
 import { corsPlugin } from './interfaces/http/plugins/cors.js';
 import { authPlugin } from './interfaces/http/plugins/auth.js';
