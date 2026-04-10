@@ -14,12 +14,12 @@ export class UserRepository implements IUserRepository {
     return user ?? null;
   }
 
-  async create(data: { email: string; name: string; passwordHash: string }) {
+  async create(data: { email: string; username: string; passwordHash: string }) {
     const [user] = await db.insert(users).values(data).returning();
     return user!;
   }
 
-  async update(id: string, data: Partial<{ name: string; email: string; locale: string; timezone: string }>) {
+  async update(id: string, data: Partial<{ username: string; email: string; locale: string; timezone: string }>) {
     const [updated] = await db.update(users).set(data).where(eq(users.id, id)).returning();
     return updated ?? null;
   }

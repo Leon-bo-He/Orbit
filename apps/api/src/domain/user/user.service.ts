@@ -5,8 +5,8 @@ export type User = typeof users.$inferSelect;
 export interface IUserRepository {
   findByEmail(email: string): Promise<User | null>;
   findById(id: string): Promise<User | null>;
-  create(data: { email: string; name: string; passwordHash: string }): Promise<User>;
-  update(id: string, data: Partial<{ name: string; email: string; locale: string; timezone: string }>): Promise<User | null>;
+  create(data: { email: string; username: string; passwordHash: string }): Promise<User>;
+  update(id: string, data: Partial<{ username: string; email: string; locale: string; timezone: string }>): Promise<User | null>;
   updatePassword(id: string, passwordHash: string): Promise<void>;
   delete(id: string): Promise<void>;
 }

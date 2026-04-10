@@ -22,7 +22,7 @@ export function useLogin() {
 }
 
 export function useRegister() {
-  return useMutation<AuthResponse, ApiError, { email: string; name: string; password: string }>({
+  return useMutation<AuthResponse, ApiError, { email: string; username: string; password: string }>({
     mutationFn: (body) =>
       apiFetch<AuthResponse>('/api/auth/register', {
         method: 'POST',
@@ -46,7 +46,7 @@ export function useRefreshToken() {
 }
 
 export function useUpdateProfile() {
-  return useMutation<AuthUser, ApiError, { name?: string; email?: string; locale?: string; timezone?: string }>({
+  return useMutation<AuthUser, ApiError, { username?: string; email?: string; locale?: string; timezone?: string }>({
     mutationFn: (body) =>
       apiFetch<AuthUser>('/api/auth/profile', {
         method: 'PATCH',

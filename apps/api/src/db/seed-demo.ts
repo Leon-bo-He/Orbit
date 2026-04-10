@@ -56,7 +56,7 @@ async function seed() {
   const passwordHash = await bcrypt.hash(DEMO_PASSWORD, 10);
   const [user] = await db.insert(users).values({
     email: DEMO_EMAIL,
-    name: 'Alex Chen',
+    username: 'Alex Chen',
     locale: 'en-US',
     timezone: 'Asia/Shanghai',
     passwordHash,

@@ -18,7 +18,7 @@ export default function RegisterPage() {
   const setAuth = useAuthStore((s) => s.setAuth);
   const { theme, setTheme } = useUiStore();
 
-  const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -46,7 +46,7 @@ export default function RegisterPage() {
     }
 
     try {
-      const result = await registerMutation.mutateAsync({ email, name, password });
+      const result = await registerMutation.mutateAsync({ email, username, password });
       setAuth(result.user, result.accessToken);
       void navigate('/', { replace: true });
     } catch (err) {
@@ -92,8 +92,8 @@ export default function RegisterPage() {
                 type="text"
                 autoComplete="name"
                 required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
               />
             </div>

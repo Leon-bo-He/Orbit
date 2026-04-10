@@ -8,7 +8,7 @@ import type { UserService } from '../../../domain/user/user.service.js';
 
 const registerSchema = z.object({
   email: z.string().email(),
-  name: z.string().min(1).max(100),
+  username: z.string().min(1).max(100),
   password: z.string().min(8),
 });
 
@@ -45,7 +45,7 @@ export function authRoutes(app: FastifyInstance, svc: UserService) {
 
       return reply
         .setCookie('refreshToken', refreshToken, { ...COOKIE_OPTS, maxAge: config.JWT_REFRESH_TTL })
-        .send({ accessToken, user: { id: user.id, email: user.email, name: user.name, locale: user.locale } });
+        .send({ accessToken, user: { id: user.id, email: user.email, username: user.username, locale: user.locale } });
     },
   );
 
@@ -86,13 +86,13 @@ export function authRoutes(app: FastifyInstance, svc: UserService) {
     if (!parsed.success) {
       return reply.code(400).send({ error: parsed.error.errors[0]?.message ?? 'Invalid input' });
     }
-    const { email, name, password } = parsed.data;
+    const { email, username, password } = parsed.data;
 
     const existing = await svc.findByEmail(email);
     if (existing) return reply.code(409).send({ error: 'Email already registered' });
 
     const passwordHash = await bcrypt.hash(password, 10);
-    const user = await svc.create({ email, name, passwordHash });
+    const user = await svc.create({ email, username, passwordHash });
 
     const jti = randomUUID();
     const accessToken = app.jwt.sign({ sub: user.id, email: user.email, jti }, { expiresIn: config.JWT_ACCESS_TTL });
@@ -101,13 +101,13 @@ export function authRoutes(app: FastifyInstance, svc: UserService) {
 
     return reply.code(201)
       .setCookie('refreshToken', refreshToken, { ...COOKIE_OPTS, maxAge: config.JWT_REFRESH_TTL })
-      .send({ accessToken, user: { id: user.id, email: user.email, name: user.name, locale: user.locale } });
+      .send({ accessToken, user: { id: user.id, email: user.email, username: user.username, locale: user.locale } });
   });
 
   // PATCH /api/auth/profile
   app.patch<{ Body: unknown }>('/api/auth/profile', { onRequest: [app.authenticate] }, async (req, reply) => {
     const schema = z.object({
-      name: z.string().min(1).max(100).optional(),
+      username: z.string().min(1).max(100).optional(),
       email: z.string().email().optional(),
       locale: z.string().optional(),
       timezone: z.string().optional(),
@@ -125,14 +125,14 @@ export function authRoutes(app: FastifyInstance, svc: UserService) {
     }
 
     const updatePayload: Parameters<UserService['update']>[1] = {};
-    if (updates.name !== undefined) updatePayload.name = updates.name;
+    if (updates.username !== undefined) updatePayload.username = updates.username;
     if (updates.email !== undefined) updatePayload.email = updates.email;
     if (updates.locale !== undefined) updatePayload.locale = updates.locale;
     if (updates.timezone !== undefined) updatePayload.timezone = updates.timezone;
     const updated = await svc.update(sub, updatePayload);
     if (!updated) return reply.code(404).send({ error: 'User not found' });
 
-    return reply.send({ id: updated.id, email: updated.email, name: updated.name, locale: updated.locale });
+    return reply.send({ id: updated.id, email: updated.email, username: updated.username, locale: updated.locale });
   });
 
   // PATCH /api/auth/password
@@ -175,6 +175,6 @@ export function authRoutes(app: FastifyInstance, svc: UserService) {
     const { sub } = req.user as { sub: string };
     const user = await svc.findById(sub);
     if (!user) return reply.code(404).send({ error: 'User not found' });
-    return reply.send({ id: user.id, email: user.email, name: user.name, locale: user.locale, timezone: user.timezone });
+    return reply.send({ id: user.id, email: user.email, username: user.username, locale: user.locale, timezone: user.timezone });
   });
 }

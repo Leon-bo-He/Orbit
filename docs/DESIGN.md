@@ -522,7 +522,7 @@ Domain errors (`NotFoundError`, `ForbiddenError`, `ConflictError`, `ValidationEr
 ```sql
 -- Users
 users (
-  id, email, name, avatar,
+  id, email, username, avatar,
   locale,    -- preferred UI language
   timezone,
   created_at
@@ -532,11 +532,8 @@ users (
 workspaces (
   id, user_id,
   name, icon, color,
-  platform,           -- e.g. douyin | xiaohongshu | weixin | youtube
-  content_type,       -- video_short | video_long | image_text | article | podcast
-  default_locale,
+  about,
   publish_goal,       -- JSON: { count: 3, period: 'week' }
-  timezone,
   stage_config,       -- JSON: custom Kanban stage list
   created_at
 )
@@ -563,8 +560,6 @@ contents (
   stage,              -- planned | planning | creating | ready | publishing | published | reviewed
   tags[],
   target_platforms[],
-  locale,
-  locale_variants,    -- JSON: [{ locale, content_id }]
   scheduled_at,
   published_at,
   notes,

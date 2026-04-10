@@ -17,17 +17,17 @@ let _seq = 0;
 
 export async function registerAndLogin(
   app: FastifyInstance,
-  overrides?: { email?: string; password?: string; name?: string },
+  overrides?: { email?: string; password?: string; username?: string },
 ): Promise<AuthResult> {
   const seq = ++_seq;
   const email = overrides?.email ?? `user${seq}@test.com`;
   const password = overrides?.password ?? 'password123';
-  const name = overrides?.name ?? 'Test User';
+  const username = overrides?.username ?? 'Test User';
 
   const res = await app.inject({
     method: 'POST',
     url: '/api/auth/register',
-    payload: { email, name, password },
+    payload: { email, username, password },
   });
 
   if (res.statusCode !== 201) {

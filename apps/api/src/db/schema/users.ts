@@ -3,7 +3,7 @@ import { pgTable, uuid, text, timestamp } from 'drizzle-orm/pg-core';
 export const users = pgTable('users', {
   id: uuid('id').primaryKey().defaultRandom(),
   email: text('email').notNull().unique(),
-  name: text('name').notNull(),
+  username: text('username').notNull(),
   avatar: text('avatar'),
   locale: text('locale').notNull().default('en-US'),
   timezone: text('timezone').notNull().default('America/Los_Angeles'),

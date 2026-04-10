@@ -10,8 +10,8 @@ describe('Auth routes', () => {
   afterAll(async () => { await app.close(); });
   beforeEach(async () => { await truncateAll(); });
 
-  const register = (email: string, password = 'password123', name = 'Test User') =>
-    app.inject({ method: 'POST', url: '/api/auth/register', payload: { email, password, name } });
+  const register = (email: string, password = 'password123', username = 'Test User') =>
+    app.inject({ method: 'POST', url: '/api/auth/register', payload: { email, password, username } });
 
   const login = (email: string, password: string) =>
     app.inject({ method: 'POST', url: '/api/auth/login', payload: { email, password } });
@@ -112,17 +112,17 @@ describe('Auth routes', () => {
   });
 
   describe('PATCH /api/auth/profile', () => {
-    it('updates user name', async () => {
+    it('updates username', async () => {
       const reg = await register('alice@example.com');
       const token = reg.json<{ accessToken: string }>().accessToken;
       const res = await app.inject({
         method: 'PATCH',
         url: '/api/auth/profile',
         headers: authHeaders(token),
-        payload: { name: 'Alice Updated' },
+        payload: { username: 'Alice Updated' },
       });
       expect(res.statusCode).toBe(200);
-      expect(res.json<{ name: string }>().name).toBe('Alice Updated');
+      expect(res.json<{ username: string }>().username).toBe('Alice Updated');
     });
 
     it('returns 409 when updating to already-used email', async () => {

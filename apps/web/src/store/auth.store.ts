@@ -7,7 +7,7 @@ import { queryClient } from '../api/query-client.js';
 export interface AuthUser {
   id: string;
   email: string;
-  name: string;
+  username: string;
   locale: string;
 }
 

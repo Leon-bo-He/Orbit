@@ -1094,7 +1094,7 @@ function AccountPanel() {
   const setLocale = useUiStore((s) => s.setLocale);
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [showDeleteAccount, setShowDeleteAccount] = useState(false);
-  const initial = user?.name ? (user.name[0]?.toUpperCase() ?? 'U') : 'U';
+  const initial = user?.username ? (user.username[0]?.toUpperCase() ?? 'U') : 'U';
 
   // Sync browser timezone to DB once on mount
   useEffect(() => {
@@ -1116,7 +1116,7 @@ function AccountPanel() {
     updateProfile.mutate({ locale: l });
   }
 
-  async function saveName(name: string) { updateUser(await updateProfile.mutateAsync({ name })); }
+  async function saveName(username: string) { updateUser(await updateProfile.mutateAsync({ username })); }
   async function saveEmail(email: string) { updateUser(await updateProfile.mutateAsync({ email })); }
 
   return (
@@ -1127,7 +1127,7 @@ function AccountPanel() {
           {initial}
         </div>
         <div className="min-w-0">
-          <p className="text-base font-semibold text-gray-900 dark:text-white truncate">{user?.name}</p>
+          <p className="text-base font-semibold text-gray-900 dark:text-white truncate">{user?.username}</p>
           <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{user?.email}</p>
         </div>
       </div>
@@ -1137,7 +1137,7 @@ function AccountPanel() {
         <div className="px-4 py-2 bg-gray-50 dark:bg-gray-700/50 border-b border-gray-100 dark:border-gray-700">
           <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">{t('settings.account.profile')}</p>
         </div>
-        <EditableField label={t('settings.account.name')}  value={user?.name ?? ''}  onSave={saveName}  saving={updateProfile.isPending} />
+        <EditableField label={t('settings.account.name')}  value={user?.username ?? ''}  onSave={saveName}  saving={updateProfile.isPending} />
         <EditableField label={t('settings.account.email')} value={user?.email ?? ''} onSave={saveEmail} saving={updateProfile.isPending} type="email" />
       </div>
 

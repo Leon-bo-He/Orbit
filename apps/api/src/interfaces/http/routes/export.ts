@@ -20,7 +20,7 @@ export function exportRoutes(app: FastifyInstance) {
     const [user] = await db.select({
       id: users.id,
       email: users.email,
-      name: users.name,
+      username: users.username,
       avatar: users.avatar,
       locale: users.locale,
       timezone: users.timezone,
