@@ -16,7 +16,7 @@ export function useGetTelegramConfig() {
 
 export function useUpdateTelegramConfig() {
   const qc = useQueryClient();
-  return useMutation<TelegramConfig, ApiError, { botToken: string | null; chatId: string | null }>({
+  return useMutation<TelegramConfig, ApiError, { botToken?: string | null; chatId: string | null }>({
     mutationFn: (body) =>
       apiFetch<TelegramConfig>('/api/notifications/telegram', {
         method: 'PATCH',

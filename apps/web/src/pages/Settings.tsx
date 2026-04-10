@@ -804,7 +804,7 @@ function TelegramPanel() {
     e.preventDefault();
     setFormError('');
     try {
-      await updateConfig.mutateAsync({ botToken: botToken || null, chatId: chatId || null });
+      await updateConfig.mutateAsync({ botToken: botToken || undefined, chatId: chatId || null });
       setEditing(false);
       setBotToken('');
     } catch (err) {
