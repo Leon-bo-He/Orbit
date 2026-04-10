@@ -1,15 +1,16 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useCreateWorkspace } from '../../api/workspaces.js';
+import { useCreateWorkspace, useUploadWorkspaceIcon } from '../../api/workspaces.js';
 import { useUiStore } from '../../store/ui.store.js';
 import { ColorPicker } from '../ui/ColorPicker.js';
+import { WorkspaceIconContent, isIconUrl } from '../ui/WorkspaceIcon.js';
 
 const EMOJI_OPTIONS = [
   '🎬', '📸', '✍️', '🎙', '📺', '🎮',
   '💄', '👗', '🍜', '✈️', '💪', '🐱',
-  '🌿', '🎨', '🏋️', '📚', '🎵', '🏠',
-  '💼', '🌍', '🍕', '🎯', '🚀', '💡',
+  '🌿', '🎨', '📚', '🎵', '🏠',
+  '💼', '🍕', '🎯', '🚀', '💡',
 ];
 
 interface CreateWorkspaceModalProps {
@@ -20,15 +21,32 @@ export function CreateWorkspaceModal({ onClose }: CreateWorkspaceModalProps) {
   const { t } = useTranslation('workspaces');
   const navigate = useNavigate();
   const createWorkspace = useCreateWorkspace();
+  const uploadIcon = useUploadWorkspaceIcon();
   const setActiveWorkspace = useUiStore((s) => s.setActiveWorkspace);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [name, setName] = useState('');
   const [icon, setIcon] = useState(EMOJI_OPTIONS[0]!);
+  const [customEmoji, setCustomEmoji] = useState('');
   const [color, setColor] = useState('#6366f1');
   const [about, setAbout] = useState('');
   const [goalCount, setGoalCount] = useState(3);
   const [goalPeriod, setGoalPeriod] = useState<'day' | 'week' | 'month'>('week');
   const [nameError, setNameError] = useState('');
+
+  function selectPreset(emoji: string) {
+    setIcon(emoji);
+    setCustomEmoji('');
+  }
+
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const url = await uploadIcon.mutateAsync(file);
+    setIcon(url.url);
+    setCustomEmoji('');
+    e.target.value = '';
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -59,10 +77,10 @@ export function CreateWorkspaceModal({ onClose }: CreateWorkspaceModalProps) {
             {/* Preview */}
             <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-xl">
               <span
-                className="w-10 h-10 rounded-full flex items-center justify-center text-2xl flex-shrink-0"
+                className="w-10 h-10 rounded-full flex items-center justify-center text-2xl flex-shrink-0 overflow-hidden"
                 style={{ backgroundColor: color + '33' }}
               >
-                {icon}
+                <WorkspaceIconContent icon={icon} />
               </span>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
@@ -86,7 +104,7 @@ export function CreateWorkspaceModal({ onClose }: CreateWorkspaceModalProps) {
               {nameError && <p className="mt-1 text-xs text-red-500">{nameError}</p>}
             </div>
 
-            {/* Icon — emoji only */}
+            {/* Icon — 3 rows of 8: 22 presets + custom emoji cell + upload cell */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('icon_label')}</label>
               <div className="grid grid-cols-8 gap-1">
@@ -94,9 +112,9 @@ export function CreateWorkspaceModal({ onClose }: CreateWorkspaceModalProps) {
                   <button
                     key={emoji}
                     type="button"
-                    onClick={() => setIcon(emoji)}
+                    onClick={() => selectPreset(emoji)}
                     className={`text-xl rounded-lg py-1.5 transition-colors ${
-                      icon === emoji
+                      icon === emoji && !customEmoji
                         ? 'bg-indigo-100 dark:bg-indigo-900 ring-2 ring-indigo-400'
                         : 'hover:bg-gray-100 dark:hover:bg-gray-700'
                     }`}
@@ -104,6 +122,51 @@ export function CreateWorkspaceModal({ onClose }: CreateWorkspaceModalProps) {
                     {emoji}
                   </button>
                 ))}
+                {/* Custom emoji — one grid cell */}
+                <input
+                  type="text"
+                  value={customEmoji}
+                  onChange={(e) => {
+                    const val = e.target.value.trim();
+                    setCustomEmoji(e.target.value);
+                    setIcon(val || EMOJI_OPTIONS[0]!);
+                  }}
+                  maxLength={10}
+                  className={`text-xl text-center border rounded-lg py-1.5 outline-none focus:ring-2 focus:ring-indigo-200 dark:bg-gray-700 dark:text-white transition-colors min-w-0 ${
+                    customEmoji
+                      ? 'border-indigo-400 bg-indigo-50 dark:bg-indigo-900/30'
+                      : 'border-gray-200 dark:border-gray-600'
+                  }`}
+                />
+                {/* Upload image — one grid cell */}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/gif,image/webp"
+                  className="hidden"
+                  onChange={(e) => void handleFileChange(e)}
+                />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploadIcon.isPending}
+                  title={isIconUrl(icon) ? t('icon_change_image') : t('icon_upload_image')}
+                  className={`flex items-center justify-center rounded-lg py-1.5 border transition-colors min-w-0 ${
+                    isIconUrl(icon)
+                      ? 'border-indigo-400 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400'
+                      : 'border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
+                  }`}
+                >
+                  {uploadIcon.isPending ? (
+                    <span className="text-xs">…</span>
+                  ) : isIconUrl(icon) ? (
+                    <img src={icon} alt="" className="w-4 h-4 rounded-full object-cover" />
+                  ) : (
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  )}
+                </button>
               </div>
             </div>
 

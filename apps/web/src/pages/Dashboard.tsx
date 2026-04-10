@@ -5,6 +5,7 @@ import { useUiStore } from '../store/ui.store.js';
 import { BarChart } from '../components/charts/BarChart.js';
 import { SkeletonCard } from '../components/ui/Skeleton.js';
 import { PlatformIcon } from '../components/ui/PlatformIcon.js';
+import { WorkspaceIconContent } from '../components/ui/WorkspaceIcon.js';
 import type { ActivityItem, TopContent, TagPerformanceItem } from '../api/analytics.js';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -346,10 +347,10 @@ export default function Dashboard() {
                   className="flex items-center gap-3 rounded-xl border border-gray-100 bg-white p-3 hover:border-gray-200 transition-colors"
                 >
                   <div
-                    className="w-9 h-9 rounded-lg flex items-center justify-center text-base flex-shrink-0"
+                    className="w-9 h-9 rounded-lg flex items-center justify-center text-base flex-shrink-0 overflow-hidden"
                     style={{ backgroundColor: ws.color + '22' }}
                   >
-                    {ws.icon}
+                    <WorkspaceIconContent icon={ws.icon} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-gray-900 truncate">{ws.name}</p>

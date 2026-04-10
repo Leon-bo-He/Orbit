@@ -10,3 +10,4 @@ dev-dist/
 coverage/
 .turbo/
 .claude/
+apps/api/uploads/workspace-icons/

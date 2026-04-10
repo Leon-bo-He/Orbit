@@ -10,6 +10,7 @@ import { ContentDrawer } from '../components/kanban/ContentDrawer.js';
 import { Skeleton } from '../components/ui/Skeleton.js';
 import { CalendarPicker } from '../components/ui/CalendarPicker.js';
 import { toast } from '../store/toast.store.js';
+import { WorkspaceIconContent } from '../components/ui/WorkspaceIcon.js';
 
 function fmtDate(val: Date | string | null | undefined): string {
   if (!val) return '';
@@ -188,10 +189,11 @@ function ManageArchivedModal({
           <div className="flex items-center justify-between gap-3">
             <span className="text-sm font-medium text-gray-700 flex-shrink-0">{t('settings.general.archived_include_ideas')}</span>
             <button
+              type="button"
               onClick={() => setIncludeIdeas((v) => !v)}
-              className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors flex-shrink-0 ${includeIdeas ? 'bg-indigo-600' : 'bg-gray-200'}`}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors flex-shrink-0 ${includeIdeas ? 'bg-indigo-600' : 'bg-gray-200 dark:bg-gray-600'}`}
             >
-              <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform ${includeIdeas ? 'translate-x-4' : 'translate-x-1'}`} />
+              <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${includeIdeas ? 'translate-x-6' : 'translate-x-1'}`} />
             </button>
           </div>
 
@@ -281,8 +283,13 @@ export default function WorkspaceArchive() {
           {workspace && (
             <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: accentColor }} />
           )}
-          <h1 className="text-[22px] font-semibold text-gray-900 tracking-tight">
-            {workspace ? `${workspace.icon} ${workspace.name}` : ''} — {tCommon('nav.archive')}
+          <h1 className="text-[22px] font-semibold text-gray-900 tracking-tight flex items-center gap-2">
+            {workspace && (
+              <span className="w-7 h-7 flex items-center justify-center text-xl overflow-hidden rounded-md flex-shrink-0">
+                <WorkspaceIconContent icon={workspace.icon} />
+              </span>
+            )}
+            {workspace ? `${workspace.name} — ` : ''}{tCommon('nav.archive')}
           </h1>
           <span className="ml-1 text-sm text-gray-400 font-normal">{archived.length}</span>
         </div>

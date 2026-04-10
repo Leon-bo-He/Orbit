@@ -3,6 +3,7 @@ import { NavLink, useMatch, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useUiStore } from '../../store/ui.store.js';
 import { useWorkspaces } from '../../api/workspaces.js';
+import { WorkspaceIconContent } from '../ui/WorkspaceIcon.js';
 
 const TAB_CLASS = (isActive: boolean) =>
   `flex flex-col items-center gap-0.5 text-[10px] px-3 py-2 transition-colors flex-1 ${
@@ -72,7 +73,7 @@ export function MobileBottomNav() {
                       : 'text-[var(--cf-text-sub)] hover:bg-[var(--cf-hover)]'
                   }`}
                 >
-                  <span>{ws.icon}</span>
+                  <span className="w-4 h-4 flex items-center justify-center overflow-hidden rounded-sm flex-shrink-0"><WorkspaceIconContent icon={ws.icon} /></span>
                   <span className="flex-1 truncate">{ws.name}</span>
                   {ws.id === wsId && <span className="text-indigo-400 text-[10px]">✓</span>}
                 </button>
@@ -86,7 +87,7 @@ export function MobileBottomNav() {
               onClick={() => setWsPickerOpen((o) => !o)}
               className="flex items-center gap-1 pl-3 pr-2 h-full text-xs font-medium border-r border-[var(--cf-border)] flex-shrink-0 max-w-[40%] text-[var(--cf-text)]"
             >
-              <span className="text-sm leading-none">{currentWs?.icon}</span>
+              <span className="w-4 h-4 flex items-center justify-center text-sm leading-none overflow-hidden rounded-sm flex-shrink-0">{currentWs ? <WorkspaceIconContent icon={currentWs.icon} /> : null}</span>
               <span className="truncate">{currentWs?.name}</span>
               <span className="text-[var(--cf-text-muted)] text-[10px] flex-shrink-0 ml-0.5">
                 {wsPickerOpen ? '▴' : '▾'}

@@ -6,6 +6,7 @@ import { useWorkspaceAnalytics } from '../api/analytics.js';
 import { usePublishQueue } from '../api/publications.js';
 import { BarChart } from '../components/charts/BarChart.js';
 import { RecordMetricsModal } from '../components/analytics/RecordMetricsModal.js';
+import { WorkspaceIconContent } from '../components/ui/WorkspaceIcon.js';
 import type { TopContent, TagPerformanceItem } from '../api/analytics.js';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -260,10 +261,10 @@ export default function Analytics() {
         <div className="flex items-center gap-3">
           {workspace && (
             <div
-              className="w-10 h-10 rounded-lg flex items-center justify-center text-xl"
+              className="w-10 h-10 rounded-lg flex items-center justify-center text-xl overflow-hidden"
               style={{ backgroundColor: workspace.color + '20', color: workspace.color }}
             >
-              {workspace.icon}
+              <WorkspaceIconContent icon={workspace.icon} />
             </div>
           )}
           <div>

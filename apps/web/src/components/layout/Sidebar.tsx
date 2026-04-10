@@ -7,6 +7,7 @@ import { useAuthStore } from '../../store/auth.store.js';
 import { useLogout } from '../../api/auth.js';
 import { toast } from '../../store/toast.store.js';
 import OrbitLogo from '../ui/OrbitLogo.js';
+import { WorkspaceIconContent } from '../ui/WorkspaceIcon.js';
 
 const topNavItems = [
   { path: '/',            label: 'nav.dashboard',   icon: '⊞' },
@@ -113,13 +114,13 @@ export function Sidebar() {
                 key={ws.id}
                 onClick={() => handleWorkspaceSelect(ws.id)}
                 title={ws.name}
-                className={`w-7 h-7 rounded-md text-base transition-colors ${
+                className={`w-7 h-7 rounded-md text-base transition-colors flex items-center justify-center overflow-hidden ${
                   ws.id === activeWorkspaceId
                     ? 'bg-[var(--cf-active)]'
                     : 'hover:bg-[var(--cf-hover)]'
                 }`}
               >
-                {ws.icon}
+                <WorkspaceIconContent icon={ws.icon} />
               </button>
             ))}
           </>
@@ -183,7 +184,7 @@ export function Sidebar() {
                     onClick={() => handleWorkspaceSelect(ws.id)}
                     className={`${NAV_ITEM} ${isActive ? NAV_ITEM_ACTIVE : ''}`}
                   >
-                    <span className="w-4 text-center text-sm leading-none">{ws.icon}</span>
+                    <span className="w-4 h-4 flex items-center justify-center text-sm leading-none overflow-hidden rounded-sm flex-shrink-0"><WorkspaceIconContent icon={ws.icon} /></span>
                     <span className="truncate">{ws.name}</span>
                     <span
                       className="ml-auto w-1.5 h-1.5 rounded-full flex-shrink-0"

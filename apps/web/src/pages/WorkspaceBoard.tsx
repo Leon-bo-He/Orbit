@@ -9,6 +9,7 @@ import { KanbanColumn } from '../components/kanban/KanbanColumn.js';
 import { ContentDrawer } from '../components/kanban/ContentDrawer.js';
 import { CreateContentModal } from '../components/kanban/CreateContentModal.js';
 import { Skeleton } from '../components/ui/Skeleton.js';
+import { WorkspaceIconContent } from '../components/ui/WorkspaceIcon.js';
 
 // Module-level set survives StrictMode double-invocation; prevents duplicate auto-archive mutations
 const _autoArchivingIds = new Set<string>();
@@ -147,8 +148,15 @@ export default function WorkspaceBoard() {
               style={{ backgroundColor: accentColor }}
             />
           )}
-          <h1 className="text-[22px] font-semibold text-gray-900 tracking-tight">
-            {workspace ? `${workspace.icon} ${workspace.name}` : t('title')}
+          <h1 className="text-[22px] font-semibold text-gray-900 tracking-tight flex items-center gap-2">
+            {workspace ? (
+              <>
+                <span className="w-7 h-7 flex items-center justify-center text-xl overflow-hidden rounded-md flex-shrink-0">
+                  <WorkspaceIconContent icon={workspace.icon} />
+                </span>
+                {workspace.name}
+              </>
+            ) : t('title')}
           </h1>
         </div>
         <button

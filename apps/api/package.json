@@ -13,11 +13,13 @@
     "seed:demo": "node --env-file=.env --import tsx/esm src/db/seed-demo.ts"
   },
   "dependencies": {
-    "@orbit/shared": "workspace:*",
     "@fastify/cookie": "^9.3.0",
-    "@fastify/rate-limit": "^9.0.0",
     "@fastify/cors": "^9.0.0",
     "@fastify/jwt": "^8.0.0",
+    "@fastify/multipart": "^8.3.1",
+    "@fastify/rate-limit": "^9.0.0",
+    "@fastify/static": "^7.0.4",
+    "@orbit/shared": "workspace:*",
     "bcryptjs": "^2.4.3",
     "bullmq": "^5.0.0",
     "drizzle-orm": "^0.40.0",

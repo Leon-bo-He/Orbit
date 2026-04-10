@@ -1,6 +1,13 @@
 import Fastify from 'fastify';
 import rateLimit from '@fastify/rate-limit';
+import multipart from '@fastify/multipart';
+import staticFiles from '@fastify/static';
 import { ZodError } from 'zod';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const UPLOADS_ROOT = path.join(__dirname, '../uploads');
 import { config } from './config.js';
 import { corsPlugin } from './interfaces/http/plugins/cors.js';
 import { authPlugin } from './interfaces/http/plugins/auth.js';
@@ -54,6 +61,8 @@ export async function buildApp() {
   await app.register(corsPlugin);
   await app.register(authPlugin);
   await app.register(rateLimit, { global: false });
+  await app.register(multipart);
+  await app.register(staticFiles, { root: UPLOADS_ROOT, prefix: '/uploads/' });
 
   const services = createServices();
   registerRoutes(app, services);

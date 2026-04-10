@@ -7,7 +7,7 @@ const publishGoalSchema = z.object({
 
 export const createWorkspaceSchema = z.object({
   name: z.string().min(1).max(100),
-  icon: z.string().min(1).max(10),
+  icon: z.string().min(1).max(500),
   color: z.string().regex(/^#[0-9a-fA-F]{6}$/),
   about: z.string().max(500).optional(),
   publishGoal: publishGoalSchema.optional(),
@@ -15,7 +15,7 @@ export const createWorkspaceSchema = z.object({
 
 export const updateWorkspaceSchema = z.object({
   name: z.string().min(1).max(100).optional(),
-  icon: z.string().min(1).max(10).optional(),
+  icon: z.string().min(1).max(500).optional(),
   about: z.string().max(500).optional(),
   publishGoal: publishGoalSchema.optional(),
   stageConfig: z

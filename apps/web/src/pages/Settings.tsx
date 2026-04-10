@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import type { Workspace } from '@orbit/shared';
-import { useWorkspaces, useUpdateWorkspace } from '../api/workspaces.js';
+import { useWorkspaces, useUpdateWorkspace, useUploadWorkspaceIcon } from '../api/workspaces.js';
 import { useCustomPlatforms, useCreateCustomPlatform, useDeleteCustomPlatform } from '../api/custom-platforms.js';
 import type { CustomPlatform } from '../api/custom-platforms.js';
 import { useUpdateProfile, useChangePassword, useDeleteAccount, useLogout } from '../api/auth.js';
@@ -12,6 +12,7 @@ import { useAuthStore } from '../store/auth.store.js';
 import { useUiStore, type Theme } from '../store/ui.store.js';
 import { CreateWorkspaceModal } from '../components/workspaces/CreateWorkspaceModal.js';
 import { ColorPicker } from '../components/ui/ColorPicker.js';
+import { WorkspaceIconContent, isIconUrl } from '../components/ui/WorkspaceIcon.js';
 import { PlatformIcon } from '../components/ui/PlatformIcon.js';
 import { CalendarPicker } from '../components/ui/CalendarPicker.js';
 import i18n, { SUPPORTED_LOCALES, type SupportedLocale } from '../i18n/index.js';
@@ -31,8 +32,8 @@ const LOCALE_META: Record<SupportedLocale, { label: string }> = {
 const EMOJI_OPTIONS = [
   '🎬', '📸', '✍️', '🎙', '📺', '🎮',
   '💄', '👗', '🍜', '✈️', '💪', '🐱',
-  '🌿', '🎨', '🏋️', '📚', '🎵', '🏠',
-  '💼', '🌍', '🍕', '🎯', '🚀', '💡',
+  '🌿', '🎨', '📚', '🎵', '🏠',
+  '💼', '🍕', '🎯', '🚀', '💡',
 ];
 
 const ROW = 'flex items-center justify-between py-3 border-b border-gray-100';
@@ -43,12 +44,32 @@ const LABEL = 'text-sm font-medium text-gray-900';
 function EditWorkspaceModal({ workspace, onClose }: { workspace: Workspace; onClose: () => void }) {
   const { t } = useTranslation('workspaces');
   const updateWorkspace = useUpdateWorkspace();
+  const uploadIcon = useUploadWorkspaceIcon();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [name, setName] = useState(workspace.name);
   const [icon, setIcon] = useState(workspace.icon);
+  // Pre-populate the custom field only when the saved icon is not a preset and not a URL
+  const [customEmoji, setCustomEmoji] = useState(
+    !isIconUrl(workspace.icon) && !EMOJI_OPTIONS.includes(workspace.icon) ? workspace.icon : '',
+  );
   const [color, setColor] = useState(workspace.color);
   const [about, setAbout] = useState((workspace as Workspace & { about?: string }).about ?? '');
   const [goalCount, setGoalCount] = useState(workspace.publishGoal?.count ?? 3);
   const [goalPeriod, setGoalPeriod] = useState<'day' | 'week' | 'month'>(workspace.publishGoal?.period ?? 'week');
+
+  function selectPreset(emoji: string) {
+    setIcon(emoji);
+    setCustomEmoji('');
+  }
+
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const result = await uploadIcon.mutateAsync(file);
+    setIcon(result.url);
+    setCustomEmoji('');
+    e.target.value = '';
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -78,10 +99,10 @@ function EditWorkspaceModal({ workspace, onClose }: { workspace: Workspace; onCl
             {/* Preview */}
             <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-xl">
               <span
-                className="w-10 h-10 rounded-full flex items-center justify-center text-2xl flex-shrink-0"
+                className="w-10 h-10 rounded-full flex items-center justify-center text-2xl flex-shrink-0 overflow-hidden"
                 style={{ backgroundColor: color + '33' }}
               >
-                {icon}
+                <WorkspaceIconContent icon={icon} />
               </span>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
@@ -103,7 +124,7 @@ function EditWorkspaceModal({ workspace, onClose }: { workspace: Workspace; onCl
               />
             </div>
 
-            {/* Icon — emoji only */}
+            {/* Icon — preset grid + custom emoji input + image upload */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('icon_label')}</label>
               <div className="grid grid-cols-8 gap-1">
@@ -111,9 +132,9 @@ function EditWorkspaceModal({ workspace, onClose }: { workspace: Workspace; onCl
                   <button
                     key={emoji}
                     type="button"
-                    onClick={() => setIcon(emoji)}
+                    onClick={() => selectPreset(emoji)}
                     className={`text-xl rounded-lg py-1.5 transition-colors ${
-                      icon === emoji
+                      icon === emoji && !customEmoji
                         ? 'bg-indigo-100 dark:bg-indigo-900 ring-2 ring-indigo-400'
                         : 'hover:bg-gray-100 dark:hover:bg-gray-700'
                     }`}
@@ -121,6 +142,51 @@ function EditWorkspaceModal({ workspace, onClose }: { workspace: Workspace; onCl
                     {emoji}
                   </button>
                 ))}
+                {/* Custom emoji — one grid cell */}
+                <input
+                  type="text"
+                  value={customEmoji}
+                  onChange={(e) => {
+                    const val = e.target.value.trim();
+                    setCustomEmoji(e.target.value);
+                    setIcon(val || EMOJI_OPTIONS[0]!);
+                  }}
+                  maxLength={10}
+                  className={`text-xl text-center border rounded-lg py-1.5 outline-none focus:ring-2 focus:ring-indigo-200 dark:bg-gray-700 dark:text-white transition-colors min-w-0 ${
+                    customEmoji
+                      ? 'border-indigo-400 bg-indigo-50 dark:bg-indigo-900/30'
+                      : 'border-gray-200 dark:border-gray-600'
+                  }`}
+                />
+                {/* Upload image — one grid cell */}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/gif,image/webp"
+                  className="hidden"
+                  onChange={(e) => void handleFileChange(e)}
+                />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploadIcon.isPending}
+                  title={isIconUrl(icon) ? t('icon_change_image') : t('icon_upload_image')}
+                  className={`flex items-center justify-center rounded-lg py-1.5 border transition-colors min-w-0 ${
+                    isIconUrl(icon)
+                      ? 'border-indigo-400 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400'
+                      : 'border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
+                  }`}
+                >
+                  {uploadIcon.isPending ? (
+                    <span className="text-xs">…</span>
+                  ) : isIconUrl(icon) ? (
+                    <img src={icon} alt="" className="w-4 h-4 rounded-full object-cover" />
+                  ) : (
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  )}
+                </button>
               </div>
             </div>
 
@@ -803,9 +869,9 @@ function WorkspacesPanel() {
           <div key={ws.id}
             className="flex items-center gap-3 p-3 border border-gray-100 rounded-lg hover:border-gray-200 transition-colors"
           >
-            <div className="w-8 h-8 rounded-md flex items-center justify-center text-base flex-shrink-0"
+            <div className="w-8 h-8 rounded-md flex items-center justify-center text-base flex-shrink-0 overflow-hidden"
               style={{ backgroundColor: ws.color + '18' }}>
-              {ws.icon}
+              <WorkspaceIconContent icon={ws.icon} />
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
