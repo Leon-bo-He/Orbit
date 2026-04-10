@@ -13,6 +13,7 @@ import { exportRoutes } from './export.js';
 import { importRoutes } from './import.js';
 import { customPlatformsRoutes } from './custom-platforms.js';
 import { uploadRoutes } from './upload.js';
+import { notificationsRoutes } from './notifications.js';
 
 export function registerRoutes(app: FastifyInstance, svc: Services) {
   healthRoutes(app);
@@ -28,4 +29,5 @@ export function registerRoutes(app: FastifyInstance, svc: Services) {
   importRoutes(app);
   customPlatformsRoutes(app);
   uploadRoutes(app);
+  notificationsRoutes(app, svc.user);
 }

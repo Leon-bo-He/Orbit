@@ -6,6 +6,7 @@ import { useWorkspaces, useUpdateWorkspace, useUploadWorkspaceIcon } from '../ap
 import { useCustomPlatforms, useCreateCustomPlatform, useDeleteCustomPlatform } from '../api/custom-platforms.js';
 import type { CustomPlatform } from '../api/custom-platforms.js';
 import { useUpdateProfile, useUploadAvatar, useChangePassword, useDeleteAccount, useLogout } from '../api/auth.js';
+import { useGetTelegramConfig, useUpdateTelegramConfig, useSendTelegramTest } from '../api/notifications.js';
 import { apiFetch } from '../api/client.js';
 import { queryClient } from '../api/query-client.js';
 import { useAuthStore } from '../store/auth.store.js';
@@ -779,6 +780,180 @@ function DataPanel() {
 
 // ─── Notifications Panel ──────────────────────────────────────────────────────
 
+function TelegramPanel() {
+  const { t } = useTranslation('common');
+  const { data: config, isLoading } = useGetTelegramConfig();
+  const updateConfig = useUpdateTelegramConfig();
+  const sendTest = useSendTelegramTest();
+
+  const [editing, setEditing] = useState(false);
+  const [botToken, setBotToken] = useState('');
+  const [chatId, setChatId] = useState('');
+  const [formError, setFormError] = useState('');
+  const [testStatus, setTestStatus] = useState<'idle' | 'ok' | 'error'>('idle');
+
+  function startEdit() {
+    setBotToken('');
+    setChatId(config?.chatId ?? '');
+    setFormError('');
+    setEditing(true);
+  }
+
+  async function handleSave(e: React.FormEvent) {
+    e.preventDefault();
+    setFormError('');
+    try {
+      await updateConfig.mutateAsync({ botToken: botToken || null, chatId: chatId || null });
+      setEditing(false);
+      setBotToken('');
+    } catch (err) {
+      setFormError(err instanceof Error ? err.message : t('status.error'));
+    }
+  }
+
+  async function handleDisconnect() {
+    await updateConfig.mutateAsync({ botToken: null, chatId: null });
+  }
+
+  async function handleTest() {
+    setTestStatus('idle');
+    try {
+      await sendTest.mutateAsync();
+      setTestStatus('ok');
+    } catch {
+      setTestStatus('error');
+    }
+  }
+
+  if (isLoading) return null;
+
+  return (
+    <div className="rounded-xl border border-gray-100 dark:border-gray-700 overflow-hidden mt-5">
+      {/* Header */}
+      <div className="px-4 py-2 bg-gray-50 dark:bg-gray-700/50 border-b border-gray-100 dark:border-gray-700 flex items-center gap-2">
+        {/* Telegram paper-plane icon */}
+        <svg viewBox="0 0 24 24" className="w-4 h-4 text-sky-500 flex-shrink-0" fill="currentColor">
+          <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2Zm4.93 6.773-1.92 9.04c-.144.643-.52.8-1.055.498l-2.912-2.146-1.406 1.353c-.155.156-.286.286-.586.286l.208-2.963 5.386-4.867c.234-.208-.051-.324-.363-.116L7.9 14.48l-2.848-.89c-.619-.193-.632-.619.13-.916l11.09-4.277c.515-.193.97.115.658.376Z"/>
+        </svg>
+        <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide flex-1">
+          {t('settings.notifications.telegram_title')}
+        </p>
+        {config?.configured && !editing && (
+          <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />
+            {t('settings.notifications.telegram_connected')}
+          </span>
+        )}
+      </div>
+
+      <div className="p-4 space-y-3">
+        {!editing && !config?.configured && (
+          <>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              {t('settings.notifications.telegram_desc')}
+            </p>
+            <ol className="text-xs text-gray-500 dark:text-gray-400 space-y-1 list-decimal list-inside">
+              <li>{t('settings.notifications.telegram_step1')}</li>
+              <li>{t('settings.notifications.telegram_step2')}</li>
+              <li>{t('settings.notifications.telegram_step3')}</li>
+            </ol>
+            <button
+              onClick={startEdit}
+              className="mt-1 px-4 py-2 bg-sky-500 hover:bg-sky-600 text-white text-sm font-medium rounded-lg transition-colors"
+            >
+              {t('settings.notifications.telegram_connect')}
+            </button>
+          </>
+        )}
+
+        {!editing && config?.configured && (
+          <div className="space-y-3">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-gray-500 dark:text-gray-400">{t('settings.notifications.telegram_chat_id')}</span>
+              <span className="font-mono text-gray-800 dark:text-gray-200">{config.chatId}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => void handleTest()}
+                disabled={sendTest.isPending}
+                className="px-3 py-1.5 text-sm border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
+              >
+                {sendTest.isPending ? t('status.loading') : t('settings.notifications.telegram_test')}
+              </button>
+              <button
+                onClick={startEdit}
+                className="px-3 py-1.5 text-sm border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              >
+                {t('settings.notifications.telegram_edit')}
+              </button>
+              <button
+                onClick={() => void handleDisconnect()}
+                disabled={updateConfig.isPending}
+                className="px-3 py-1.5 text-sm text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-50 ml-auto"
+              >
+                {t('settings.notifications.telegram_disconnect')}
+              </button>
+            </div>
+            {testStatus === 'ok' && (
+              <p className="text-xs text-emerald-600 dark:text-emerald-400">{t('settings.notifications.telegram_test_ok')}</p>
+            )}
+            {testStatus === 'error' && (
+              <p className="text-xs text-red-500">{t('settings.notifications.telegram_test_fail')}</p>
+            )}
+          </div>
+        )}
+
+        {editing && (
+          <form onSubmit={(e) => void handleSave(e)} className="space-y-3">
+            <div>
+              <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                {t('settings.notifications.telegram_bot_token')}
+              </label>
+              <input
+                type="password"
+                value={botToken}
+                onChange={(e) => setBotToken(e.target.value)}
+                placeholder={config?.tokenSet ? t('settings.notifications.telegram_token_placeholder_set') : t('settings.notifications.telegram_token_placeholder')}
+                className="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-400"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                {t('settings.notifications.telegram_chat_id')}
+              </label>
+              <input
+                type="text"
+                value={chatId}
+                onChange={(e) => setChatId(e.target.value)}
+                placeholder="e.g. 123456789"
+                className="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-400"
+              />
+              <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">{t('settings.notifications.telegram_chat_id_hint')}</p>
+            </div>
+            {formError && <p className="text-xs text-red-500">{formError}</p>}
+            <div className="flex gap-2 pt-1">
+              <button
+                type="submit"
+                disabled={updateConfig.isPending || (!botToken && !config?.tokenSet) || !chatId}
+                className="px-4 py-2 bg-sky-500 hover:bg-sky-600 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50"
+              >
+                {updateConfig.isPending ? t('status.saving') : t('status.save')}
+              </button>
+              <button
+                type="button"
+                onClick={() => setEditing(false)}
+                className="px-4 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              >
+                {t('status.cancel')}
+              </button>
+            </div>
+          </form>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function NotificationsPanel() {
   const { t } = useTranslation('common');
   const [enabled, setEnabled] = useState(
@@ -831,6 +1006,8 @@ function NotificationsPanel() {
       {typeof Notification !== 'undefined' && Notification.permission === 'denied' && (
         <p className="text-xs text-red-500 pt-3">{t('settings.notifications.blocked')}</p>
       )}
+
+      <TelegramPanel />
     </div>
   );
 }

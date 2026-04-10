@@ -6,7 +6,7 @@ export interface IUserRepository {
   findByEmail(email: string): Promise<User | null>;
   findById(id: string): Promise<User | null>;
   create(data: { email: string; username: string; passwordHash: string }): Promise<User>;
-  update(id: string, data: Partial<{ username: string; email: string; locale: string; timezone: string; avatar: string | null }>): Promise<User | null>;
+  update(id: string, data: Partial<{ username: string; email: string; locale: string; timezone: string; avatar: string | null; telegramBotToken: string | null; telegramChatId: string | null }>): Promise<User | null>;
   updatePassword(id: string, passwordHash: string): Promise<void>;
   delete(id: string): Promise<void>;
 }

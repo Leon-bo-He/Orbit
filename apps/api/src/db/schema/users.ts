@@ -8,6 +8,8 @@ export const users = pgTable('users', {
   locale: text('locale').notNull().default('en-US'),
   timezone: text('timezone').notNull().default('America/Los_Angeles'),
   passwordHash: text('password_hash'),
+  telegramBotToken: text('telegram_bot_token'),
+  telegramChatId: text('telegram_chat_id'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 });
 
