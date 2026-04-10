@@ -167,7 +167,8 @@
       "telegram_token_placeholder": "Enter your bot token",
       "telegram_token_placeholder_set": "Token saved — enter a new one to replace",
       "telegram_chat_id": "Chat ID",
-      "telegram_chat_id_hint": "Get your Chat ID by messaging @userinfobot on Telegram."
+      "telegram_chat_id_hint": "Send any message to your bot, then click \"Fetch\" to auto-fill.",
+      "telegram_fetch_chat_id": "Fetch"
     },
     "account": {
       "name": "Username",

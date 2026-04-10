@@ -34,3 +34,13 @@ export function useSendTelegramTest() {
       apiFetch<{ ok: boolean }>('/api/notifications/telegram/test', { method: 'POST' }),
   });
 }
+
+export function useFetchTelegramChatId() {
+  return useMutation<{ chatId: string }, ApiError, { botToken?: string }>({
+    mutationFn: (body) =>
+      apiFetch<{ chatId: string }>('/api/notifications/telegram/fetch-chat-id', {
+        method: 'POST',
+        body: JSON.stringify(body),
+      }),
+  });
+}

@@ -167,7 +167,8 @@
       "telegram_token_placeholder": "Bot Token を入力",
       "telegram_token_placeholder_set": "Token は保存済みです。新しい Token を入力すると置き換えられます",
       "telegram_chat_id": "Chat ID",
-      "telegram_chat_id_hint": "Telegram で @userinfobot にメッセージを送信して Chat ID を取得します。"
+      "telegram_chat_id_hint": "ボットにメッセージを送ってから「取得」をクリックすると自動入力されます。",
+      "telegram_fetch_chat_id": "取得"
     },
     "account": {
       "name": "ユーザー名",

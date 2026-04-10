@@ -167,7 +167,8 @@
       "telegram_token_placeholder": "輸入你的 Bot Token",
       "telegram_token_placeholder_set": "Token 已儲存，輸入新 Token 以替換",
       "telegram_chat_id": "Chat ID",
-      "telegram_chat_id_hint": "在 Telegram 中向 @userinfobot 傳送訊息以取得你的 Chat ID。"
+      "telegram_chat_id_hint": "先向機器人傳送任意訊息，再點擊「獲取」自動填入。",
+      "telegram_fetch_chat_id": "獲取"
     },
     "account": {
       "name": "用戶名",

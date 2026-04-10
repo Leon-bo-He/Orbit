@@ -6,7 +6,7 @@ import { useWorkspaces, useUpdateWorkspace, useUploadWorkspaceIcon } from '../ap
 import { useCustomPlatforms, useCreateCustomPlatform, useDeleteCustomPlatform } from '../api/custom-platforms.js';
 import type { CustomPlatform } from '../api/custom-platforms.js';
 import { useUpdateProfile, useUploadAvatar, useChangePassword, useDeleteAccount, useLogout } from '../api/auth.js';
-import { useGetTelegramConfig, useUpdateTelegramConfig, useSendTelegramTest } from '../api/notifications.js';
+import { useGetTelegramConfig, useUpdateTelegramConfig, useSendTelegramTest, useFetchTelegramChatId } from '../api/notifications.js';
 import { apiFetch } from '../api/client.js';
 import { queryClient } from '../api/query-client.js';
 import { useAuthStore } from '../store/auth.store.js';
@@ -785,6 +785,7 @@ function TelegramPanel() {
   const { data: config, isLoading } = useGetTelegramConfig();
   const updateConfig = useUpdateTelegramConfig();
   const sendTest = useSendTelegramTest();
+  const fetchChatId = useFetchTelegramChatId();
 
   const [editing, setEditing] = useState(false);
   const [botToken, setBotToken] = useState('');
@@ -926,13 +927,31 @@ function TelegramPanel() {
               <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
                 {t('settings.notifications.telegram_chat_id')}
               </label>
-              <input
-                type="text"
-                value={chatId}
-                onChange={(e) => setChatId(e.target.value)}
-                placeholder="e.g. 123456789"
-                className="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-400"
-              />
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={chatId}
+                  onChange={(e) => setChatId(e.target.value)}
+                  placeholder="e.g. 123456789"
+                  className="flex-1 px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-400"
+                />
+                <button
+                  type="button"
+                  disabled={fetchChatId.isPending || (!botToken && !config?.tokenSet)}
+                  onClick={async () => {
+                    try {
+                      const res = await fetchChatId.mutateAsync({ botToken: botToken || undefined });
+                      setChatId(res.chatId);
+                    } catch (err) {
+                      setFormError(err instanceof Error ? err.message : t('status.error'));
+                    }
+                  }}
+                  className="px-3 py-2 text-sm border border-sky-300 dark:border-sky-700 text-sky-600 dark:text-sky-400 rounded-lg hover:bg-sky-50 dark:hover:bg-sky-900/20 transition-colors disabled:opacity-40 whitespace-nowrap"
+                  title={t('settings.notifications.telegram_fetch_chat_id')}
+                >
+                  {fetchChatId.isPending ? '…' : t('settings.notifications.telegram_fetch_chat_id')}
+                </button>
+              </div>
               <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">{t('settings.notifications.telegram_chat_id_hint')}</p>
             </div>
             {formError && <p className="text-xs text-red-500">{formError}</p>}

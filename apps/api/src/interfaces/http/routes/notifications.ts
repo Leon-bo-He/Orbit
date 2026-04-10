@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
 import type { UserService } from '../../../domain/user/user.service.js';
-import { sendMessage, validateToken } from '../../../lib/telegram.js';
+import { sendMessage, validateToken, getLatestChatId } from '../../../lib/telegram.js';
 
 export function notificationsRoutes(app: FastifyInstance, svc: UserService) {
   // GET /api/notifications/telegram — return masked config (never expose the token)
@@ -48,6 +48,27 @@ export function notificationsRoutes(app: FastifyInstance, svc: UserService) {
       chatId: updated.telegramChatId ?? null,
       tokenSet: !!updated.telegramBotToken,
     });
+  });
+
+  // POST /api/notifications/telegram/fetch-chat-id — call getUpdates to auto-detect chat id
+  app.post<{ Body: unknown }>('/api/notifications/telegram/fetch-chat-id', { onRequest: [app.authenticate] }, async (req, reply) => {
+    const schema = z.object({ botToken: z.string().min(1).optional() });
+    const parsed = schema.safeParse(req.body);
+    if (!parsed.success) return reply.code(400).send({ error: 'Invalid input' });
+
+    const { sub } = req.user as { sub: string };
+
+    // Use token from request body if provided; fall back to stored token
+    let token = parsed.data.botToken;
+    if (!token) {
+      const user = await svc.findById(sub);
+      token = user?.telegramBotToken ?? undefined;
+    }
+    if (!token) return reply.code(400).send({ error: 'No bot token provided or saved' });
+
+    const result = await getLatestChatId(token);
+    if (!result.ok) return reply.code(400).send({ error: result.error });
+    return reply.send({ chatId: result.chatId });
   });
 
   // POST /api/notifications/telegram/test — send a test message with stored credentials
