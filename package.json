@@ -8,6 +8,7 @@
     "build": "pnpm --recursive build",
     "test": "pnpm --recursive test",
     "migrate": "pnpm --filter api migrate",
+    "seed:demo": "pnpm --filter api seed:demo",
     "lint": "eslint .",
     "typecheck": "pnpm --recursive typecheck"
   },

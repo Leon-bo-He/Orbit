@@ -9,7 +9,8 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "migrate": "drizzle-kit push",
-    "generate": "drizzle-kit generate"
+    "generate": "drizzle-kit generate",
+    "seed:demo": "node --env-file=.env --import tsx/esm src/db/seed-demo.ts"
   },
   "dependencies": {
     "@orbit/shared": "workspace:*",
