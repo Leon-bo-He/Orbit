@@ -77,6 +77,14 @@ function platformMetrics(
       const b = Math.round(19000 * v * (0.25 + g * 0.75));
       return { views: b, likes: Math.round(b * 0.08), comments: Math.round(b * 0.018), shares: Math.round(b * 0.046), saves: 0, followersGained: Math.round(b * 0.002) };
     }
+    case 'youtube': {
+      const b = Math.round(18000 * v * (0.25 + g * 0.75));
+      return { views: b, likes: Math.round(b * 0.07), comments: Math.round(b * 0.022), shares: Math.round(b * 0.012), saves: Math.round(b * 0.015), followersGained: Math.round(b * 0.005) };
+    }
+    case 'weixin_video': {
+      const b = Math.round(11000 * v * (0.25 + g * 0.75));
+      return { views: b, likes: Math.round(b * 0.09), comments: Math.round(b * 0.025), shares: Math.round(b * 0.048), saves: 0, followersGained: Math.round(b * 0.004) };
+    }
     default: {
       const b = Math.round(5000 * v * (0.25 + g * 0.75));
       return { views: b, likes: Math.round(b * 0.10), comments: Math.round(b * 0.02), shares: Math.round(b * 0.01), saves: Math.round(b * 0.05), followersGained: Math.round(b * 0.003) };
@@ -131,105 +139,105 @@ interface ContentDef {
 
 // 3 items/month × 13 months = 39 items (months 14 → 2)
 const COMEDY_BANK: ContentDef[] = [
-  { title: 'Expectation vs Reality: Working From Home', tags: ['relatable', 'wfh', 'comedy'], platforms: ['douyin', 'tiktok'], contentType: 'video_short', reviewNotes: 'Huge engagement. Surprise-ending format works.' },
-  { title: 'Types of Coworkers in Every Stand-up Meeting', tags: ['work', 'relatable', 'comedy'], platforms: ['douyin', 'tiktok'], contentType: 'video_short' },
-  { title: 'When the Code Finally Works After 6 Hours', tags: ['dev-humor', 'relatable', 'coding'], platforms: ['douyin', 'tiktok', 'bilibili'], contentType: 'video_short' },
-  { title: "POV: You're the Rubber Duck in a Dev Session", tags: ['dev-humor', 'comedy'], platforms: ['douyin', 'tiktok'], contentType: 'video_short' },
-  { title: 'Office Monday vs Friday Energy', tags: ['work', 'relatable', 'comedy'], platforms: ['douyin', 'tiktok'], contentType: 'video_short' },
-  { title: 'The 5 Stages of Debugging Grief', tags: ['dev-humor', 'coding'], platforms: ['douyin', 'tiktok', 'bilibili'], contentType: 'video_short' },
-  { title: 'Git Commit Messages Throughout Your Career', tags: ['dev-humor', 'coding', 'relatable'], platforms: ['douyin', 'tiktok'], contentType: 'video_short' },
-  { title: "When the PM Says 'It'll Only Take 5 Minutes'", tags: ['dev-humor', 'work', 'relatable'], platforms: ['douyin', 'tiktok'], contentType: 'video_short' },
-  { title: 'Developer Zodiac Signs', tags: ['dev-humor', 'comedy', 'trending'], platforms: ['douyin', 'tiktok', 'bilibili'], contentType: 'video_short' },
-  { title: 'Zoom Call Bingo: Remote Work Edition', tags: ['wfh', 'work', 'relatable'], platforms: ['douyin', 'tiktok'], contentType: 'video_short' },
-  { title: "When HR Sends a 'Quick Sync' Invite", tags: ['work', 'relatable', 'comedy'], platforms: ['douyin', 'tiktok'], contentType: 'video_short' },
-  { title: "Every Dev's Reaction to a New JS Framework", tags: ['dev-humor', 'javascript', 'comedy'], platforms: ['douyin', 'tiktok', 'bilibili'], contentType: 'video_short' },
-  { title: 'Stack Overflow vs Reading the Docs', tags: ['dev-humor', 'relatable', 'coding'], platforms: ['douyin', 'tiktok'], contentType: 'video_short' },
-  { title: 'Senior Dev vs Junior Dev: Same Bug', tags: ['dev-humor', 'coding', 'relatable'], platforms: ['douyin', 'tiktok'], contentType: 'video_short' },
-  { title: 'The Different Faces of Code Review', tags: ['dev-humor', 'work', 'comedy'], platforms: ['douyin', 'tiktok', 'bilibili'], contentType: 'video_short' },
-  { title: 'What Clients Say vs What They Mean', tags: ['work', 'relatable', 'comedy'], platforms: ['douyin', 'tiktok'], contentType: 'video_short' },
-  { title: 'When You Finally Push to Production', tags: ['dev-humor', 'coding', 'relatable'], platforms: ['douyin', 'tiktok'], contentType: 'video_short' },
-  { title: 'Tech Bro vs Normal Person Translator', tags: ['comedy', 'trending', 'tech'], platforms: ['douyin', 'tiktok', 'bilibili'], contentType: 'video_short' },
-  { title: 'Monday Morning Bug Report Energy', tags: ['dev-humor', 'work', 'comedy'], platforms: ['douyin', 'tiktok'], contentType: 'video_short' },
-  { title: 'The App Store Review Reading Experience', tags: ['comedy', 'tech', 'relatable'], platforms: ['douyin', 'tiktok'], contentType: 'video_short' },
-  { title: 'Types of GitHub Issues', tags: ['dev-humor', 'coding', 'comedy'], platforms: ['douyin', 'tiktok', 'bilibili'], contentType: 'video_short' },
-  { title: 'When the Feature Is Already Built in CSS', tags: ['dev-humor', 'frontend', 'comedy'], platforms: ['douyin', 'tiktok'], contentType: 'video_short' },
-  { title: 'Developer Imposter Syndrome Levels', tags: ['dev-humor', 'relatable', 'coding'], platforms: ['douyin', 'tiktok'], contentType: 'video_short' },
-  { title: 'The Sprint Planning Reality Show', tags: ['work', 'agile', 'comedy'], platforms: ['douyin', 'tiktok', 'bilibili'], contentType: 'video_short' },
-  { title: 'Copy-Pasting from Stack Overflow in 2025', tags: ['dev-humor', 'coding', 'comedy'], platforms: ['douyin', 'tiktok'], contentType: 'video_short' },
-  { title: 'Deploying on a Friday', tags: ['dev-humor', 'relatable', 'coding'], platforms: ['douyin', 'tiktok'], contentType: 'video_short' },
-  { title: "When Someone Asks 'Is It Urgent?'", tags: ['work', 'relatable', 'comedy'], platforms: ['douyin', 'tiktok', 'bilibili'], contentType: 'video_short' },
-  { title: 'PM vs Designer vs Developer: One Feature', tags: ['work', 'comedy', 'relatable'], platforms: ['douyin', 'tiktok'], contentType: 'video_short' },
-  { title: 'Stand-up Meeting Attention Span Chart', tags: ['work', 'dev-humor', 'comedy'], platforms: ['douyin', 'tiktok'], contentType: 'video_short' },
-  { title: 'New Feature vs Bug Report: Same Code', tags: ['dev-humor', 'coding', 'relatable'], platforms: ['douyin', 'tiktok', 'bilibili'], contentType: 'video_short' },
-  { title: 'The Meeting That Could Have Been an Email', tags: ['work', 'relatable', 'comedy'], platforms: ['douyin', 'tiktok'], contentType: 'video_short' },
-  { title: 'Reading Your Own Code 6 Months Later', tags: ['dev-humor', 'coding', 'relatable'], platforms: ['douyin', 'tiktok'], contentType: 'video_short' },
-  { title: 'Tech Interview Prep vs Actual Job', tags: ['dev-humor', 'work', 'comedy'], platforms: ['douyin', 'tiktok', 'bilibili'], contentType: 'video_short' },
-  { title: 'The Agile Ceremony Collection', tags: ['work', 'agile', 'comedy'], platforms: ['douyin', 'tiktok'], contentType: 'video_short' },
-  { title: 'When the Intern Writes Better Code Than You', tags: ['dev-humor', 'coding', 'relatable'], platforms: ['douyin', 'tiktok'], contentType: 'video_short' },
-  { title: 'CSS Is Easy They Said', tags: ['dev-humor', 'frontend', 'comedy'], platforms: ['douyin', 'tiktok', 'bilibili'], contentType: 'video_short' },
-  { title: 'Every API Documentation Experience', tags: ['dev-humor', 'coding', 'relatable'], platforms: ['douyin', 'tiktok'], contentType: 'video_short' },
-  { title: 'The Tech Stack Decision Flowchart', tags: ['dev-humor', 'comedy', 'tech'], platforms: ['douyin', 'tiktok'], contentType: 'video_short' },
-  { title: "When AI Writes Your Code but It's Wrong", tags: ['AI', 'dev-humor', 'comedy'], platforms: ['douyin', 'tiktok', 'bilibili'], contentType: 'video_short' },
+  { title: 'Expectation vs Reality: Working From Home', tags: ['relatable', 'wfh', 'comedy'], platforms: ['douyin', 'tiktok', 'bilibili', 'youtube'], contentType: 'video_short', reviewNotes: 'Huge engagement. Surprise-ending format works.' },
+  { title: 'Types of Coworkers in Every Stand-up Meeting', tags: ['work', 'relatable', 'comedy'], platforms: ['douyin', 'tiktok', 'bilibili', 'youtube'], contentType: 'video_short' },
+  { title: 'When the Code Finally Works After 6 Hours', tags: ['dev-humor', 'relatable', 'coding'], platforms: ['douyin', 'tiktok', 'bilibili', 'youtube', 'instagram'], contentType: 'video_short' },
+  { title: "POV: You're the Rubber Duck in a Dev Session", tags: ['dev-humor', 'comedy'], platforms: ['douyin', 'tiktok', 'bilibili', 'youtube'], contentType: 'video_short' },
+  { title: 'Office Monday vs Friday Energy', tags: ['work', 'relatable', 'comedy'], platforms: ['douyin', 'tiktok', 'bilibili', 'youtube'], contentType: 'video_short' },
+  { title: 'The 5 Stages of Debugging Grief', tags: ['dev-humor', 'coding'], platforms: ['douyin', 'tiktok', 'bilibili', 'youtube', 'instagram'], contentType: 'video_short' },
+  { title: 'Git Commit Messages Throughout Your Career', tags: ['dev-humor', 'coding', 'relatable'], platforms: ['douyin', 'tiktok', 'bilibili', 'youtube'], contentType: 'video_short' },
+  { title: "When the PM Says 'It'll Only Take 5 Minutes'", tags: ['dev-humor', 'work', 'relatable'], platforms: ['douyin', 'tiktok', 'bilibili', 'youtube'], contentType: 'video_short' },
+  { title: 'Developer Zodiac Signs', tags: ['dev-humor', 'comedy', 'trending'], platforms: ['douyin', 'tiktok', 'bilibili', 'youtube', 'instagram'], contentType: 'video_short' },
+  { title: 'Zoom Call Bingo: Remote Work Edition', tags: ['wfh', 'work', 'relatable'], platforms: ['douyin', 'tiktok', 'bilibili', 'youtube'], contentType: 'video_short' },
+  { title: "When HR Sends a 'Quick Sync' Invite", tags: ['work', 'relatable', 'comedy'], platforms: ['douyin', 'tiktok', 'bilibili', 'youtube'], contentType: 'video_short' },
+  { title: "Every Dev's Reaction to a New JS Framework", tags: ['dev-humor', 'javascript', 'comedy'], platforms: ['douyin', 'tiktok', 'bilibili', 'youtube', 'instagram'], contentType: 'video_short' },
+  { title: 'Stack Overflow vs Reading the Docs', tags: ['dev-humor', 'relatable', 'coding'], platforms: ['douyin', 'tiktok', 'bilibili', 'youtube'], contentType: 'video_short' },
+  { title: 'Senior Dev vs Junior Dev: Same Bug', tags: ['dev-humor', 'coding', 'relatable'], platforms: ['douyin', 'tiktok', 'bilibili', 'youtube'], contentType: 'video_short' },
+  { title: 'The Different Faces of Code Review', tags: ['dev-humor', 'work', 'comedy'], platforms: ['douyin', 'tiktok', 'bilibili', 'youtube', 'instagram'], contentType: 'video_short' },
+  { title: 'What Clients Say vs What They Mean', tags: ['work', 'relatable', 'comedy'], platforms: ['douyin', 'tiktok', 'bilibili', 'youtube'], contentType: 'video_short' },
+  { title: 'When You Finally Push to Production', tags: ['dev-humor', 'coding', 'relatable'], platforms: ['douyin', 'tiktok', 'bilibili', 'youtube'], contentType: 'video_short' },
+  { title: 'Tech Bro vs Normal Person Translator', tags: ['comedy', 'trending', 'tech'], platforms: ['douyin', 'tiktok', 'bilibili', 'youtube', 'instagram'], contentType: 'video_short' },
+  { title: 'Monday Morning Bug Report Energy', tags: ['dev-humor', 'work', 'comedy'], platforms: ['douyin', 'tiktok', 'bilibili', 'youtube'], contentType: 'video_short' },
+  { title: 'The App Store Review Reading Experience', tags: ['comedy', 'tech', 'relatable'], platforms: ['douyin', 'tiktok', 'bilibili', 'youtube'], contentType: 'video_short' },
+  { title: 'Types of GitHub Issues', tags: ['dev-humor', 'coding', 'comedy'], platforms: ['douyin', 'tiktok', 'bilibili', 'youtube', 'instagram'], contentType: 'video_short' },
+  { title: 'When the Feature Is Already Built in CSS', tags: ['dev-humor', 'frontend', 'comedy'], platforms: ['douyin', 'tiktok', 'bilibili', 'youtube'], contentType: 'video_short' },
+  { title: 'Developer Imposter Syndrome Levels', tags: ['dev-humor', 'relatable', 'coding'], platforms: ['douyin', 'tiktok', 'bilibili', 'youtube'], contentType: 'video_short' },
+  { title: 'The Sprint Planning Reality Show', tags: ['work', 'agile', 'comedy'], platforms: ['douyin', 'tiktok', 'bilibili', 'youtube', 'instagram'], contentType: 'video_short' },
+  { title: 'Copy-Pasting from Stack Overflow in 2025', tags: ['dev-humor', 'coding', 'comedy'], platforms: ['douyin', 'tiktok', 'bilibili', 'youtube'], contentType: 'video_short' },
+  { title: 'Deploying on a Friday', tags: ['dev-humor', 'relatable', 'coding'], platforms: ['douyin', 'tiktok', 'bilibili', 'youtube'], contentType: 'video_short' },
+  { title: "When Someone Asks 'Is It Urgent?'", tags: ['work', 'relatable', 'comedy'], platforms: ['douyin', 'tiktok', 'bilibili', 'youtube', 'instagram'], contentType: 'video_short' },
+  { title: 'PM vs Designer vs Developer: One Feature', tags: ['work', 'comedy', 'relatable'], platforms: ['douyin', 'tiktok', 'bilibili', 'youtube'], contentType: 'video_short' },
+  { title: 'Stand-up Meeting Attention Span Chart', tags: ['work', 'dev-humor', 'comedy'], platforms: ['douyin', 'tiktok', 'bilibili', 'youtube'], contentType: 'video_short' },
+  { title: 'New Feature vs Bug Report: Same Code', tags: ['dev-humor', 'coding', 'relatable'], platforms: ['douyin', 'tiktok', 'bilibili', 'youtube', 'instagram'], contentType: 'video_short' },
+  { title: 'The Meeting That Could Have Been an Email', tags: ['work', 'relatable', 'comedy'], platforms: ['douyin', 'tiktok', 'bilibili', 'youtube'], contentType: 'video_short' },
+  { title: 'Reading Your Own Code 6 Months Later', tags: ['dev-humor', 'coding', 'relatable'], platforms: ['douyin', 'tiktok', 'bilibili', 'youtube'], contentType: 'video_short' },
+  { title: 'Tech Interview Prep vs Actual Job', tags: ['dev-humor', 'work', 'comedy'], platforms: ['douyin', 'tiktok', 'bilibili', 'youtube', 'instagram'], contentType: 'video_short' },
+  { title: 'The Agile Ceremony Collection', tags: ['work', 'agile', 'comedy'], platforms: ['douyin', 'tiktok', 'bilibili', 'youtube'], contentType: 'video_short' },
+  { title: 'When the Intern Writes Better Code Than You', tags: ['dev-humor', 'coding', 'relatable'], platforms: ['douyin', 'tiktok', 'bilibili', 'youtube'], contentType: 'video_short' },
+  { title: 'CSS Is Easy They Said', tags: ['dev-humor', 'frontend', 'comedy'], platforms: ['douyin', 'tiktok', 'bilibili', 'youtube', 'instagram'], contentType: 'video_short' },
+  { title: 'Every API Documentation Experience', tags: ['dev-humor', 'coding', 'relatable'], platforms: ['douyin', 'tiktok', 'bilibili', 'youtube'], contentType: 'video_short' },
+  { title: 'The Tech Stack Decision Flowchart', tags: ['dev-humor', 'comedy', 'tech'], platforms: ['douyin', 'tiktok', 'bilibili', 'youtube'], contentType: 'video_short' },
+  { title: "When AI Writes Your Code but It's Wrong", tags: ['AI', 'dev-humor', 'comedy'], platforms: ['douyin', 'tiktok', 'bilibili', 'youtube', 'instagram'], contentType: 'video_short' },
 ];
 
 // 2 items/month × 13 months = 26 items (months 14 → 2)
 const LIFESTYLE_BANK: ContentDef[] = [
-  { title: 'My Capsule Wardrobe: 10 Pieces, 30 Outfits Under ¥500', tags: ['fashion', 'budget', 'capsule-wardrobe'], platforms: ['xiaohongshu', 'instagram'], contentType: 'image_text', reviewNotes: 'Saves through the roof. Budget fashion consistently outperforms.' },
-  { title: 'The Only Skincare Routine You Will Ever Need', tags: ['skincare', 'beauty', 'routine'], platforms: ['xiaohongshu', 'instagram'], contentType: 'image_text' },
-  { title: 'How I Redesigned My Room for Under ¥1000', tags: ['home-decor', 'budget', 'diy'], platforms: ['xiaohongshu', 'instagram'], contentType: 'image_text' },
-  { title: 'A Week of Meal Prep for Busy Professionals', tags: ['food', 'meal-prep', 'productivity'], platforms: ['xiaohongshu', 'instagram'], contentType: 'image_text' },
-  { title: 'Cherry Blossom Season: The Ultimate Outfit Guide', tags: ['fashion', 'spring', 'ootd', 'cherry-blossom'], platforms: ['xiaohongshu', 'instagram'], contentType: 'image_text' },
-  { title: 'Tokyo Ramen Spots Worth the Queue', tags: ['food', 'travel', 'japan', 'ramen'], platforms: ['xiaohongshu', 'instagram'], contentType: 'image_text' },
-  { title: 'Minimalist Home Office Setup Under ¥2000', tags: ['home-office', 'minimalist', 'setup'], platforms: ['xiaohongshu', 'instagram'], contentType: 'image_text' },
-  { title: 'The Perfect Reading Nook on a Budget', tags: ['home-decor', 'books', 'lifestyle'], platforms: ['xiaohongshu', 'instagram'], contentType: 'image_text' },
-  { title: 'Summer Skincare Essentials: What Actually Works', tags: ['skincare', 'beauty', 'summer'], platforms: ['xiaohongshu', 'instagram'], contentType: 'image_text' },
-  { title: "Shanghai's Hidden Street Food Gems", tags: ['food', 'shanghai', 'street-food', 'local'], platforms: ['xiaohongshu', 'instagram'], contentType: 'image_text' },
-  { title: 'Autumn Fashion Haul Under ¥800', tags: ['fashion', 'haul', 'autumn', 'budget'], platforms: ['xiaohongshu', 'instagram'], contentType: 'image_text' },
-  { title: 'Best Cafes in Shanghai for Remote Work', tags: ['cafe', 'shanghai', 'wfh', 'lifestyle'], platforms: ['xiaohongshu', 'instagram'], contentType: 'image_text' },
-  { title: 'How I Stopped Impulse Buying (And Built a Better Wardrobe)', tags: ['fashion', 'mindset', 'finance', 'lifestyle'], platforms: ['xiaohongshu', 'instagram'], contentType: 'image_text' },
-  { title: 'Osaka on a Budget: 5 Days Under ¥3000', tags: ['travel', 'japan', 'budget', 'osaka'], platforms: ['xiaohongshu', 'instagram'], contentType: 'image_text' },
-  { title: 'Winter Layering Masterclass: Stylish and Warm', tags: ['fashion', 'winter', 'layering', 'ootd'], platforms: ['xiaohongshu', 'instagram'], contentType: 'image_text' },
-  { title: 'Tried 5 Viral Recipes — Honest Review', tags: ['food', 'recipe', 'review', 'trending'], platforms: ['xiaohongshu', 'instagram'], contentType: 'image_text' },
-  { title: 'Spring Clean Your Wardrobe: Keep vs Toss', tags: ['fashion', 'spring', 'declutter', 'capsule'], platforms: ['xiaohongshu', 'instagram'], contentType: 'image_text' },
-  { title: 'The Self-Care Sunday Routine That Actually Works', tags: ['self-care', 'lifestyle', 'routine', 'wellness'], platforms: ['xiaohongshu', 'instagram'], contentType: 'image_text' },
-  { title: 'Affordable Luxury: What to Splurge On vs Save On', tags: ['fashion', 'beauty', 'budget', 'luxury'], platforms: ['xiaohongshu', 'instagram'], contentType: 'image_text' },
-  { title: 'Seoul Street Food Diary', tags: ['food', 'travel', 'korea', 'street-food'], platforms: ['xiaohongshu', 'instagram'], contentType: 'image_text' },
-  { title: 'Office Outfit Formula: 5 Basics, Infinite Looks', tags: ['fashion', 'office', 'ootd', 'workwear'], platforms: ['xiaohongshu', 'instagram'], contentType: 'image_text' },
-  { title: 'My Apartment Transformation: Before and After', tags: ['home-decor', 'diy', 'interior', 'lifestyle'], platforms: ['xiaohongshu', 'instagram'], contentType: 'image_text' },
-  { title: 'The Wellness Habits I Actually Kept This Year', tags: ['wellness', 'lifestyle', 'habits', 'health'], platforms: ['xiaohongshu', 'instagram'], contentType: 'image_text' },
-  { title: 'Budget Travel: Kyoto in 3 Days Under ¥2500', tags: ['travel', 'japan', 'kyoto', 'budget'], platforms: ['xiaohongshu', 'instagram'], contentType: 'image_text' },
-  { title: 'Transitional Dressing: How to Style Any Season', tags: ['fashion', 'ootd', 'style', 'versatile'], platforms: ['xiaohongshu', 'instagram'], contentType: 'image_text' },
-  { title: 'The Perfect Gift Guide: Under ¥200 Edition', tags: ['gift', 'budget', 'lifestyle', 'holiday'], platforms: ['xiaohongshu', 'instagram'], contentType: 'image_text' },
+  { title: 'My Capsule Wardrobe: 10 Pieces, 30 Outfits Under ¥500', tags: ['fashion', 'budget', 'capsule-wardrobe'], platforms: ['xiaohongshu', 'instagram', 'douyin', 'weixin'], contentType: 'image_text', reviewNotes: 'Saves through the roof. Budget fashion consistently outperforms.' },
+  { title: 'The Only Skincare Routine You Will Ever Need', tags: ['skincare', 'beauty', 'routine'], platforms: ['xiaohongshu', 'instagram', 'douyin', 'weixin'], contentType: 'image_text' },
+  { title: 'How I Redesigned My Room for Under ¥1000', tags: ['home-decor', 'budget', 'diy'], platforms: ['xiaohongshu', 'instagram', 'douyin', 'weixin'], contentType: 'image_text' },
+  { title: 'A Week of Meal Prep for Busy Professionals', tags: ['food', 'meal-prep', 'productivity'], platforms: ['xiaohongshu', 'instagram', 'douyin', 'weixin'], contentType: 'image_text' },
+  { title: 'Cherry Blossom Season: The Ultimate Outfit Guide', tags: ['fashion', 'spring', 'ootd', 'cherry-blossom'], platforms: ['xiaohongshu', 'instagram', 'douyin', 'weixin'], contentType: 'image_text' },
+  { title: 'Tokyo Ramen Spots Worth the Queue', tags: ['food', 'travel', 'japan', 'ramen'], platforms: ['xiaohongshu', 'instagram', 'douyin', 'weixin'], contentType: 'image_text' },
+  { title: 'Minimalist Home Office Setup Under ¥2000', tags: ['home-office', 'minimalist', 'setup'], platforms: ['xiaohongshu', 'instagram', 'douyin', 'weixin'], contentType: 'image_text' },
+  { title: 'The Perfect Reading Nook on a Budget', tags: ['home-decor', 'books', 'lifestyle'], platforms: ['xiaohongshu', 'instagram', 'douyin', 'weixin'], contentType: 'image_text' },
+  { title: 'Summer Skincare Essentials: What Actually Works', tags: ['skincare', 'beauty', 'summer'], platforms: ['xiaohongshu', 'instagram', 'douyin', 'weixin'], contentType: 'image_text' },
+  { title: "Shanghai's Hidden Street Food Gems", tags: ['food', 'shanghai', 'street-food', 'local'], platforms: ['xiaohongshu', 'instagram', 'douyin', 'weixin'], contentType: 'image_text' },
+  { title: 'Autumn Fashion Haul Under ¥800', tags: ['fashion', 'haul', 'autumn', 'budget'], platforms: ['xiaohongshu', 'instagram', 'douyin', 'weixin'], contentType: 'image_text' },
+  { title: 'Best Cafes in Shanghai for Remote Work', tags: ['cafe', 'shanghai', 'wfh', 'lifestyle'], platforms: ['xiaohongshu', 'instagram', 'douyin', 'weixin'], contentType: 'image_text' },
+  { title: 'How I Stopped Impulse Buying (And Built a Better Wardrobe)', tags: ['fashion', 'mindset', 'finance', 'lifestyle'], platforms: ['xiaohongshu', 'instagram', 'douyin', 'weixin'], contentType: 'image_text' },
+  { title: 'Osaka on a Budget: 5 Days Under ¥3000', tags: ['travel', 'japan', 'budget', 'osaka'], platforms: ['xiaohongshu', 'instagram', 'douyin', 'weixin'], contentType: 'image_text' },
+  { title: 'Winter Layering Masterclass: Stylish and Warm', tags: ['fashion', 'winter', 'layering', 'ootd'], platforms: ['xiaohongshu', 'instagram', 'douyin', 'weixin'], contentType: 'image_text' },
+  { title: 'Tried 5 Viral Recipes — Honest Review', tags: ['food', 'recipe', 'review', 'trending'], platforms: ['xiaohongshu', 'instagram', 'douyin', 'weixin'], contentType: 'image_text' },
+  { title: 'Spring Clean Your Wardrobe: Keep vs Toss', tags: ['fashion', 'spring', 'declutter', 'capsule'], platforms: ['xiaohongshu', 'instagram', 'douyin', 'weixin'], contentType: 'image_text' },
+  { title: 'The Self-Care Sunday Routine That Actually Works', tags: ['self-care', 'lifestyle', 'routine', 'wellness'], platforms: ['xiaohongshu', 'instagram', 'douyin', 'weixin'], contentType: 'image_text' },
+  { title: 'Affordable Luxury: What to Splurge On vs Save On', tags: ['fashion', 'beauty', 'budget', 'luxury'], platforms: ['xiaohongshu', 'instagram', 'douyin', 'weixin'], contentType: 'image_text' },
+  { title: 'Seoul Street Food Diary', tags: ['food', 'travel', 'korea', 'street-food'], platforms: ['xiaohongshu', 'instagram', 'douyin', 'weixin'], contentType: 'image_text' },
+  { title: 'Office Outfit Formula: 5 Basics, Infinite Looks', tags: ['fashion', 'office', 'ootd', 'workwear'], platforms: ['xiaohongshu', 'instagram', 'douyin', 'weixin'], contentType: 'image_text' },
+  { title: 'My Apartment Transformation: Before and After', tags: ['home-decor', 'diy', 'interior', 'lifestyle'], platforms: ['xiaohongshu', 'instagram', 'douyin', 'weixin'], contentType: 'image_text' },
+  { title: 'The Wellness Habits I Actually Kept This Year', tags: ['wellness', 'lifestyle', 'habits', 'health'], platforms: ['xiaohongshu', 'instagram', 'douyin', 'weixin'], contentType: 'image_text' },
+  { title: 'Budget Travel: Kyoto in 3 Days Under ¥2500', tags: ['travel', 'japan', 'kyoto', 'budget'], platforms: ['xiaohongshu', 'instagram', 'douyin', 'weixin'], contentType: 'image_text' },
+  { title: 'Transitional Dressing: How to Style Any Season', tags: ['fashion', 'ootd', 'style', 'versatile'], platforms: ['xiaohongshu', 'instagram', 'douyin', 'weixin'], contentType: 'image_text' },
+  { title: 'The Perfect Gift Guide: Under ¥200 Edition', tags: ['gift', 'budget', 'lifestyle', 'holiday'], platforms: ['xiaohongshu', 'instagram', 'douyin', 'weixin'], contentType: 'image_text' },
 ];
 
 // 2 items/month × 13 months = 26 items (months 14 → 2)
 const TECH_BANK: ContentDef[] = [
-  { title: 'The Real Difference Between Claude 4 and GPT-5 for Developers', tags: ['AI', 'LLM', 'developer-tools', 'comparison'], platforms: ['weixin', 'x'], contentType: 'article', reviewNotes: 'High shares. Technical posts with code examples perform best.' },
-  { title: 'Why Most AI Startups Will Fail in 2027', tags: ['AI', 'startup', 'prediction', 'opinion'], platforms: ['weixin', 'x'], contentType: 'article' },
-  { title: 'Vibe Coding Is Real: How Junior Devs Ship Faster with AI', tags: ['AI', 'productivity', 'coding', 'junior-dev'], platforms: ['weixin', 'x'], contentType: 'article' },
-  { title: 'From Prompt Engineering to Agent Architecture', tags: ['AI', 'agents', 'architecture', 'LLM'], platforms: ['weixin', 'x'], contentType: 'article' },
-  { title: 'The Hidden Cost of AI-First Development', tags: ['AI', 'engineering', 'opinion', 'cost'], platforms: ['weixin', 'x'], contentType: 'article' },
-  { title: 'Open Source LLMs in 2026: Llama, Mistral, and New Players', tags: ['AI', 'open-source', 'LLM', 'llama'], platforms: ['weixin', 'x'], contentType: 'article' },
-  { title: 'Why TypeScript Won (And What Comes Next)', tags: ['typescript', 'javascript', 'opinion', 'frontend'], platforms: ['weixin', 'x'], contentType: 'article' },
-  { title: 'The Database Choice That Will Define Your Next 5 Years', tags: ['database', 'architecture', 'postgres', 'opinion'], platforms: ['weixin', 'x'], contentType: 'article' },
-  { title: 'React Is Not Dying: A Data-Driven Rebuttal', tags: ['react', 'frontend', 'opinion', 'data'], platforms: ['weixin', 'x'], contentType: 'article' },
-  { title: 'Edge Computing vs Cloud: Real Trade-offs in 2026', tags: ['cloud', 'edge', 'architecture', 'infra'], platforms: ['weixin', 'x'], contentType: 'article' },
-  { title: 'How AI Code Reviewers Are Changing Engineering Culture', tags: ['AI', 'code-review', 'culture', 'engineering'], platforms: ['weixin', 'x'], contentType: 'article' },
-  { title: 'The Rise of Solo Developers: Building $1M Products Alone', tags: ['indie-dev', 'solo', 'startup', 'AI'], platforms: ['weixin', 'x'], contentType: 'article' },
-  { title: 'Microservices vs Monolith: What I Learned After 3 Rewrites', tags: ['architecture', 'microservices', 'monolith', 'opinion'], platforms: ['weixin', 'x'], contentType: 'article' },
-  { title: "Why Your Startup's Engineering Culture Is Broken", tags: ['startup', 'engineering', 'culture', 'management'], platforms: ['weixin', 'x'], contentType: 'article' },
-  { title: 'Claude as a Coding Partner: 6 Months of Real Experience', tags: ['AI', 'claude', 'productivity', 'coding'], platforms: ['weixin', 'x'], contentType: 'article' },
-  { title: 'Rust in Production: Honest Assessment After 1 Year', tags: ['rust', 'systems', 'opinion', 'backend'], platforms: ['weixin', 'x'], contentType: 'article' },
-  { title: 'The API Design Mistakes I Made (So You Don\'t Have To)', tags: ['api', 'design', 'backend', 'rest'], platforms: ['weixin', 'x'], contentType: 'article' },
-  { title: 'AI-Assisted Testing: Does It Actually Improve Quality?', tags: ['AI', 'testing', 'quality', 'engineering'], platforms: ['weixin', 'x'], contentType: 'article' },
-  { title: 'The State of Developer Tools in 2026', tags: ['dev-tools', 'productivity', 'survey', 'opinion'], platforms: ['weixin', 'x'], contentType: 'article' },
-  { title: 'Zero-to-Production Solo: Building Orbit in Public', tags: ['indie-dev', 'orbit', 'building-in-public', 'solo'], platforms: ['weixin', 'x'], contentType: 'article' },
-  { title: 'Next.js vs Remix vs Vite: An Honest Comparison', tags: ['nextjs', 'react', 'frontend', 'comparison'], platforms: ['weixin', 'x'], contentType: 'article' },
-  { title: 'The Death of the Traditional Tech Interview', tags: ['interview', 'hiring', 'AI', 'opinion'], platforms: ['weixin', 'x'], contentType: 'article' },
-  { title: 'How I Reduced LLM Costs 60% by Switching Providers', tags: ['AI', 'cost', 'LLM', 'optimization'], platforms: ['weixin', 'x'], contentType: 'article' },
-  { title: 'The Content Creator Tech Stack (2026 Edition)', tags: ['tools', 'creator', 'productivity', 'stack'], platforms: ['weixin', 'x'], contentType: 'article' },
-  { title: 'Reflections: 1 Year Building in Public', tags: ['building-in-public', 'indie-dev', 'reflection', 'personal'], platforms: ['weixin', 'x'], contentType: 'article' },
-  { title: 'What No One Tells You About Building AI Products', tags: ['AI', 'product', 'startup', 'lessons'], platforms: ['weixin', 'x'], contentType: 'article' },
+  { title: 'The Real Difference Between Claude 4 and GPT-5 for Developers', tags: ['AI', 'LLM', 'developer-tools', 'comparison'], platforms: ['weixin', 'x', 'bilibili', 'weixin_video'], contentType: 'article', reviewNotes: 'High shares. Technical posts with code examples perform best.' },
+  { title: 'Why Most AI Startups Will Fail in 2027', tags: ['AI', 'startup', 'prediction', 'opinion'], platforms: ['weixin', 'x', 'bilibili', 'weixin_video'], contentType: 'article' },
+  { title: 'Vibe Coding Is Real: How Junior Devs Ship Faster with AI', tags: ['AI', 'productivity', 'coding', 'junior-dev'], platforms: ['weixin', 'x', 'bilibili', 'weixin_video'], contentType: 'article' },
+  { title: 'From Prompt Engineering to Agent Architecture', tags: ['AI', 'agents', 'architecture', 'LLM'], platforms: ['weixin', 'x', 'bilibili', 'weixin_video'], contentType: 'article' },
+  { title: 'The Hidden Cost of AI-First Development', tags: ['AI', 'engineering', 'opinion', 'cost'], platforms: ['weixin', 'x', 'bilibili', 'weixin_video'], contentType: 'article' },
+  { title: 'Open Source LLMs in 2026: Llama, Mistral, and New Players', tags: ['AI', 'open-source', 'LLM', 'llama'], platforms: ['weixin', 'x', 'bilibili', 'weixin_video'], contentType: 'article' },
+  { title: 'Why TypeScript Won (And What Comes Next)', tags: ['typescript', 'javascript', 'opinion', 'frontend'], platforms: ['weixin', 'x', 'bilibili', 'weixin_video'], contentType: 'article' },
+  { title: 'The Database Choice That Will Define Your Next 5 Years', tags: ['database', 'architecture', 'postgres', 'opinion'], platforms: ['weixin', 'x', 'bilibili', 'weixin_video'], contentType: 'article' },
+  { title: 'React Is Not Dying: A Data-Driven Rebuttal', tags: ['react', 'frontend', 'opinion', 'data'], platforms: ['weixin', 'x', 'bilibili', 'weixin_video'], contentType: 'article' },
+  { title: 'Edge Computing vs Cloud: Real Trade-offs in 2026', tags: ['cloud', 'edge', 'architecture', 'infra'], platforms: ['weixin', 'x', 'bilibili', 'weixin_video'], contentType: 'article' },
+  { title: 'How AI Code Reviewers Are Changing Engineering Culture', tags: ['AI', 'code-review', 'culture', 'engineering'], platforms: ['weixin', 'x', 'bilibili', 'weixin_video'], contentType: 'article' },
+  { title: 'The Rise of Solo Developers: Building $1M Products Alone', tags: ['indie-dev', 'solo', 'startup', 'AI'], platforms: ['weixin', 'x', 'bilibili', 'weixin_video'], contentType: 'article' },
+  { title: 'Microservices vs Monolith: What I Learned After 3 Rewrites', tags: ['architecture', 'microservices', 'monolith', 'opinion'], platforms: ['weixin', 'x', 'bilibili', 'weixin_video'], contentType: 'article' },
+  { title: "Why Your Startup's Engineering Culture Is Broken", tags: ['startup', 'engineering', 'culture', 'management'], platforms: ['weixin', 'x', 'bilibili', 'weixin_video'], contentType: 'article' },
+  { title: 'Claude as a Coding Partner: 6 Months of Real Experience', tags: ['AI', 'claude', 'productivity', 'coding'], platforms: ['weixin', 'x', 'bilibili', 'weixin_video'], contentType: 'article' },
+  { title: 'Rust in Production: Honest Assessment After 1 Year', tags: ['rust', 'systems', 'opinion', 'backend'], platforms: ['weixin', 'x', 'bilibili', 'weixin_video'], contentType: 'article' },
+  { title: 'The API Design Mistakes I Made (So You Don\'t Have To)', tags: ['api', 'design', 'backend', 'rest'], platforms: ['weixin', 'x', 'bilibili', 'weixin_video'], contentType: 'article' },
+  { title: 'AI-Assisted Testing: Does It Actually Improve Quality?', tags: ['AI', 'testing', 'quality', 'engineering'], platforms: ['weixin', 'x', 'bilibili', 'weixin_video'], contentType: 'article' },
+  { title: 'The State of Developer Tools in 2026', tags: ['dev-tools', 'productivity', 'survey', 'opinion'], platforms: ['weixin', 'x', 'bilibili', 'weixin_video'], contentType: 'article' },
+  { title: 'Zero-to-Production Solo: Building Orbit in Public', tags: ['indie-dev', 'orbit', 'building-in-public', 'solo'], platforms: ['weixin', 'x', 'bilibili', 'weixin_video'], contentType: 'article' },
+  { title: 'Next.js vs Remix vs Vite: An Honest Comparison', tags: ['nextjs', 'react', 'frontend', 'comparison'], platforms: ['weixin', 'x', 'bilibili', 'weixin_video'], contentType: 'article' },
+  { title: 'The Death of the Traditional Tech Interview', tags: ['interview', 'hiring', 'AI', 'opinion'], platforms: ['weixin', 'x', 'bilibili', 'weixin_video'], contentType: 'article' },
+  { title: 'How I Reduced LLM Costs 60% by Switching Providers', tags: ['AI', 'cost', 'LLM', 'optimization'], platforms: ['weixin', 'x', 'bilibili', 'weixin_video'], contentType: 'article' },
+  { title: 'The Content Creator Tech Stack (2026 Edition)', tags: ['tools', 'creator', 'productivity', 'stack'], platforms: ['weixin', 'x', 'bilibili', 'weixin_video'], contentType: 'article' },
+  { title: 'Reflections: 1 Year Building in Public', tags: ['building-in-public', 'indie-dev', 'reflection', 'personal'], platforms: ['weixin', 'x', 'bilibili', 'weixin_video'], contentType: 'article' },
+  { title: 'What No One Tells You About Building AI Products', tags: ['AI', 'product', 'startup', 'lessons'], platforms: ['weixin', 'x', 'bilibili', 'weixin_video'], contentType: 'article' },
 ];
 
 // ─── main ────────────────────────────────────────────────────────────────────
@@ -365,48 +373,54 @@ async function seed() {
   const [rComedy1] = await db.insert(contents).values({
     workspaceId: wsD, title: 'POV: You\'re the Only One Who Reads the Docs',
     contentType: 'video_short', stage: 'published',
-    tags: ['dev-humor', 'relatable'], targetPlatforms: ['douyin', 'tiktok'],
+    tags: ['dev-humor', 'relatable'], targetPlatforms: ['douyin', 'tiktok', 'bilibili', 'youtube'],
     scheduledAt: daysAgo(15), publishedAt: daysAgo(14), attachments: [],
     stageHistory: sh(['planned', 28], ['creating', 22], ['ready', 16], ['published', 14]),
   }).returning();
-  await insertPublished(rComedy1!.id, ['douyin', 'tiktok'], 14, 1.8, 'https://orbit.demo/c/rc1', {
+  await insertPublished(rComedy1!.id, ['douyin', 'tiktok', 'bilibili', 'youtube'], 14, 1.8, 'https://orbit.demo/c/rc1', {
     douyin: { title: 'POV: 文档？我读过！📖', copy: '你们公司也有这种人吗？ #程序员日常 #dev', tags: ['#程序员', '#编程'] },
     tiktok: { title: 'POV: You actually read the docs 📖', copy: 'The rarest skill in software engineering 😭 #coding #developer #relatable', tags: ['#coding', '#developer'] },
+    bilibili: { title: 'POV：你是公司里唯一看文档的人 📖', tags: ['程序员', '编程', '职场'] },
+    youtube: { title: 'POV: You\'re the Only One Who Actually Reads the Docs 📖', copy: 'The rarest dev skill: reading documentation 😭 #coding #developer', tags: ['#coding', '#developer', '#devhumor'] },
   });
 
   const [rLifestyle1] = await db.insert(contents).values({
     workspaceId: wsX, title: 'Spring 2026 Outfit Ideas — Cherry Blossom Lookbook',
     contentType: 'image_text', stage: 'published',
-    tags: ['fashion', 'spring', 'lookbook', 'cherry-blossom'], targetPlatforms: ['xiaohongshu', 'instagram'],
+    tags: ['fashion', 'spring', 'lookbook', 'cherry-blossom'], targetPlatforms: ['xiaohongshu', 'instagram', 'douyin', 'weixin'],
     scheduledAt: daysAgo(20), publishedAt: daysAgo(19), attachments: [],
     stageHistory: sh(['planned', 32], ['creating', 26], ['ready', 21], ['published', 19]),
   }).returning();
-  await insertPublished(rLifestyle1!.id, ['xiaohongshu', 'instagram'], 19, 2.1, 'https://orbit.demo/c/rl1', {
+  await insertPublished(rLifestyle1!.id, ['xiaohongshu', 'instagram', 'douyin', 'weixin'], 19, 2.1, 'https://orbit.demo/c/rl1', {
     xiaohongshu: { title: '2026春季穿搭｜赏樱花的正确打开方式🌸', copy: '春天来了！分享我的赏花穿搭合集 🌸 #春季穿搭 #樱花 #ootd', tags: ['#春季穿搭', '#樱花'] },
     instagram: { title: 'Spring lookbook 🌸 Cherry blossom season is here', copy: 'Outfit ideas for cherry blossom season 🌸 #springfashion #ootd #cherryblossom', tags: ['#ootd', '#cherryblossom'] },
+    douyin: { title: '2026春天穿搭合集🌸赏花季必备', copy: '春天来了，来看我的赏花穿搭！#春季穿搭 #ootd', tags: ['#春季穿搭', '#ootd'] },
+    weixin: { title: '2026春季穿搭指南｜赏樱花的10种打开方式', copy: '春天是穿搭最美的季节，这些搭配你学会了吗？' },
   });
 
   const [rTech1] = await db.insert(contents).values({
     workspaceId: wsW, title: 'Vibe Coding Is Real: How Junior Devs Are Shipping Faster with AI',
     contentType: 'article', stage: 'published',
-    tags: ['AI', 'productivity', 'coding', 'junior-dev'], targetPlatforms: ['weixin', 'x'],
+    tags: ['AI', 'productivity', 'coding', 'junior-dev'], targetPlatforms: ['weixin', 'x', 'bilibili', 'weixin_video'],
     scheduledAt: daysAgo(12), publishedAt: daysAgo(11), attachments: [],
     notes: 'Include code examples and real benchmarks.',
     stageHistory: sh(['planned', 22], ['creating', 17], ['ready', 13], ['published', 11]),
   }).returning();
-  await insertPublished(rTech1!.id, ['weixin', 'x'], 11, 2.4, 'https://orbit.demo/c/rt1', {
+  await insertPublished(rTech1!.id, ['weixin', 'x', 'bilibili', 'weixin_video'], 11, 2.4, 'https://orbit.demo/c/rt1', {
     weixin: { title: 'Vibe编程是真实的：AI让初级开发者越跑越快', copy: '没有废话，直接看数据。AI辅助开发的真实效率对比。' },
     x: { title: 'Vibe Coding Is Real — data from real junior devs using AI', copy: 'I tracked 12 junior devs for 3 months. Here\'s what AI actually did to their output 🧵 #AI #coding #developers', tags: ['#AI', '#developers'] },
+    bilibili: { title: 'Vibe编程实测：AI到底让初级开发者快了多少？', tags: ['AI', '编程', '效率'] },
+    weixin_video: { title: 'AI让初级开发者快了多少？真实数据来了', copy: '我追踪了12位初级开发者3个月，AI对他们的产出做了这些...' },
   });
 
   const [rComedy2] = await db.insert(contents).values({
     workspaceId: wsD, title: 'Debugging at 3am be like…',
     contentType: 'video_short', stage: 'published',
-    tags: ['dev-humor', 'coding', 'relatable'], targetPlatforms: ['douyin', 'tiktok', 'bilibili'],
+    tags: ['dev-humor', 'coding', 'relatable'], targetPlatforms: ['douyin', 'tiktok', 'bilibili', 'youtube', 'instagram'],
     scheduledAt: daysAgo(4), publishedAt: daysAgo(3), attachments: [],
     stageHistory: sh(['planned', 12], ['creating', 8], ['ready', 4], ['published', 3]),
   }).returning();
-  await insertPublished(rComedy2!.id, ['douyin', 'tiktok', 'bilibili'], 3, 1.5, 'https://orbit.demo/c/rc2');
+  await insertPublished(rComedy2!.id, ['douyin', 'tiktok', 'bilibili', 'youtube', 'instagram'], 3, 1.5, 'https://orbit.demo/c/rc2');
 
   // ── 7. Current pipeline ────────────────────────────────────────────────────
 
@@ -414,49 +428,55 @@ async function seed() {
   const [pReady1] = await db.insert(contents).values({
     workspaceId: wsD, title: "When Your PM Says 'It'll Only Take 5 Minutes'",
     contentType: 'video_short', stage: 'ready',
-    tags: ['dev-humor', 'work', 'relatable'], targetPlatforms: ['douyin', 'tiktok'],
+    tags: ['dev-humor', 'work', 'relatable'], targetPlatforms: ['douyin', 'tiktok', 'bilibili', 'youtube'],
     scheduledAt: daysFromNow(2), attachments: [],
     stageHistory: sh(['planned', 12], ['creating', 7], ['ready', 2]),
   }).returning();
   const [pReady2] = await db.insert(contents).values({
     workspaceId: wsX, title: 'Best Cafés in Shanghai for Remote Work (2026 Edition)',
     contentType: 'image_text', stage: 'ready',
-    tags: ['cafe', 'shanghai', 'work', 'lifestyle'], targetPlatforms: ['xiaohongshu', 'instagram'],
+    tags: ['cafe', 'shanghai', 'work', 'lifestyle'], targetPlatforms: ['xiaohongshu', 'instagram', 'douyin', 'weixin'],
     scheduledAt: daysFromNow(3), attachments: [],
     stageHistory: sh(['planned', 10], ['creating', 6], ['ready', 1]),
   }).returning();
   const [pReady3] = await db.insert(contents).values({
     workspaceId: wsW, title: 'Why Most AI Startups Will Fail in 2027 (And What Survives)',
     contentType: 'article', stage: 'ready',
-    tags: ['AI', 'startup', 'prediction', 'VC'], targetPlatforms: ['weixin', 'x'],
+    tags: ['AI', 'startup', 'prediction', 'VC'], targetPlatforms: ['weixin', 'x', 'bilibili', 'weixin_video'],
     scheduledAt: daysFromNow(5), attachments: [],
     stageHistory: sh(['planned', 11], ['creating', 6], ['ready', 2]),
   }).returning();
 
   // Creating
   await db.insert(contents).values([
-    { workspaceId: wsD, title: 'Office Monday vs Friday Energy', contentType: 'video_short', stage: 'creating', tags: ['work', 'relatable', 'comedy'], targetPlatforms: ['douyin', 'tiktok', 'bilibili'], notes: 'B-roll: coffee machine, commute, slack notifications', attachments: [], stageHistory: sh(['planned', 9], ['creating', 3]) },
-    { workspaceId: wsX, title: 'Minimalist Home Office Setup Under ¥2000', contentType: 'image_text', stage: 'creating', tags: ['home-office', 'minimalist', 'setup'], targetPlatforms: ['xiaohongshu', 'instagram'], attachments: [], stageHistory: sh(['planned', 7], ['creating', 2]) },
-    { workspaceId: wsW, title: 'From Prompt Engineering to Agent Architecture: What Changed', contentType: 'article', stage: 'creating', tags: ['AI', 'agents', 'architecture', 'LLM'], targetPlatforms: ['weixin', 'x'], attachments: [], stageHistory: sh(['planned', 8], ['creating', 2]) },
+    { workspaceId: wsD, title: 'Office Monday vs Friday Energy', contentType: 'video_short', stage: 'creating', tags: ['work', 'relatable', 'comedy'], targetPlatforms: ['douyin', 'tiktok', 'bilibili', 'youtube', 'instagram'], notes: 'B-roll: coffee machine, commute, slack notifications', attachments: [], stageHistory: sh(['planned', 9], ['creating', 3]) },
+    { workspaceId: wsX, title: 'Minimalist Home Office Setup Under ¥2000', contentType: 'image_text', stage: 'creating', tags: ['home-office', 'minimalist', 'setup'], targetPlatforms: ['xiaohongshu', 'instagram', 'douyin', 'weixin'], attachments: [], stageHistory: sh(['planned', 7], ['creating', 2]) },
+    { workspaceId: wsW, title: 'From Prompt Engineering to Agent Architecture: What Changed', contentType: 'article', stage: 'creating', tags: ['AI', 'agents', 'architecture', 'LLM'], targetPlatforms: ['weixin', 'x', 'bilibili', 'weixin_video'], attachments: [], stageHistory: sh(['planned', 8], ['creating', 2]) },
   ]);
 
   // Planned
   await db.insert(contents).values([
-    { workspaceId: wsD, title: 'The 5 Stages of Debugging Grief', contentType: 'video_short', stage: 'planned', tags: ['dev-humor', 'coding'], targetPlatforms: ['douyin', 'tiktok'], attachments: [], stageHistory: sh(['planned', 4]) },
-    { workspaceId: wsD, title: 'Zoom Call Bingo: Remote Work Edition', contentType: 'video_short', stage: 'planned', tags: ['wfh', 'relatable'], targetPlatforms: ['douyin', 'tiktok'], attachments: [], stageHistory: sh(['planned', 2]) },
-    { workspaceId: wsX, title: 'How I Stopped Impulse Buying (And Built a Better Wardrobe)', contentType: 'image_text', stage: 'planned', tags: ['fashion', 'mindset', 'finance'], targetPlatforms: ['xiaohongshu', 'instagram'], attachments: [], stageHistory: sh(['planned', 3]) },
-    { workspaceId: wsW, title: 'The Hidden Cost of AI-First Development', contentType: 'article', stage: 'planned', tags: ['AI', 'engineering', 'opinion'], targetPlatforms: ['weixin', 'x'], attachments: [], stageHistory: sh(['planned', 2]) },
-    { workspaceId: wsW, title: 'Open Source LLMs in 2026: Llama, Mistral, and the New Players', contentType: 'article', stage: 'planned', tags: ['AI', 'open-source', 'LLM'], targetPlatforms: ['weixin', 'x'], attachments: [], stageHistory: sh(['planned', 1]) },
+    { workspaceId: wsD, title: 'The 5 Stages of Debugging Grief', contentType: 'video_short', stage: 'planned', tags: ['dev-humor', 'coding'], targetPlatforms: ['douyin', 'tiktok', 'bilibili', 'youtube'], attachments: [], stageHistory: sh(['planned', 4]) },
+    { workspaceId: wsD, title: 'Zoom Call Bingo: Remote Work Edition', contentType: 'video_short', stage: 'planned', tags: ['wfh', 'relatable'], targetPlatforms: ['douyin', 'tiktok', 'bilibili', 'youtube'], attachments: [], stageHistory: sh(['planned', 2]) },
+    { workspaceId: wsX, title: 'How I Stopped Impulse Buying (And Built a Better Wardrobe)', contentType: 'image_text', stage: 'planned', tags: ['fashion', 'mindset', 'finance'], targetPlatforms: ['xiaohongshu', 'instagram', 'douyin', 'weixin'], attachments: [], stageHistory: sh(['planned', 3]) },
+    { workspaceId: wsW, title: 'The Hidden Cost of AI-First Development', contentType: 'article', stage: 'planned', tags: ['AI', 'engineering', 'opinion'], targetPlatforms: ['weixin', 'x', 'bilibili', 'weixin_video'], attachments: [], stageHistory: sh(['planned', 2]) },
+    { workspaceId: wsW, title: 'Open Source LLMs in 2026: Llama, Mistral, and the New Players', contentType: 'article', stage: 'planned', tags: ['AI', 'open-source', 'LLM'], targetPlatforms: ['weixin', 'x', 'bilibili', 'weixin_video'], attachments: [], stageHistory: sh(['planned', 1]) },
   ]);
 
   // Queued publications for ready items
   await db.insert(publications).values([
-    { contentId: pReady1!.id, platform: 'douyin', status: 'queued', scheduledAt: daysFromNow(2), platformTags: ['#职场', '#打工人', '#搞笑'], platformSettings: {}, publishLog: [], platformTitle: "当PM说'就5分钟的事' 😶‍🌫️" },
-    { contentId: pReady1!.id, platform: 'tiktok', status: 'queued', scheduledAt: daysFromNow(2), platformTags: ['#pm', '#devlife', '#relatable'], platformSettings: {}, publishLog: [] },
+    { contentId: pReady1!.id, platform: 'douyin',  status: 'queued', scheduledAt: daysFromNow(2), platformTags: ['#职场', '#打工人', '#搞笑'], platformSettings: {}, publishLog: [], platformTitle: "当PM说'就5分钟的事' 😶‍🌫️" },
+    { contentId: pReady1!.id, platform: 'tiktok',  status: 'queued', scheduledAt: daysFromNow(2), platformTags: ['#pm', '#devlife', '#relatable'], platformSettings: {}, publishLog: [] },
+    { contentId: pReady1!.id, platform: 'bilibili', status: 'queued', scheduledAt: daysFromNow(2), platformTags: ['程序员', '职场', '打工人'], platformSettings: {}, publishLog: [], platformTitle: "当需求方说「就5分钟」😶‍🌫️" },
+    { contentId: pReady1!.id, platform: 'youtube',  status: 'queued', scheduledAt: daysFromNow(2), platformTags: ['#devhumor', '#pm', '#relatable'], platformSettings: {}, publishLog: [] },
     { contentId: pReady2!.id, platform: 'xiaohongshu', status: 'queued', scheduledAt: daysFromNow(3), platformTags: ['#咖啡店', '#上海', '#wfh'], platformSettings: {}, publishLog: [] },
-    { contentId: pReady2!.id, platform: 'instagram', status: 'queued', scheduledAt: daysFromNow(3), platformTags: ['#shanghai', '#cafe', '#remotework'], platformSettings: {}, publishLog: [] },
-    { contentId: pReady3!.id, platform: 'weixin', status: 'queued', scheduledAt: daysFromNow(5), platformTags: [], platformSettings: {}, publishLog: [] },
-    { contentId: pReady3!.id, platform: 'x', status: 'ready', scheduledAt: daysFromNow(5), platformTags: ['#AI', '#startups'], platformSettings: {}, publishLog: [] },
+    { contentId: pReady2!.id, platform: 'instagram',   status: 'queued', scheduledAt: daysFromNow(3), platformTags: ['#shanghai', '#cafe', '#remotework'], platformSettings: {}, publishLog: [] },
+    { contentId: pReady2!.id, platform: 'douyin',      status: 'queued', scheduledAt: daysFromNow(3), platformTags: ['#上海咖啡', '#远程办公'], platformSettings: {}, publishLog: [] },
+    { contentId: pReady2!.id, platform: 'weixin',      status: 'queued', scheduledAt: daysFromNow(3), platformTags: [], platformSettings: {}, publishLog: [] },
+    { contentId: pReady3!.id, platform: 'weixin',       status: 'queued', scheduledAt: daysFromNow(5), platformTags: [], platformSettings: {}, publishLog: [] },
+    { contentId: pReady3!.id, platform: 'x',            status: 'queued', scheduledAt: daysFromNow(5), platformTags: ['#AI', '#startups'], platformSettings: {}, publishLog: [] },
+    { contentId: pReady3!.id, platform: 'bilibili',     status: 'queued', scheduledAt: daysFromNow(5), platformTags: ['AI', '创业', '预测'], platformSettings: {}, publishLog: [] },
+    { contentId: pReady3!.id, platform: 'weixin_video', status: 'queued', scheduledAt: daysFromNow(5), platformTags: [], platformSettings: {}, publishLog: [] },
   ]);
 
   // ── 8. Content briefs (hero items only) ───────────────────────────────────
