@@ -82,11 +82,34 @@ export function PlatformIcon({ platform, className = 'w-5 h-5' }: PlatformIconPr
       );
 
     case 'tiktok':
+      // White music-note on clean black — recognisable Western TikTok style
       return <BrandIcon path={PATHS.tiktok} bg="#010101" className={className} />;
 
     case 'douyin':
-      // Douyin uses same icon as TikTok (same app, CN market)
-      return <BrandIcon path={PATHS.tiktok} bg="#161823" className={className} />;
+      // Three-layer neon shadow (cyan + pink + white) characteristic of Douyin's visual style
+      return (
+        <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="24" height="24" rx="5" fill="#161823" />
+          {/* cyan layer — offset left */}
+          <g transform="scale(0.75) translate(2, 4)">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="#25F4EE">
+              <path d={PATHS.tiktok} />
+            </svg>
+          </g>
+          {/* pink layer — offset right */}
+          <g transform="scale(0.75) translate(6, 4)">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="#FE2C55">
+              <path d={PATHS.tiktok} />
+            </svg>
+          </g>
+          {/* white main icon — centred */}
+          <g transform="scale(0.75) translate(4, 4)">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="white">
+              <path d={PATHS.tiktok} />
+            </svg>
+          </g>
+        </svg>
+      );
 
     case 'weixin':
       return <BrandIcon path={PATHS.weixin} bg="#07C160" className={className} />;
