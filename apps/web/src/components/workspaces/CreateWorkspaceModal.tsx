@@ -27,17 +27,24 @@ export function CreateWorkspaceModal({ onClose }: CreateWorkspaceModalProps) {
 
   const [name, setName] = useState('');
   const [icon, setIcon] = useState(EMOJI_OPTIONS[0]!);
+  const [customEmoji, setCustomEmoji] = useState('');
   const [color, setColor] = useState('#6366f1');
   const [about, setAbout] = useState('');
   const [goalCount, setGoalCount] = useState(3);
   const [goalPeriod, setGoalPeriod] = useState<'day' | 'week' | 'month'>('week');
   const [nameError, setNameError] = useState('');
 
+  function selectPreset(emoji: string) {
+    setIcon(emoji);
+    setCustomEmoji('');
+  }
+
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
     const url = await uploadIcon.mutateAsync(file);
     setIcon(url.url);
+    setCustomEmoji('');
     e.target.value = '';
   }
 
@@ -105,9 +112,9 @@ export function CreateWorkspaceModal({ onClose }: CreateWorkspaceModalProps) {
                   <button
                     key={emoji}
                     type="button"
-                    onClick={() => setIcon(emoji)}
+                    onClick={() => selectPreset(emoji)}
                     className={`text-xl rounded-lg py-1.5 transition-colors ${
-                      icon === emoji
+                      icon === emoji && !customEmoji
                         ? 'bg-indigo-100 dark:bg-indigo-900 ring-2 ring-indigo-400'
                         : 'hover:bg-gray-100 dark:hover:bg-gray-700'
                     }`}
@@ -120,12 +127,16 @@ export function CreateWorkspaceModal({ onClose }: CreateWorkspaceModalProps) {
                 {/* Custom emoji text input */}
                 <input
                   type="text"
-                  value={isIconUrl(icon) ? '' : icon}
-                  onChange={(e) => setIcon(e.target.value.trim() || EMOJI_OPTIONS[0]!)}
+                  value={customEmoji}
+                  onChange={(e) => {
+                    const val = e.target.value.trim();
+                    setCustomEmoji(e.target.value);
+                    setIcon(val || EMOJI_OPTIONS[0]!);
+                  }}
                   placeholder={t('icon_custom_placeholder')}
                   maxLength={10}
                   className={`flex-1 text-sm border rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-200 dark:bg-gray-700 dark:text-white transition-colors ${
-                    !isIconUrl(icon) && !EMOJI_OPTIONS.includes(icon)
+                    customEmoji
                       ? 'border-indigo-400 bg-indigo-50 dark:bg-indigo-900/30'
                       : 'border-gray-200 dark:border-gray-600'
                   }`}

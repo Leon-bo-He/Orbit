@@ -48,16 +48,26 @@ function EditWorkspaceModal({ workspace, onClose }: { workspace: Workspace; onCl
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [name, setName] = useState(workspace.name);
   const [icon, setIcon] = useState(workspace.icon);
+  // Pre-populate the custom field only when the saved icon is not a preset and not a URL
+  const [customEmoji, setCustomEmoji] = useState(
+    !isIconUrl(workspace.icon) && !EMOJI_OPTIONS.includes(workspace.icon) ? workspace.icon : '',
+  );
   const [color, setColor] = useState(workspace.color);
   const [about, setAbout] = useState((workspace as Workspace & { about?: string }).about ?? '');
   const [goalCount, setGoalCount] = useState(workspace.publishGoal?.count ?? 3);
   const [goalPeriod, setGoalPeriod] = useState<'day' | 'week' | 'month'>(workspace.publishGoal?.period ?? 'week');
+
+  function selectPreset(emoji: string) {
+    setIcon(emoji);
+    setCustomEmoji('');
+  }
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
     const result = await uploadIcon.mutateAsync(file);
     setIcon(result.url);
+    setCustomEmoji('');
     e.target.value = '';
   }
 
@@ -122,9 +132,9 @@ function EditWorkspaceModal({ workspace, onClose }: { workspace: Workspace; onCl
                   <button
                     key={emoji}
                     type="button"
-                    onClick={() => setIcon(emoji)}
+                    onClick={() => selectPreset(emoji)}
                     className={`text-xl rounded-lg py-1.5 transition-colors ${
-                      icon === emoji
+                      icon === emoji && !customEmoji
                         ? 'bg-indigo-100 dark:bg-indigo-900 ring-2 ring-indigo-400'
                         : 'hover:bg-gray-100 dark:hover:bg-gray-700'
                     }`}
@@ -137,12 +147,16 @@ function EditWorkspaceModal({ workspace, onClose }: { workspace: Workspace; onCl
                 {/* Custom emoji text input */}
                 <input
                   type="text"
-                  value={isIconUrl(icon) ? '' : icon}
-                  onChange={(e) => setIcon(e.target.value.trim() || EMOJI_OPTIONS[0]!)}
+                  value={customEmoji}
+                  onChange={(e) => {
+                    const val = e.target.value.trim();
+                    setCustomEmoji(e.target.value);
+                    setIcon(val || EMOJI_OPTIONS[0]!);
+                  }}
                   placeholder={t('icon_custom_placeholder')}
                   maxLength={10}
                   className={`flex-1 text-sm border rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-200 dark:bg-gray-700 dark:text-white transition-colors ${
-                    !isIconUrl(icon) && !EMOJI_OPTIONS.includes(icon)
+                    customEmoji
                       ? 'border-indigo-400 bg-indigo-50 dark:bg-indigo-900/30'
                       : 'border-gray-200 dark:border-gray-600'
                   }`}
