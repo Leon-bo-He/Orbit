@@ -57,7 +57,7 @@ export const publicationsRoutes: FastifyPluginAsync = async (app) => {
       to?: string;
     };
 
-    const statusFilter = (query.status ?? 'queued,ready')
+    const statusFilter = (query.status ?? '')
       .split(',')
       .map((s) => s.trim())
       .filter(Boolean);
@@ -85,9 +85,11 @@ export const publicationsRoutes: FastifyPluginAsync = async (app) => {
       .where(
         and(
           eq(workspaces.userId, user.sub),
-          statusFilter.length === 1
-            ? eq(publications.status, statusFilter[0]!)
-            : inArray(publications.status, statusFilter),
+          statusFilter.length === 0
+            ? undefined
+            : statusFilter.length === 1
+              ? eq(publications.status, statusFilter[0]!)
+              : inArray(publications.status, statusFilter),
           gte(publications.scheduledAt, fromDate),
           lte(publications.scheduledAt, toDate),
         ),
