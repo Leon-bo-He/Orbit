@@ -1,6 +1,6 @@
-import type { FastifyPluginAsync } from 'fastify';
+import type { FastifyInstance } from 'fastify';
 import { eq, inArray } from 'drizzle-orm';
-import { db } from '../db/client.js';
+import { db } from '../../../db/client.js';
 import {
   users,
   workspaces,
@@ -11,55 +11,43 @@ import {
   ideas,
   planTemplates,
   metrics,
-} from '../db/schema/index.js';
+} from '../../../db/schema/index.js';
 
-export const exportRoutes: FastifyPluginAsync = async (app) => {
+export function exportRoutes(app: FastifyInstance) {
   app.get('/api/export', { onRequest: [app.authenticate] }, async (req, reply) => {
     const { sub: userId } = req.user as { sub: string };
 
-    // Profile (exclude password hash)
-    const [user] = await db
-      .select({
-        id: users.id,
-        email: users.email,
-        name: users.name,
-        avatar: users.avatar,
-        locale: users.locale,
-        timezone: users.timezone,
-        createdAt: users.createdAt,
-      })
-      .from(users)
-      .where(eq(users.id, userId));
+    const [user] = await db.select({
+      id: users.id,
+      email: users.email,
+      name: users.name,
+      avatar: users.avatar,
+      locale: users.locale,
+      timezone: users.timezone,
+      createdAt: users.createdAt,
+    }).from(users).where(eq(users.id, userId));
 
-    // Workspaces
-    const userWorkspaces = await db
-      .select()
-      .from(workspaces)
-      .where(eq(workspaces.userId, userId));
+    const userWorkspaces = await db.select().from(workspaces).where(eq(workspaces.userId, userId));
     const workspaceIds = userWorkspaces.map((w) => w.id);
 
-    // Contents (all workspaces in one query)
     const allContents = workspaceIds.length > 0
       ? await db.select().from(contents).where(inArray(contents.workspaceId, workspaceIds))
       : [];
     const contentIds = allContents.map((c) => c.id);
 
-    // Content sub-data (3 parallel batch queries)
     const [allPlans, allRefs, allPubs] = contentIds.length > 0
       ? await Promise.all([
-          db.select().from(contentPlans).where(inArray(contentPlans.contentId, contentIds)),
-          db.select().from(contentReferences).where(inArray(contentReferences.contentId, contentIds)),
-          db.select().from(publications).where(inArray(publications.contentId, contentIds)),
-        ])
+        db.select().from(contentPlans).where(inArray(contentPlans.contentId, contentIds)),
+        db.select().from(contentReferences).where(inArray(contentReferences.contentId, contentIds)),
+        db.select().from(publications).where(inArray(publications.contentId, contentIds)),
+      ])
       : [[], [], []];
 
-    // Metrics per publication
     const pubIds = allPubs.map((p) => p.id);
     const allMetrics = pubIds.length > 0
       ? await db.select().from(metrics).where(inArray(metrics.publicationId, pubIds))
       : [];
 
-    // Ideas & plan templates
     const [allIdeas, allPlanTemplates] = await Promise.all([
       db.select().from(ideas).where(eq(ideas.userId, userId)),
       workspaceIds.length > 0
@@ -67,42 +55,26 @@ export const exportRoutes: FastifyPluginAsync = async (app) => {
         : Promise.resolve([]),
     ]);
 
-    // Index sub-data by parent ID for O(1) lookup
     const plansById = new Map(allPlans.map((p) => [p.contentId, p]));
-
     const refsByContent = new Map<string, typeof allRefs>();
     for (const r of allRefs) {
-      const arr = refsByContent.get(r.contentId) ?? [];
-      arr.push(r);
-      refsByContent.set(r.contentId, arr);
+      (refsByContent.get(r.contentId) ?? refsByContent.set(r.contentId, []).get(r.contentId)!).push(r);
     }
-
     const pubsByContent = new Map<string, typeof allPubs>();
     for (const p of allPubs) {
-      const arr = pubsByContent.get(p.contentId) ?? [];
-      arr.push(p);
-      pubsByContent.set(p.contentId, arr);
+      (pubsByContent.get(p.contentId) ?? pubsByContent.set(p.contentId, []).get(p.contentId)!).push(p);
     }
-
     const metricsByPub = new Map<string, typeof allMetrics>();
     for (const m of allMetrics) {
-      const arr = metricsByPub.get(m.publicationId) ?? [];
-      arr.push(m);
-      metricsByPub.set(m.publicationId, arr);
+      (metricsByPub.get(m.publicationId) ?? metricsByPub.set(m.publicationId, []).get(m.publicationId)!).push(m);
     }
-
     const contentsByWorkspace = new Map<string, typeof allContents>();
     for (const c of allContents) {
-      const arr = contentsByWorkspace.get(c.workspaceId) ?? [];
-      arr.push(c);
-      contentsByWorkspace.set(c.workspaceId, arr);
+      (contentsByWorkspace.get(c.workspaceId) ?? contentsByWorkspace.set(c.workspaceId, []).get(c.workspaceId)!).push(c);
     }
-
     const templatesByWorkspace = new Map<string, typeof allPlanTemplates>();
     for (const t of allPlanTemplates) {
-      const arr = templatesByWorkspace.get(t.workspaceId) ?? [];
-      arr.push(t);
-      templatesByWorkspace.set(t.workspaceId, arr);
+      (templatesByWorkspace.get(t.workspaceId) ?? templatesByWorkspace.set(t.workspaceId, []).get(t.workspaceId)!).push(t);
     }
 
     const payload = {
@@ -125,9 +97,8 @@ export const exportRoutes: FastifyPluginAsync = async (app) => {
       ideas: allIdeas,
     };
 
-    const filename = `orbit-export-${new Date().toISOString().slice(0, 10)}.json`;
-    reply.header('Content-Disposition', `attachment; filename="${filename}"`);
+    reply.header('Content-Disposition', `attachment; filename="orbit-export-${new Date().toISOString().slice(0, 10)}.json"`);
     reply.header('Content-Type', 'application/json');
     return reply.send(payload);
   });
-};
+}

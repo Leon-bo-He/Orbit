@@ -1,9 +1,9 @@
-import type { FastifyPluginAsync } from 'fastify';
+import type { FastifyInstance } from 'fastify';
 import { sql } from 'drizzle-orm';
-import { db } from '../db/client';
-import { redis } from '../redis/client';
+import { db } from '../../../db/client.js';
+import { redis } from '../../../redis/client.js';
 
-export const healthRoutes: FastifyPluginAsync = async (app) => {
+export function healthRoutes(app: FastifyInstance) {
   app.get('/health', async (_req, reply) => {
     const [pgResult, redisResult] = await Promise.allSettled([
       db.execute(sql`SELECT 1`),
@@ -19,4 +19,4 @@ export const healthRoutes: FastifyPluginAsync = async (app) => {
     const code = status.postgres === 'ok' && status.redis === 'ok' ? 200 : 503;
     return reply.code(code).send(status);
   });
-};
+}
