@@ -29,7 +29,7 @@
 
 **One sentence:** Orbit doesn't replace your creative tools — it manages everything around creation: idea capture, scheduling, multi-platform distribution, and performance tracking.
 
-**Core scenario:** A creator running three vertical accounts simultaneously — Douyin (comedy), Xiaohongshu (fashion), WeChat Official Account (long-form opinion) — needs one place to plan content, manage publishing cadence, and track performance across all channels.
+**Core scenario:** A creator running multiple content verticals simultaneously — comedy shorts, lifestyle posts, long-form tech writing — and publishing each across a mix of platforms (Douyin, TikTok, Xiaohongshu, Instagram, WeChat OA, YouTube, X, or a custom channel) needs one place to plan content, manage publishing cadence, and track performance across all channels. Workspaces represent content areas, not platforms; platforms are selected per publication.
 
 ### Phase Roadmap
 
@@ -55,7 +55,7 @@ Orbit
 ├── Global Dashboard        — cross-workspace overview
 ├── Global Publish Queue    — cross-workspace timeline
 │
-├── Workspace A  (e.g. Douyin · Comedy)
+├── Workspace A  (e.g. "Comedy" — publishes to Douyin, TikTok, YouTube Shorts)
 │   ├── Idea Pool
 │   ├── Content Board (Kanban)
 │   ├── Content Brief
@@ -63,13 +63,13 @@ Orbit
 │   ├── Scheduling Calendar
 │   └── Analytics Panel
 │
-├── Workspace B  (e.g. Xiaohongshu · Fashion)
+├── Workspace B  (e.g. "Lifestyle" — publishes to Xiaohongshu, Instagram)
 │   ├── Idea Pool
 │   ├── Content Board
 │   ├── Scheduling Calendar
 │   └── Analytics Panel
 │
-├── Workspace C  (e.g. WeChat OA · Deep Dives)
+├── Workspace C  (e.g. "Tech Insights" — publishes to WeChat OA, X, newsletter)
 │   └── ...
 │
 └── Settings  — account bindings, language, notification preferences
@@ -111,14 +111,13 @@ Capture inspiration anywhere, with zero friction. Categorize later.
 
 ### 3.2 Workspaces
 
-Each vertical account or content track has its own isolated workspace. Schedules and data do not bleed between workspaces.
+Each content area or vertical has its own isolated workspace. Schedules and data do not bleed between workspaces. Platforms are not bound to a workspace — a single piece of content can be published to any combination of platforms via independent Publication records.
 
 **Workspace configuration:**
 
 | Field | Description |
 |-------|-------------|
-| Name & icon | e.g. "Douyin · Comedy", "Xiaohongshu · Fashion" |
-| Associated platform | Social media platform bound to this workspace |
+| Name & icon | e.g. "Comedy", "Lifestyle", "Tech Insights" — the content area, not the platform |
 | Content type | Short video / Image-text / Long article / Podcast (determines Kanban fields) |
 | Default tag set | Pre-set tags for this vertical |
 | Publish frequency goal | e.g. "3 posts/week" — used for calendar gap alerts |

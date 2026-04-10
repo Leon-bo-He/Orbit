@@ -1,10 +1,10 @@
 ![Orbit](logo.svg)
 
-> Content ops for solo creators managing multiple vertical accounts.
+> Content ops for creators managing multiple content verticals across any platform.
 
 Orbit handles everything *around* creation — capturing ideas before they slip away, planning content with structured briefs, tracking each piece through its full production lifecycle, coordinating multi-platform publishing, and recording performance metrics. It doesn't replace your creative tools; it connects them.
 
-**Built for:** a creator running Douyin (comedy), Xiaohongshu (fashion), and a WeChat Official Account simultaneously, who needs one place to stay on top of all three without letting anything fall through the cracks.
+**Built for:** any creator juggling multiple content areas — comedy shorts, lifestyle posts, long-form tech writing — and publishing across any combination of platforms: Douyin, YouTube, Instagram, X, Xiaohongshu, WeChat, TikTok, or a custom channel of your own. One place to stay on top of it all without letting anything fall through the cracks.
 
 ---
 

@@ -64,31 +64,33 @@ async function seed() {
   const userId = user!.id;
 
   // ── 2. Workspaces ──────────────────────────────────────────────────────────
+  // Workspaces represent content areas/verticals, not platforms.
+  // Platform is chosen per publication.
   const [wDouyin, wXHS, wWeChat] = await db.insert(workspaces).values([
     {
       userId,
-      name: 'Douyin · Comedy',
+      name: 'Comedy',
       icon: '🎭',
       color: '#FF4757',
-      about: 'Short comedy skits and trending challenges for Douyin',
+      about: 'Short comedy skits and trending relatable content',
       publishGoal: { count: 5, period: 'week' },
       stageConfig: [],
     },
     {
       userId,
-      name: 'Xiaohongshu · Lifestyle',
+      name: 'Lifestyle',
       icon: '🌸',
       color: '#FF6B9D',
-      about: 'Fashion, food, and daily life content for Xiaohongshu',
+      about: 'Fashion, food, travel, and daily life content',
       publishGoal: { count: 3, period: 'week' },
       stageConfig: [],
     },
     {
       userId,
-      name: 'WeChat OA · Tech Insights',
+      name: 'Tech Insights',
       icon: '🔬',
       color: '#2ECC71',
-      about: 'In-depth tech analysis and AI commentary for WeChat Official Account',
+      about: 'In-depth tech analysis, AI commentary, and developer perspectives',
       publishGoal: { count: 2, period: 'week' },
       stageConfig: [],
     },
@@ -626,7 +628,7 @@ async function seed() {
   console.log('  Email:    demo@orbit.app');
   console.log('  Password: demo1234');
   console.log('\nData summary:');
-  console.log('  3 workspaces (Douyin, Xiaohongshu, WeChat OA)');
+  console.log('  3 workspaces (Comedy, Lifestyle, Tech Insights)');
   console.log('  3 plan templates');
   console.log('  14 ideas (active, converted, archived)');
   console.log('  26 content items (all stages represented)');
