@@ -146,10 +146,13 @@
       "archived_ideas_delete_error": "Delete failed: {{message}}"
     },
     "notifications": {
-      "publish_reminders": "Publish reminders",
-      "publish_reminders_desc": "Get notified before a scheduled publication",
+      "section_timing": "Timing",
+      "section_channels": "Channels",
       "lead_time": "Reminder lead time",
+      "lead_time_desc": "Applies to all notification channels",
       "lead_time_unit": "min before",
+      "browser_channel": "Browser",
+      "browser_channel_desc": "Receive a browser notification before scheduled publications",
       "blocked": "Notifications are blocked. Enable them in your browser settings.",
       "telegram_title": "Telegram",
       "telegram_connected": "Connected",

@@ -6,6 +6,7 @@ export interface TelegramConfig {
   chatId: string | null;
   tokenSet: boolean;
   enabled: boolean;
+  leadTime: number;
 }
 
 export function useGetTelegramConfig() {
@@ -17,7 +18,7 @@ export function useGetTelegramConfig() {
 
 export function useUpdateTelegramConfig() {
   const qc = useQueryClient();
-  return useMutation<TelegramConfig, ApiError, { botToken?: string | null; chatId?: string | null; enabled?: boolean }>({
+  return useMutation<TelegramConfig, ApiError, { botToken?: string | null; chatId?: string | null; enabled?: boolean; leadTime?: number }>({
     mutationFn: (body) =>
       apiFetch<TelegramConfig>('/api/notifications/telegram', {
         method: 'PATCH',

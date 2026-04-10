@@ -146,10 +146,13 @@
       "archived_ideas_delete_error": "删除失败：{{message}}"
     },
     "notifications": {
-      "publish_reminders": "发布提醒",
-      "publish_reminders_desc": "在排期发布前收到通知",
-      "lead_time": "提前提醒",
+      "section_timing": "提醒设置",
+      "section_channels": "通知渠道",
+      "lead_time": "提前通知时间",
+      "lead_time_desc": "适用于所有通知渠道",
       "lead_time_unit": "分钟前",
+      "browser_channel": "浏览器",
+      "browser_channel_desc": "在排期发布前收到浏览器通知",
       "blocked": "通知已被浏览器拦截，请在浏览器设置中开启",
       "telegram_title": "Telegram",
       "telegram_connected": "已连接",
