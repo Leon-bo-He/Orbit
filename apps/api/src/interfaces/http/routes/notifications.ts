@@ -66,6 +66,7 @@ export function notificationsRoutes(app: FastifyInstance, svc: UserService) {
     );
 
     if (!result.ok) {
+      console.error('[telegram/test] sendMessage failed:', result.error);
       return reply.code(502).send({ error: result.error ?? 'Failed to send message' });
     }
 

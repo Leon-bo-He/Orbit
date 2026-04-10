@@ -791,6 +791,7 @@ function TelegramPanel() {
   const [chatId, setChatId] = useState('');
   const [formError, setFormError] = useState('');
   const [testStatus, setTestStatus] = useState<'idle' | 'ok' | 'error'>('idle');
+  const [testError, setTestError] = useState('');
 
   function startEdit() {
     setBotToken('');
@@ -817,11 +818,13 @@ function TelegramPanel() {
 
   async function handleTest() {
     setTestStatus('idle');
+    setTestError('');
     try {
       await sendTest.mutateAsync();
       setTestStatus('ok');
-    } catch {
+    } catch (err) {
       setTestStatus('error');
+      setTestError(err instanceof Error ? err.message : '');
     }
   }
 
@@ -898,7 +901,9 @@ function TelegramPanel() {
               <p className="text-xs text-emerald-600 dark:text-emerald-400">{t('settings.notifications.telegram_test_ok')}</p>
             )}
             {testStatus === 'error' && (
-              <p className="text-xs text-red-500">{t('settings.notifications.telegram_test_fail')}</p>
+              <p className="text-xs text-red-500">
+                {testError || t('settings.notifications.telegram_test_fail')}
+              </p>
             )}
           </div>
         )}
