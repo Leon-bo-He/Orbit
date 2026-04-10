@@ -6,7 +6,13 @@ Phase 1 (MVP) is complete and shipped at v0.3.0. Phase 2 is now in active develo
 
 **Phase 1 (done):** Idea capture, multi-workspace Kanban, content briefs, scheduling calendar, manual-assist publishing, analytics dashboard, 5-locale i18n, PWA/offline support.
 
-**Phase 2 (current):** Multi-user collaboration, approval workflows, platform API auto-publish, AI-assisted titling and translation, team permissions, advanced analytics export, webhooks.
+**Phase 2 (current):** Multi-platform API auto-publish (Douyin, WeChat, Xiaohongshu, YouTube, etc.) and inbound/outbound webhooks. All platform calls go through BullMQ — never synchronous. Credentials encrypted at rest. Webhook handlers are idempotent and acknowledge immediately.
+
+**Phase 3 (next):** AI skills — hot topic discovery, assisted titling, translation suggestions, brief generation, and content idea expansion. All AI output is a suggestion; never auto-save without explicit user confirmation.
+
+**Phase 4:** Advanced analytics — cross-platform performance comparison, trend charts, funnel analysis, audience insights, scheduled report delivery.
+
+**Phase 5:** Multi-user collaboration — team workspaces, approval workflows, RBAC (owner / admin / editor / viewer), member invites, activity audit logs. Phase 1 routes assumed a single user per workspace; role guards will be added here.
 
 ---
 
@@ -113,7 +119,7 @@ The API follows a three-layer architecture:
 Roles: `owner > admin > editor > viewer`.
 - Enforce permissions in route handlers via a shared `requireRole(role)` middleware, not in individual business logic.
 - Owners can do everything. Admins manage members. Editors create/edit content. Viewers are read-only.
-- Phase 1 routes assumed a single user per workspace — audit and add role guards when extending them for multi-user.
+- Phase 1 routes assumed a single user per workspace — role guards are Phase 5 work; do not add them prematurely.
 
 ### Platform API integrations
 - All platform API calls must be dispatched as BullMQ jobs, never called synchronously in a request handler.
@@ -153,7 +159,7 @@ Roles: `owner > admin > editor > viewer`.
 | Member | A user who belongs to a Team with an assigned Role |
 | Role | `owner`, `admin`, `editor`, or `viewer` — defines what a Member can do |
 | PlatformConnection | An OAuth-authorized link between a Workspace and a social platform account |
-| ApprovalRequest | A Phase 2 workflow step where content requires sign-off before publishing |
+| ApprovalRequest | A Phase 5 workflow step where content requires sign-off before publishing |
 | Job | A BullMQ background task (auto-publish, webhook delivery, AI generation, reminders) |
 
 ---
