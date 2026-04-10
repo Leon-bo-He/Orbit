@@ -33,17 +33,13 @@
 
 ### Phase Roadmap
 
-| Phase 1 — MVP | Phase 2 — Growth |
-|---------------|-----------------|
-| Rapid idea capture | Multi-user collaboration |
-| Multi-workspace (per account/vertical) | Approval workflows |
-| Structured content briefs | Multi-platform API auto-publish |
-| Full content lifecycle tracking | AI-assisted titling & translation |
-| Publication management (manual-assist) | Team permissions |
-| Scheduling calendar & workflow | Advanced analytics export |
-| Analytics dashboard | Plugin / Webhook ecosystem |
-| Multilingual UI (5 locales) | |
-| PWA mobile support | |
+| Phase | Focus | Status |
+|-------|-------|--------|
+| **Phase 1 — MVP** | Idea capture, multi-workspace Kanban, content briefs, scheduling calendar, manual-assist publishing, analytics dashboard, 5-locale i18n, PWA/offline | **Done** |
+| **Phase 2 — Platform Integration** | Multi-platform API auto-publish (Douyin, WeChat, Xiaohongshu, YouTube, etc.), inbound and outbound webhooks | **In progress** |
+| **Phase 3 — AI Skills** | Hot topic discovery, AI-assisted titling, translation suggestions, brief generation, content idea expansion | Planned |
+| **Phase 4 — Advanced Analytics** | Cross-platform performance comparison, trend charts, funnel analysis, audience insights, scheduled report delivery | Planned |
+| **Phase 5 — Collaboration** | Multi-user team workspaces, approval workflows, role-based access control, member invites, activity audit logs | Planned |
 
 ---
 
@@ -171,7 +167,7 @@ Idea → Planned → Planning → Creating → Ready → Publishing → Publishe
 | Post-publish metrics | Auto-shown once published |
 | Post-mortem notes | Filled in Reviewed stage |
 
-**Stage customization:** Workspace settings allow adding/removing stages. Phase 2 can insert "In Review" between Creating and Ready without rebuilding the board.
+**Stage customization:** Workspace settings allow adding/removing stages. Phase 5 can insert "In Review" between Creating and Ready as part of the approval workflow.
 
 ---
 

@@ -26,6 +26,18 @@ Orbit handles everything *around* creation — capturing ideas before they slip 
 
 ---
 
+## Roadmap
+
+| Phase | Focus | Status |
+|-------|-------|--------|
+| **Phase 1 — MVP** | Idea capture, Kanban, content briefs, scheduling calendar, manual-assist publishing, analytics dashboard, 5-locale i18n, PWA/offline | **Done** |
+| **Phase 2 — Platform Integration** | Multi-platform API auto-publish, inbound and outbound webhooks | **In progress** |
+| **Phase 3 — AI Skills** | Hot topic discovery, AI-assisted titling, translation suggestions, brief generation, content idea expansion | Planned |
+| **Phase 4 — Advanced Analytics** | Cross-platform performance comparison, trend charts, funnel analysis, audience insights, scheduled reports | Planned |
+| **Phase 5 — Collaboration** | Multi-user team workspaces, approval workflows, role-based access control, member invites, audit logs | Planned |
+
+---
+
 ## Tech Stack
 
 | Layer | Technology |
