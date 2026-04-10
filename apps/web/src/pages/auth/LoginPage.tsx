@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from '@tanstack/react-query';
@@ -22,6 +22,7 @@ export default function LoginPage() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const passwordRef = useRef<HTMLInputElement>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -108,6 +109,7 @@ export default function LoginPage() {
               </label>
               <div className="relative">
                 <input
+                  ref={passwordRef}
                   type={showPassword ? 'text' : 'password'}
                   autoComplete="current-password"
                   required
@@ -144,7 +146,14 @@ export default function LoginPage() {
 
           <p className="mt-5 text-center text-sm text-gray-500 dark:text-gray-400">
             {t('auth.no_account')}{' '}
-            <Link to="/register" onClick={() => setPassword('')} className="text-indigo-600 hover:text-indigo-700 font-medium">
+            <Link
+              to="/register"
+              onClick={() => {
+                if (passwordRef.current) passwordRef.current.value = '';
+                setPassword('');
+              }}
+              className="text-indigo-600 hover:text-indigo-700 font-medium"
+            >
               {t('auth.sign_up')}
             </Link>
           </p>
