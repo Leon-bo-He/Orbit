@@ -71,6 +71,25 @@ pnpm dev
 
 Open [http://localhost:5173](http://localhost:5173) and register an account.
 
+### Demo account
+
+To explore the app with pre-populated data, seed the demo account:
+
+```bash
+pnpm seed:demo
+```
+
+Then log in with:
+
+| Field | Value |
+|-------|-------|
+| Email | `demo@orbit.app` |
+| Password | `demo1234` |
+
+The demo account includes 3 workspaces (Comedy, Lifestyle, Tech Insights), 26 content items across all Kanban stages, content briefs, 12 publications, and 8 weeks of metric data so every dashboard and chart renders with real content.
+
+Run `pnpm seed:demo --force` to wipe and re-seed from scratch.
+
 ### Environment variables
 
 Copy `.env.example` to `.env`:
