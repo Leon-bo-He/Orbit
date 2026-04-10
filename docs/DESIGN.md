@@ -391,9 +391,6 @@ users (
   locale text NOT NULL DEFAULT 'en-US',
   timezone text NOT NULL DEFAULT 'America/Los_Angeles',
   password_hash text,
-  telegram_bot_token text,
-  telegram_chat_id text,
-  telegram_notifications_enabled boolean NOT NULL DEFAULT true,
   notification_lead_time integer NOT NULL DEFAULT 15,  -- minutes; applies to all channels
   created_at timestamptz NOT NULL
 )
@@ -522,6 +519,18 @@ metrics (
   followers_gained integer NOT NULL DEFAULT 0,
   recorded_at timestamptz NOT NULL,
   created_at timestamptz NOT NULL
+)
+
+-- Notification Channels  (one row per user per channel type)
+notification_channels (
+  id uuid PK,
+  user_id uuid FK→users CASCADE,
+  type text NOT NULL,            -- 'telegram' | 'slack' | 'email' | ...
+  enabled boolean NOT NULL DEFAULT true,
+  config jsonb NOT NULL DEFAULT {},  -- channel-specific blob: { botToken, chatId } for telegram
+  created_at timestamptz NOT NULL,
+  updated_at timestamptz NOT NULL,
+  UNIQUE (user_id, type)
 )
 
 -- Custom Platforms
