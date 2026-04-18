@@ -8,3 +8,4 @@ export * from './plan-templates';
 export * from './publications';
 export * from './metrics';
 export * from './custom-platforms';
+export * from './notification-channels';

@@ -5,7 +5,7 @@ services:
       POSTGRES_DB: orbit
       POSTGRES_USER: orbit
       POSTGRES_PASSWORD: secret
-    ports: ["5432:5432"]
+    ports: ["15432:5432"]
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -20,11 +20,11 @@ services:
       POSTGRES_DB: orbit_test
       POSTGRES_USER: orbit
       POSTGRES_PASSWORD: secret
-    ports: ["5433:5432"]
+    ports: ["15433:5432"]
 
   redis:
     image: redis:7-alpine
-    ports: ["6379:6379"]
+    ports: ["16379:6379"]
     volumes:
       - redis_data:/data
 

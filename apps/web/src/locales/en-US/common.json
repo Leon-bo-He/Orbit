@@ -146,10 +146,13 @@
       "archived_ideas_delete_error": "Delete failed: {{message}}"
     },
     "notifications": {
-      "publish_reminders": "Publish reminders",
-      "publish_reminders_desc": "Get notified before a scheduled publication",
+      "section_timing": "Timing",
+      "section_channels": "Channels",
       "lead_time": "Reminder lead time",
+      "lead_time_desc": "Applies to all notification channels",
       "lead_time_unit": "min before",
+      "browser_channel": "Browser",
+      "browser_channel_desc": "Receive a browser notification before scheduled publications",
       "blocked": "Notifications are blocked. Enable them in your browser settings.",
       "telegram_title": "Telegram",
       "telegram_connected": "Connected",
@@ -169,7 +172,9 @@
       "telegram_chat_id": "Chat ID",
       "telegram_chat_id_hint": "Send any message to your bot, then click \"Fetch\" to auto-fill.",
       "telegram_fetch_chat_id": "Fetch",
-      "telegram_notifications": "Notifications enabled"
+      "telegram_notifications": "Notifications enabled",
+      "telegram_disconnect_title": "Disconnect Telegram",
+      "telegram_disconnect_desc": "This will remove your bot token and chat ID. You can reconnect at any time."
     },
     "account": {
       "name": "Username",

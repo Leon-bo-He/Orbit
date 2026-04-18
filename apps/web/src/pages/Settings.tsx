@@ -788,6 +788,7 @@ function TelegramPanel() {
   const fetchChatId = useFetchTelegramChatId();
 
   const [editing, setEditing] = useState(false);
+  const [showDisconnectConfirm, setShowDisconnectConfirm] = useState(false);
   const [botToken, setBotToken] = useState('');
   const [chatId, setChatId] = useState('');
   const [formError, setFormError] = useState('');
@@ -908,7 +909,7 @@ function TelegramPanel() {
                 {t('settings.notifications.telegram_edit')}
               </button>
               <button
-                onClick={() => void handleDisconnect()}
+                onClick={() => setShowDisconnectConfirm(true)}
                 disabled={updateConfig.isPending}
                 className="px-3 py-1.5 text-sm text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-50 ml-auto"
               >
@@ -927,7 +928,7 @@ function TelegramPanel() {
         )}
 
         {editing && (
-          <form onSubmit={(e) => void handleSave(e)} className="space-y-3">
+          <form onSubmit={(e) => void handleSave(e)} className="space-y-3" autoComplete="off">
             <div>
               <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
                 {t('settings.notifications.telegram_bot_token')}
@@ -937,6 +938,8 @@ function TelegramPanel() {
                 value={botToken}
                 onChange={(e) => { setBotToken(e.target.value); setChatId(''); setFormError(''); }}
                 placeholder={config?.tokenSet ? t('settings.notifications.telegram_token_placeholder_set') : t('settings.notifications.telegram_token_placeholder')}
+                autoComplete="off"
+                data-1p-ignore
                 className="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-400"
               />
             </div>
@@ -991,16 +994,52 @@ function TelegramPanel() {
           </form>
         )}
       </div>
+
+      {showDisconnectConfirm && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[60] p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-xl w-full max-w-sm">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-gray-700">
+              <h2 className="text-sm font-semibold text-gray-900 dark:text-white">{t('settings.notifications.telegram_disconnect_title')}</h2>
+              <button onClick={() => setShowDisconnectConfirm(false)} className="text-gray-400 hover:text-gray-600 text-sm">✕</button>
+            </div>
+            <div className="px-5 py-4 space-y-4">
+              <p className="text-sm text-gray-600 dark:text-gray-300">{t('settings.notifications.telegram_disconnect_desc')}</p>
+              <div className="flex justify-end gap-2 pt-1">
+                <button
+                  onClick={() => setShowDisconnectConfirm(false)}
+                  className="px-3 py-1.5 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+                >
+                  {t('action.cancel')}
+                </button>
+                <button
+                  onClick={() => { setShowDisconnectConfirm(false); void handleDisconnect(); }}
+                  disabled={updateConfig.isPending}
+                  className="px-3 py-1.5 text-sm bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50"
+                >
+                  {t('settings.notifications.telegram_disconnect')}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
 function NotificationsPanel() {
   const { t } = useTranslation('common');
+  const { data: config } = useGetTelegramConfig();
+  const updateConfig = useUpdateTelegramConfig();
+
   const [enabled, setEnabled] = useState(
     typeof Notification !== 'undefined' && Notification.permission === 'granted'
   );
   const [leadTime, setLeadTime] = useState(15);
+
+  useEffect(() => {
+    if (config?.leadTime != null) setLeadTime(config.leadTime);
+  }, [config?.leadTime]);
 
   async function handleToggle() {
     if (!enabled) {
@@ -1012,43 +1051,63 @@ function NotificationsPanel() {
   }
 
   return (
-    <div>
-      <div className={ROW}>
-        <div>
-          <p className={LABEL}>{t('settings.notifications.publish_reminders')}</p>
-          <p className="text-xs text-gray-500 mt-0.5">{t('settings.notifications.publish_reminders_desc')}</p>
+    <div className="space-y-6">
+      {/* Timing — global lead time for all channels */}
+      <div>
+        <p className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-1">
+          {t('settings.notifications.section_timing')}
+        </p>
+        <div className="rounded-xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+          <div className={ROW + ' px-4'}>
+            <div>
+              <p className={LABEL + ' dark:text-white'}>{t('settings.notifications.lead_time')}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{t('settings.notifications.lead_time_desc')}</p>
+            </div>
+            <select
+              value={leadTime}
+              onChange={(e) => {
+                const val = Number(e.target.value);
+                setLeadTime(val);
+                updateConfig.mutate({ leadTime: val });
+              }}
+              className="text-sm border border-gray-200 dark:border-gray-600 rounded-md px-2 py-1.5 outline-none focus:ring-2 focus:ring-indigo-200 bg-white dark:bg-gray-800 dark:text-white ml-4"
+            >
+              {[5, 10, 15, 30, 60].map((m) => (
+                <option key={m} value={m}>{m} {t('settings.notifications.lead_time_unit')}</option>
+              ))}
+            </select>
+          </div>
         </div>
-        <button
-          onClick={() => void handleToggle()}
-          role="switch"
-          aria-checked={enabled}
-          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 flex-shrink-0 ml-4 ${enabled ? 'bg-indigo-600' : 'bg-gray-200'}`}
-        >
-          <span className={`inline-block transform rounded-full bg-white shadow-sm transition-transform duration-200 ${enabled ? 'translate-x-6' : 'translate-x-1'}`}
-            style={{ width: '18px', height: '18px' }} />
-        </button>
       </div>
 
-      {enabled && (
-        <div className={ROW}>
-          <span className={LABEL}>{t('settings.notifications.lead_time')}</span>
-          <select
-            value={leadTime}
-            onChange={(e) => setLeadTime(Number(e.target.value))}
-            className="text-sm border border-gray-200 rounded-md px-2 py-1.5 outline-none focus:ring-2 focus:ring-indigo-200 bg-white"
-          >
-            {[5, 10, 15, 30, 60].map((m) => (
-              <option key={m} value={m}>{m} {t('settings.notifications.lead_time_unit')}</option>
-            ))}
-          </select>
+      {/* Channels */}
+      <div>
+        <p className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-1">
+          {t('settings.notifications.section_channels')}
+        </p>
+        <div className="rounded-xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+          <div className={ROW + ' px-4'}>
+            <div>
+              <p className={LABEL + ' dark:text-white'}>{t('settings.notifications.browser_channel')}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{t('settings.notifications.browser_channel_desc')}</p>
+            </div>
+            <button
+              onClick={() => void handleToggle()}
+              role="switch"
+              aria-checked={enabled}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 flex-shrink-0 ml-4 ${enabled ? 'bg-indigo-600' : 'bg-gray-200'}`}
+            >
+              <span className={`inline-block transform rounded-full bg-white shadow-sm transition-transform duration-200 ${enabled ? 'translate-x-6' : 'translate-x-1'}`}
+                style={{ width: '18px', height: '18px' }} />
+            </button>
+          </div>
         </div>
-      )}
+        {typeof Notification !== 'undefined' && Notification.permission === 'denied' && (
+          <p className="text-xs text-red-500 pt-2">{t('settings.notifications.blocked')}</p>
+        )}
 
-      {typeof Notification !== 'undefined' && Notification.permission === 'denied' && (
-        <p className="text-xs text-red-500 pt-3">{t('settings.notifications.blocked')}</p>
-      )}
-
-      <TelegramPanel />
+        <TelegramPanel />
+      </div>
     </div>
   );
 }

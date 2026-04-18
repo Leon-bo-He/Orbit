@@ -146,10 +146,13 @@
       "archived_ideas_delete_error": "刪除失敗：{{message}}"
     },
     "notifications": {
-      "publish_reminders": "發布提醒",
-      "publish_reminders_desc": "在排期發布前收到通知",
-      "lead_time": "提前提醒",
+      "section_timing": "提醒設定",
+      "section_channels": "通知管道",
+      "lead_time": "提前通知時間",
+      "lead_time_desc": "適用於所有通知管道",
       "lead_time_unit": "分鐘前",
+      "browser_channel": "瀏覽器",
+      "browser_channel_desc": "在排期發佈前收到瀏覽器通知",
       "blocked": "通知已被瀏覽器攔截，請在瀏覽器設定中開啟",
       "telegram_title": "Telegram",
       "telegram_connected": "已連接",
@@ -169,7 +172,9 @@
       "telegram_chat_id": "Chat ID",
       "telegram_chat_id_hint": "先向機器人傳送任意訊息，再點擊「獲取」自動填入。",
       "telegram_fetch_chat_id": "獲取",
-      "telegram_notifications": "啟用通知"
+      "telegram_notifications": "啟用通知",
+      "telegram_disconnect_title": "中斷 Telegram 連接",
+      "telegram_disconnect_desc": "這將移除你的 Bot Token 和 Chat ID，你可以隨時重新連接。"
     },
     "account": {
       "name": "用戶名",

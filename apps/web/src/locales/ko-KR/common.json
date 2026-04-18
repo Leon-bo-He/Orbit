@@ -146,10 +146,13 @@
       "archived_ideas_delete_error": "삭제 실패: {{message}}"
     },
     "notifications": {
-      "publish_reminders": "발행 알림",
-      "publish_reminders_desc": "예약된 발행 전에 알림을 받습니다",
+      "section_timing": "타이밍",
+      "section_channels": "알림 채널",
       "lead_time": "사전 알림 시간",
+      "lead_time_desc": "모든 알림 채널에 적용됩니다",
       "lead_time_unit": "분 전",
+      "browser_channel": "브라우저",
+      "browser_channel_desc": "예약된 발행 전에 브라우저 알림을 받습니다",
       "blocked": "알림이 브라우저에 의해 차단되었습니다. 브라우저 설정에서 활성화하세요.",
       "telegram_title": "Telegram",
       "telegram_connected": "연결됨",
@@ -169,7 +172,9 @@
       "telegram_chat_id": "Chat ID",
       "telegram_chat_id_hint": "봇에 메시지를 보낸 후 「가져오기」를 클릭하면 자동으로 입력됩니다.",
       "telegram_fetch_chat_id": "가져오기",
-      "telegram_notifications": "알림 활성화"
+      "telegram_notifications": "알림 활성화",
+      "telegram_disconnect_title": "Telegram 연결 해제",
+      "telegram_disconnect_desc": "Bot Token과 Chat ID가 삭제됩니다. 언제든지 다시 연결할 수 있습니다."
     },
     "account": {
       "name": "사용자명",

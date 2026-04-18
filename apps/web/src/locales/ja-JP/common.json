@@ -146,10 +146,13 @@
       "archived_ideas_delete_error": "削除失敗：{{message}}"
     },
     "notifications": {
-      "publish_reminders": "配信リマインダー",
-      "publish_reminders_desc": "予定された投稿の前に通知を受け取る",
+      "section_timing": "タイミング",
+      "section_channels": "通知チャンネル",
       "lead_time": "リマインダーの事前通知時間",
+      "lead_time_desc": "すべての通知チャンネルに適用されます",
       "lead_time_unit": "分前",
+      "browser_channel": "ブラウザ",
+      "browser_channel_desc": "予定された投稿の前にブラウザ通知を受け取る",
       "blocked": "通知はブラウザによってブロックされています。ブラウザの設定で有効にしてください。",
       "telegram_title": "Telegram",
       "telegram_connected": "接続済み",
@@ -169,7 +172,9 @@
       "telegram_chat_id": "Chat ID",
       "telegram_chat_id_hint": "ボットにメッセージを送ってから「取得」をクリックすると自動入力されます。",
       "telegram_fetch_chat_id": "取得",
-      "telegram_notifications": "通知を有効にする"
+      "telegram_notifications": "通知を有効にする",
+      "telegram_disconnect_title": "Telegram の接続を解除",
+      "telegram_disconnect_desc": "Bot Token と Chat ID が削除されます。いつでも再接続できます。"
     },
     "account": {
       "name": "ユーザー名",
