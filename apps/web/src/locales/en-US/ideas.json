@@ -63,15 +63,10 @@
   "trending_news": {
     "button": "Trending News",
     "title": "Trending News",
-    "add_source": "Add Source",
-    "add_first_source": "Add RSS Source",
     "no_sources_heading": "No RSS sources yet",
-    "no_sources_body": "Add an RSS feed to see trending news from your favorite sources.",
-    "source_name_placeholder": "e.g. TechCrunch",
-    "source_url_placeholder": "https://example.com/feed.xml",
-    "save_source": "Add",
-    "cancel": "Cancel",
-    "remove_source": "Remove",
+    "no_sources_body": "Add RSS feeds in Settings > Data to follow your favorite sources.",
+    "open_settings": "Open Settings",
+    "manage_sources": "Manage sources in Settings",
     "fetch_error": "Failed to load feed",
     "no_articles": "No articles found"
   }

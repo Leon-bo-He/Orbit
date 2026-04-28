@@ -143,7 +143,12 @@
       "archived_ideas_export_success": "アーカイブ済みアイデアを {{count}} 件エクスポートしました",
       "archived_ideas_delete_success": "アーカイブ済みアイデアを {{count}} 件削除しました",
       "archived_ideas_export_error": "エクスポート失敗：{{message}}",
-      "archived_ideas_delete_error": "削除失敗：{{message}}"
+      "archived_ideas_delete_error": "削除失敗：{{message}}",
+      "section_rss_sources": "RSSソース",
+      "rss_sources_desc": "アイデアページの「トレンドニュース」パネルに表示するフィード。",
+      "rss_add_source": "ソースを追加",
+      "rss_source_name_placeholder": "例：TechCrunch",
+      "rss_source_url_placeholder": "https://example.com/feed.xml"
     },
     "notifications": {
       "section_timing": "タイミング",

@@ -143,7 +143,12 @@
       "archived_ideas_export_success": "보관된 아이디어 {{count}}개를 내보냈습니다",
       "archived_ideas_delete_success": "보관된 아이디어 {{count}}개를 삭제했습니다",
       "archived_ideas_export_error": "내보내기 실패: {{message}}",
-      "archived_ideas_delete_error": "삭제 실패: {{message}}"
+      "archived_ideas_delete_error": "삭제 실패: {{message}}",
+      "section_rss_sources": "RSS 소스",
+      "rss_sources_desc": "아이디어 페이지의 '트렌딩 뉴스' 패널에 표시할 피드입니다.",
+      "rss_add_source": "소스 추가",
+      "rss_source_name_placeholder": "예: TechCrunch",
+      "rss_source_url_placeholder": "https://example.com/feed.xml"
     },
     "notifications": {
       "section_timing": "타이밍",

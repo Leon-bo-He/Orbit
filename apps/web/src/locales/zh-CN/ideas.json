@@ -63,15 +63,10 @@
   "trending_news": {
     "button": "热门资讯",
     "title": "热门资讯",
-    "add_source": "添加来源",
-    "add_first_source": "添加 RSS 来源",
     "no_sources_heading": "暂无 RSS 来源",
-    "no_sources_body": "添加 RSS 订阅，即可在此查看来自你喜爱的来源的最新资讯。",
-    "source_name_placeholder": "例如：36氪",
-    "source_url_placeholder": "https://example.com/feed.xml",
-    "save_source": "添加",
-    "cancel": "取消",
-    "remove_source": "移除",
+    "no_sources_body": "前往「设置 > 数据」添加 RSS 订阅，即可追踪你喜爱的来源。",
+    "open_settings": "打开设置",
+    "manage_sources": "在设置中管理订阅来源",
     "fetch_error": "加载订阅失败",
     "no_articles": "暂无文章"
   }

@@ -63,15 +63,10 @@
   "trending_news": {
     "button": "熱門資訊",
     "title": "熱門資訊",
-    "add_source": "新增來源",
-    "add_first_source": "新增 RSS 來源",
     "no_sources_heading": "尚無 RSS 來源",
-    "no_sources_body": "新增 RSS 訂閱，即可在此查看來自你喜愛的來源的最新資訊。",
-    "source_name_placeholder": "例如：TechCrunch",
-    "source_url_placeholder": "https://example.com/feed.xml",
-    "save_source": "新增",
-    "cancel": "取消",
-    "remove_source": "移除",
+    "no_sources_body": "前往「設定 > 資料」新增 RSS 訂閱，即可追蹤你喜愛的來源。",
+    "open_settings": "開啟設定",
+    "manage_sources": "在設定中管理訂閱來源",
     "fetch_error": "載入訂閱失敗",
     "no_articles": "暫無文章"
   }

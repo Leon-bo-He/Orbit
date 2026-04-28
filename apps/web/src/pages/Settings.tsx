@@ -18,6 +18,7 @@ import { PlatformIcon } from '../components/ui/PlatformIcon.js';
 import { CalendarPicker } from '../components/ui/CalendarPicker.js';
 import i18n, { SUPPORTED_LOCALES, type SupportedLocale } from '../i18n/index.js';
 import { toast } from '../store/toast.store.js';
+import { useRssStore } from '../store/rss.store.js';
 
 type Section = 'account' | 'appearance' | 'workspaces' | 'platforms' | 'notifications' | 'data';
 
@@ -353,6 +354,20 @@ function DataPanel() {
   const [exportingArchivedIdeas, setExportingArchivedIdeas] = useState(false);
   const [deletingArchivedIdeas, setDeletingArchivedIdeas] = useState(false);
   const [showArchivedIdeasDeleteConfirm, setShowArchivedIdeasDeleteConfirm] = useState(false);
+
+  const { sources: rssSources, addSource: addRssSource, removeSource: removeRssSource } = useRssStore();
+  const [showRssAddForm, setShowRssAddForm] = useState(false);
+  const [rssNewName, setRssNewName] = useState('');
+  const [rssNewUrl, setRssNewUrl] = useState('');
+
+  function handleRssAdd(e: React.FormEvent) {
+    e.preventDefault();
+    if (!rssNewName.trim() || !rssNewUrl.trim()) return;
+    addRssSource({ name: rssNewName.trim(), url: rssNewUrl.trim() });
+    setRssNewName('');
+    setRssNewUrl('');
+    setShowRssAddForm(false);
+  }
 
   async function handleExport() {
     setExporting(true);
@@ -745,6 +760,78 @@ function DataPanel() {
           </div>
         </div>
       )}
+
+      {/* RSS Sources */}
+      <div>
+        <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">{t('settings.general.section_rss_sources')}</p>
+        <div className="rounded-xl border border-gray-100 overflow-hidden divide-y divide-gray-100">
+          {rssSources.map((source) => (
+            <div key={source.id} className={ROW + ' px-4 gap-3'}>
+              <div className="flex items-center gap-2 min-w-0 flex-1">
+                <svg className="w-3.5 h-3.5 text-orange-400 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M3.75 3a.75.75 0 00-.75.75v.5c0 .414.336.75.75.75H4c6.075 0 11 4.925 11 11v.25c0 .414.336.75.75.75h.5a.75.75 0 00.75-.75V16C17 8.82 11.18 3 4 3h-.25z"/>
+                  <path d="M3 8.75A.75.75 0 013.75 8H4a8 8 0 018 8v.25a.75.75 0 01-.75.75h-.5a.75.75 0 01-.75-.75V16a6 6 0 00-6-6h-.25A.75.75 0 013 9.25v-.5zM7 15a2 2 0 11-4 0 2 2 0 014 0z"/>
+                </svg>
+                <div className="min-w-0">
+                  <p className={LABEL + ' truncate'}>{source.name}</p>
+                  <p className="text-xs text-gray-400 truncate">{source.url}</p>
+                </div>
+              </div>
+              <button
+                onClick={() => removeRssSource(source.id)}
+                className="text-xs px-2.5 py-1 rounded-md border border-red-200 text-red-500 hover:bg-red-50 transition-colors flex-shrink-0"
+              >
+                {t('action.remove')}
+              </button>
+            </div>
+          ))}
+          {showRssAddForm ? (
+            <form onSubmit={handleRssAdd} className="px-4 py-3 flex flex-col sm:flex-row gap-2">
+              <input
+                autoFocus
+                value={rssNewName}
+                onChange={(e) => setRssNewName(e.target.value)}
+                placeholder={t('settings.general.rss_source_name_placeholder')}
+                className="flex-1 text-sm px-3 py-1.5 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-colors"
+              />
+              <input
+                value={rssNewUrl}
+                onChange={(e) => setRssNewUrl(e.target.value)}
+                placeholder={t('settings.general.rss_source_url_placeholder')}
+                type="url"
+                className="flex-[2] text-sm px-3 py-1.5 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-colors"
+              />
+              <div className="flex gap-2 flex-shrink-0">
+                <button
+                  type="submit"
+                  disabled={!rssNewName.trim() || !rssNewUrl.trim()}
+                  className="text-sm px-3 py-1.5 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-40 transition-colors"
+                >
+                  {t('action.add')}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setShowRssAddForm(false); setRssNewName(''); setRssNewUrl(''); }}
+                  className="text-sm px-3 py-1.5 rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors"
+                >
+                  {t('action.cancel')}
+                </button>
+              </div>
+            </form>
+          ) : (
+            <div className={`${ROW} px-4 border-b-0`}>
+              <p className="text-xs text-gray-400">{t('settings.general.rss_sources_desc')}</p>
+              <button
+                onClick={() => setShowRssAddForm(true)}
+                className="text-sm px-3 py-1.5 rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors flex-shrink-0 inline-flex items-center gap-1"
+              >
+                <span className="text-base leading-none">+</span>
+                {t('settings.general.rss_add_source')}
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
 
       {showArchivedIdeasDeleteConfirm && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/40">

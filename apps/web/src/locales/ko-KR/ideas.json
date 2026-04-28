@@ -63,15 +63,10 @@
   "trending_news": {
     "button": "트렌딩 뉴스",
     "title": "트렌딩 뉴스",
-    "add_source": "소스 추가",
-    "add_first_source": "RSS 소스 추가",
     "no_sources_heading": "RSS 소스가 없습니다",
-    "no_sources_body": "RSS 피드를 추가하여 좋아하는 소스의 최신 뉴스를 확인하세요.",
-    "source_name_placeholder": "예: TechCrunch",
-    "source_url_placeholder": "https://example.com/feed.xml",
-    "save_source": "추가",
-    "cancel": "취소",
-    "remove_source": "제거",
+    "no_sources_body": "설정 > 데이터에서 RSS 피드를 추가하여 좋아하는 소스를 팔로우하세요.",
+    "open_settings": "설정 열기",
+    "manage_sources": "설정에서 소스 관리",
     "fetch_error": "피드 로드 실패",
     "no_articles": "기사를 찾을 수 없습니다"
   }

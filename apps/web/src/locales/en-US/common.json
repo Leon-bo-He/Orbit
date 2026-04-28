@@ -143,7 +143,12 @@
       "archived_ideas_export_success": "Exported {{count}} archived ideas",
       "archived_ideas_delete_success": "Deleted {{count}} archived ideas",
       "archived_ideas_export_error": "Export failed: {{message}}",
-      "archived_ideas_delete_error": "Delete failed: {{message}}"
+      "archived_ideas_delete_error": "Delete failed: {{message}}",
+      "section_rss_sources": "RSS Sources",
+      "rss_sources_desc": "Feeds shown in the Trending News panel on the Ideas page.",
+      "rss_add_source": "Add Source",
+      "rss_source_name_placeholder": "e.g. TechCrunch",
+      "rss_source_url_placeholder": "https://example.com/feed.xml"
     },
     "notifications": {
       "section_timing": "Timing",

@@ -143,7 +143,12 @@
       "archived_ideas_export_success": "已匯出 {{count}} 條封存靈感",
       "archived_ideas_delete_success": "已刪除 {{count}} 條封存靈感",
       "archived_ideas_export_error": "匯出失敗：{{message}}",
-      "archived_ideas_delete_error": "刪除失敗：{{message}}"
+      "archived_ideas_delete_error": "刪除失敗：{{message}}",
+      "section_rss_sources": "RSS 來源",
+      "rss_sources_desc": "在靈感頁「熱門資訊」面板中顯示的訂閱源。",
+      "rss_add_source": "新增來源",
+      "rss_source_name_placeholder": "例如：TechCrunch",
+      "rss_source_url_placeholder": "https://example.com/feed.xml"
     },
     "notifications": {
       "section_timing": "提醒設定",

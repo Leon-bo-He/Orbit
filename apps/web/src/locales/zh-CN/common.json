@@ -143,7 +143,12 @@
       "archived_ideas_export_success": "已导出 {{count}} 条归档灵感",
       "archived_ideas_delete_success": "已删除 {{count}} 条归档灵感",
       "archived_ideas_export_error": "导出失败：{{message}}",
-      "archived_ideas_delete_error": "删除失败：{{message}}"
+      "archived_ideas_delete_error": "删除失败：{{message}}",
+      "section_rss_sources": "RSS 来源",
+      "rss_sources_desc": "在灵感页「热门资讯」面板中显示的订阅源。",
+      "rss_add_source": "添加来源",
+      "rss_source_name_placeholder": "例如：36氪",
+      "rss_source_url_placeholder": "https://example.com/feed.xml"
     },
     "notifications": {
       "section_timing": "提醒设置",
