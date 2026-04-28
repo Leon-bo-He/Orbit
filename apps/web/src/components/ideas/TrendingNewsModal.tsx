@@ -1,0 +1,298 @@
+import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useRssStore, type RssSource } from '../../store/rss.store.js';
+
+interface RssArticle {
+  title: string;
+  link: string;
+  pubDate: string;
+}
+
+function parseRssXml(xml: string): RssArticle[] {
+  const doc = new DOMParser().parseFromString(xml, 'text/xml');
+
+  const toArticle = (title: string, link: string, date: string): RssArticle => ({
+    title: title.trim(),
+    link: link.trim(),
+    pubDate: date.trim(),
+  });
+
+  // RSS 2.0
+  const items = doc.querySelectorAll('item');
+  if (items.length > 0) {
+    return Array.from(items)
+      .slice(0, 6)
+      .map((item) =>
+        toArticle(
+          item.querySelector('title')?.textContent ?? '',
+          item.querySelector('link')?.textContent ??
+            item.querySelector('link')?.getAttribute('href') ?? '',
+          item.querySelector('pubDate')?.textContent ?? '',
+        )
+      )
+      .filter((a) => a.title);
+  }
+
+  // Atom
+  const entries = doc.querySelectorAll('entry');
+  return Array.from(entries)
+    .slice(0, 6)
+    .map((entry) =>
+      toArticle(
+        entry.querySelector('title')?.textContent ?? '',
+        entry.querySelector('link[href]')?.getAttribute('href') ??
+          entry.querySelector('link')?.textContent ?? '',
+        entry.querySelector('published')?.textContent ??
+          entry.querySelector('updated')?.textContent ?? '',
+      )
+    )
+    .filter((a) => a.title);
+}
+
+async function fetchFeed(url: string): Promise<RssArticle[]> {
+  const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+  const res = await fetch(proxy);
+  if (!res.ok) throw new Error('fetch_failed');
+  const json = await res.json() as { contents: string };
+  return parseRssXml(json.contents);
+}
+
+function formatDate(raw: string): string {
+  if (!raw) return '';
+  try {
+    return new Date(raw).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  } catch {
+    return '';
+  }
+}
+
+// ─── Source Card ─────────────────────────────────────────────────────────────
+
+function SourceCard({ source, onRemove }: { source: RssSource; onRemove: () => void }) {
+  const { t } = useTranslation('ideas');
+  const [articles, setArticles] = useState<RssArticle[] | null>(null);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    setArticles(null);
+    setError(false);
+    fetchFeed(source.url)
+      .then((data) => { if (!cancelled) setArticles(data); })
+      .catch(() => { if (!cancelled) setError(true); });
+    return () => { cancelled = true; };
+  }, [source.url]);
+
+  return (
+    <div className="border border-gray-200 rounded-xl p-4 bg-white flex flex-col gap-3 min-h-[180px]">
+      {/* Card header */}
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-1.5 min-w-0">
+          <svg className="w-3.5 h-3.5 text-orange-500 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M3.75 3a.75.75 0 00-.75.75v.5c0 .414.336.75.75.75H4c6.075 0 11 4.925 11 11v.25c0 .414.336.75.75.75h.5a.75.75 0 00.75-.75V16C17 8.82 11.18 3 4 3h-.25z"/>
+            <path d="M3 8.75A.75.75 0 013.75 8H4a8 8 0 018 8v.25a.75.75 0 01-.75.75h-.5a.75.75 0 01-.75-.75V16a6 6 0 00-6-6h-.25A.75.75 0 013 9.25v-.5zM7 15a2 2 0 11-4 0 2 2 0 014 0z"/>
+          </svg>
+          <span className="text-sm font-semibold text-gray-800 truncate">{source.name}</span>
+        </div>
+        <button
+          onClick={onRemove}
+          title={t('trending_news.remove_source')}
+          className="text-gray-300 hover:text-red-400 transition-colors flex-shrink-0"
+        >
+          <svg className="w-3.5 h-3.5" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <path d="M2 2l10 10M12 2L2 12"/>
+          </svg>
+        </button>
+      </div>
+
+      {/* Articles */}
+      {!articles && !error && (
+        <div className="flex-1 flex items-center justify-center">
+          <div className="w-4 h-4 border-2 border-indigo-300 border-t-indigo-600 rounded-full animate-spin"/>
+        </div>
+      )}
+
+      {error && (
+        <p className="text-xs text-red-400 flex-1 flex items-center">{t('trending_news.fetch_error')}</p>
+      )}
+
+      {articles && articles.length === 0 && (
+        <p className="text-xs text-gray-400 flex-1 flex items-center">{t('trending_news.no_articles')}</p>
+      )}
+
+      {articles && articles.length > 0 && (
+        <ul className="space-y-2 flex-1">
+          {articles.map((article, i) => (
+            <li key={i}>
+              <a
+                href={article.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex items-start gap-1.5"
+              >
+                <span className="mt-[5px] w-1 h-1 rounded-full bg-gray-300 group-hover:bg-indigo-400 flex-shrink-0 transition-colors"/>
+                <span className="text-xs text-gray-700 group-hover:text-indigo-600 transition-colors leading-snug line-clamp-2">
+                  {article.title}
+                  {article.pubDate && (
+                    <span className="ml-1.5 text-gray-400 font-normal">{formatDate(article.pubDate)}</span>
+                  )}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+// ─── Add Source Form ──────────────────────────────────────────────────────────
+
+function AddSourceForm({ onSave, onCancel }: { onSave: (name: string, url: string) => void; onCancel: () => void }) {
+  const { t } = useTranslation('ideas');
+  const [name, setName] = useState('');
+  const [url, setUrl] = useState('');
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!name.trim() || !url.trim()) return;
+    onSave(name.trim(), url.trim());
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="border border-indigo-200 bg-indigo-50 rounded-xl p-4 mb-4 flex flex-col sm:flex-row gap-2.5">
+      <input
+        autoFocus
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        placeholder={t('trending_news.source_name_placeholder')}
+        className="flex-1 text-sm px-3 py-2 rounded-lg border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-colors"
+      />
+      <input
+        value={url}
+        onChange={(e) => setUrl(e.target.value)}
+        placeholder={t('trending_news.source_url_placeholder')}
+        type="url"
+        className="flex-[2] text-sm px-3 py-2 rounded-lg border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-colors"
+      />
+      <div className="flex gap-2 flex-shrink-0">
+        <button
+          type="submit"
+          disabled={!name.trim() || !url.trim()}
+          className="text-sm px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-40 transition-colors"
+        >
+          {t('trending_news.save_source')}
+        </button>
+        <button
+          type="button"
+          onClick={onCancel}
+          className="text-sm px-3 py-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-white transition-colors"
+        >
+          {t('trending_news.cancel')}
+        </button>
+      </div>
+    </form>
+  );
+}
+
+// ─── Trending News Modal ──────────────────────────────────────────────────────
+
+export function TrendingNewsModal({ onClose }: { onClose: () => void }) {
+  const { t } = useTranslation('ideas');
+  const { sources, addSource, removeSource } = useRssStore();
+  const [showAddForm, setShowAddForm] = useState(false);
+
+  function handleSaveSource(name: string, url: string) {
+    addSource({ name, url });
+    setShowAddForm(false);
+  }
+
+  return (
+    <div
+      className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-xl shadow-xl w-full max-w-3xl max-h-[80vh] flex flex-col overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 flex-shrink-0">
+          <div className="flex items-center gap-2">
+            <svg className="w-4 h-4 text-gray-500" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6">
+              <rect x="2" y="4" width="16" height="12" rx="2"/>
+              <path d="M2 8h16M6 4v4" strokeLinecap="round"/>
+            </svg>
+            <h2 className="text-sm font-semibold text-gray-900">{t('trending_news.title')}</h2>
+          </div>
+          <div className="flex items-center gap-2">
+            {sources.length > 0 && !showAddForm && (
+              <button
+                onClick={() => setShowAddForm(true)}
+                className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1.5 rounded-md border border-gray-200 text-gray-600 bg-white hover:bg-gray-50 transition-colors"
+              >
+                <span className="text-sm leading-none">+</span>
+                {t('trending_news.add_source')}
+              </button>
+            )}
+            <button
+              onClick={onClose}
+              className="text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <svg className="w-4 h-4" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <path d="M2 2l10 10M12 2L2 12"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        {/* Body */}
+        <div className="flex-1 overflow-y-auto px-5 py-4">
+          {/* Add source form */}
+          {showAddForm && (
+            <AddSourceForm
+              onSave={handleSaveSource}
+              onCancel={() => setShowAddForm(false)}
+            />
+          )}
+
+          {/* Empty state */}
+          {sources.length === 0 && !showAddForm && (
+            <div className="flex flex-col items-center justify-center py-16 gap-4">
+              <div className="w-14 h-14 rounded-full bg-orange-50 flex items-center justify-center">
+                <svg className="w-7 h-7 text-orange-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M3.75 3a.75.75 0 00-.75.75v.5c0 .414.336.75.75.75H4c6.075 0 11 4.925 11 11v.25c0 .414.336.75.75.75h.5a.75.75 0 00.75-.75V16C17 8.82 11.18 3 4 3h-.25z"/>
+                  <path d="M3 8.75A.75.75 0 013.75 8H4a8 8 0 018 8v.25a.75.75 0 01-.75.75h-.5a.75.75 0 01-.75-.75V16a6 6 0 00-6-6h-.25A.75.75 0 013 9.25v-.5zM7 15a2 2 0 11-4 0 2 2 0 014 0z"/>
+                </svg>
+              </div>
+              <div className="text-center">
+                <h3 className="text-sm font-semibold text-gray-800 mb-1">{t('trending_news.no_sources_heading')}</h3>
+                <p className="text-sm text-gray-400 max-w-xs">{t('trending_news.no_sources_body')}</p>
+              </div>
+              <button
+                onClick={() => setShowAddForm(true)}
+                className="inline-flex items-center gap-1.5 text-sm font-medium px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors"
+              >
+                <span className="text-base leading-none">+</span>
+                {t('trending_news.add_first_source')}
+              </button>
+            </div>
+          )}
+
+          {/* Sources grid */}
+          {sources.length > 0 && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {sources.map((source) => (
+                <SourceCard
+                  key={source.id}
+                  source={source}
+                  onRemove={() => removeSource(source.id)}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

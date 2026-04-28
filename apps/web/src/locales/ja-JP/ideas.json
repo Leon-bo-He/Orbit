@@ -59,5 +59,20 @@
   "toast_created": "アイデアを作成しました",
   "toast_create_failed": "アイデアの作成に失敗しました：{{message}}",
   "toast_saved": "アイデアを保存しました",
-  "toast_update_failed": "アイデアの更新に失敗しました：{{message}}"
+  "toast_update_failed": "アイデアの更新に失敗しました：{{message}}",
+  "trending_news": {
+    "button": "トレンドニュース",
+    "title": "トレンドニュース",
+    "add_source": "ソースを追加",
+    "add_first_source": "RSSソースを追加",
+    "no_sources_heading": "RSSソースがありません",
+    "no_sources_body": "RSSフィードを追加して、お気に入りのソースの最新ニュースを確認しましょう。",
+    "source_name_placeholder": "例：TechCrunch",
+    "source_url_placeholder": "https://example.com/feed.xml",
+    "save_source": "追加",
+    "cancel": "キャンセル",
+    "remove_source": "削除",
+    "fetch_error": "フィードの読み込みに失敗しました",
+    "no_articles": "記事が見つかりません"
+  }
 }
