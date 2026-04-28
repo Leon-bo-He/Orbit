@@ -14,3 +14,4 @@ apps/api/uploads/workspace-icons/
 
 # Ignore only this documentation file
 /docs/CLAUDE.md
+/docs/AGENTS.md

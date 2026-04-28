@@ -150,7 +150,6 @@ Orbit/
 ## Documentation
 
 - **[DESIGN.md](DESIGN.md)** — Full product design, data model, and API reference.
-- **[CLAUDE.md](CLAUDE.md)** — Code conventions, architectural rules, and domain glossary.
 
 ---
 
