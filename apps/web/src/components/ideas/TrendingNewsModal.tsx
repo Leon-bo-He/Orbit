@@ -12,41 +12,36 @@ interface RssArticle {
 function parseRssXml(xml: string): RssArticle[] {
   const doc = new DOMParser().parseFromString(xml, 'text/xml');
 
-  const toArticle = (title: string, link: string, date: string): RssArticle => ({
-    title: title.trim(),
-    link: link.trim(),
-    pubDate: date.trim(),
-  });
+  // Detect XML parse failure (DOMParser returns a <parsererror> document on bad input)
+  if (doc.documentElement.tagName === 'parsererror' || doc.getElementsByTagName('parsererror').length > 0) {
+    throw new Error('xml_parse_error');
+  }
 
-  // RSS 2.0
-  const items = doc.querySelectorAll('item');
+  const text = (col: HTMLCollectionOf<Element>) => col[0]?.textContent?.trim() ?? '';
+
+  // RSS 2.0 — use getElementsByTagName; querySelector can silently fail on namespaced XML docs
+  const items = Array.from(doc.getElementsByTagName('item'));
   if (items.length > 0) {
-    return Array.from(items)
-      .slice(0, 6)
-      .map((item) =>
-        toArticle(
-          item.querySelector('title')?.textContent ?? '',
-          item.querySelector('link')?.textContent ??
-            item.querySelector('link')?.getAttribute('href') ?? '',
-          item.querySelector('pubDate')?.textContent ?? '',
-        )
-      )
+    return items.slice(0, 6)
+      .map((item) => ({
+        title: text(item.getElementsByTagName('title')),
+        link: text(item.getElementsByTagName('link')) ||
+              item.getElementsByTagName('link')[0]?.getAttribute('href') ?? '',
+        pubDate: text(item.getElementsByTagName('pubDate')),
+      }))
       .filter((a) => a.title);
   }
 
   // Atom
-  const entries = doc.querySelectorAll('entry');
-  return Array.from(entries)
-    .slice(0, 6)
-    .map((entry) =>
-      toArticle(
-        entry.querySelector('title')?.textContent ?? '',
-        entry.querySelector('link[href]')?.getAttribute('href') ??
-          entry.querySelector('link')?.textContent ?? '',
-        entry.querySelector('published')?.textContent ??
-          entry.querySelector('updated')?.textContent ?? '',
-      )
-    )
+  const entries = Array.from(doc.getElementsByTagName('entry'));
+  return entries.slice(0, 6)
+    .map((entry) => ({
+      title: text(entry.getElementsByTagName('title')),
+      link: entry.getElementsByTagName('link')[0]?.getAttribute('href') ??
+            text(entry.getElementsByTagName('link')),
+      pubDate: text(entry.getElementsByTagName('published')) ||
+               text(entry.getElementsByTagName('updated')),
+    }))
     .filter((a) => a.title);
 }
 
@@ -54,7 +49,9 @@ async function fetchFeed(url: string): Promise<RssArticle[]> {
   const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
   const res = await fetch(proxy);
   if (!res.ok) throw new Error('fetch_failed');
-  const json = await res.json() as { contents: string };
+  const json = await res.json() as { contents: string | null };
+  // allorigins returns null contents when the target URL is unreachable or blocked
+  if (!json.contents) throw new Error('empty_response');
   return parseRssXml(json.contents);
 }
 
