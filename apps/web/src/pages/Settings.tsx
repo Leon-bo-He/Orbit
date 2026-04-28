@@ -797,35 +797,37 @@ function DataPanel() {
             </div>
           ))}
           {showRssAddForm ? (
-            <form onSubmit={handleRssAdd} className="px-4 py-3 flex flex-col sm:flex-row gap-2">
-              <input
-                autoFocus
-                value={rssNewName}
-                onChange={(e) => setRssNewName(e.target.value)}
-                placeholder={t('settings.general.rss_source_name_placeholder')}
-                className="flex-1 text-sm px-3 py-1.5 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-colors"
-              />
-              <input
-                value={rssNewUrl}
-                onChange={(e) => setRssNewUrl(e.target.value)}
-                placeholder={t('settings.general.rss_source_url_placeholder')}
-                type="url"
-                className="flex-[2] text-sm px-3 py-1.5 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-colors"
-              />
-              <div className="flex gap-2 flex-shrink-0">
-                <button
-                  type="submit"
-                  disabled={!rssNewName.trim() || !rssNewUrl.trim()}
-                  className="text-sm px-3 py-1.5 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-40 transition-colors"
-                >
-                  {t('action.add')}
-                </button>
+            <form onSubmit={handleRssAdd} className="px-4 py-3 flex flex-col gap-2">
+              <div className="flex gap-2">
+                <input
+                  autoFocus
+                  value={rssNewName}
+                  onChange={(e) => setRssNewName(e.target.value)}
+                  placeholder={t('settings.general.rss_source_name_placeholder')}
+                  className="flex-1 text-sm px-3 py-1.5 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-colors"
+                />
+                <input
+                  value={rssNewUrl}
+                  onChange={(e) => setRssNewUrl(e.target.value)}
+                  placeholder={t('settings.general.rss_source_url_placeholder')}
+                  type="url"
+                  className="flex-[2] text-sm px-3 py-1.5 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-colors"
+                />
+              </div>
+              <div className="flex gap-2 justify-end">
                 <button
                   type="button"
                   onClick={() => { setShowRssAddForm(false); setRssNewName(''); setRssNewUrl(''); }}
                   className="text-sm px-3 py-1.5 rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors"
                 >
                   {t('action.cancel')}
+                </button>
+                <button
+                  type="submit"
+                  disabled={!rssNewName.trim() || !rssNewUrl.trim()}
+                  className="text-sm px-3 py-1.5 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-40 transition-colors"
+                >
+                  {t('action.add')}
                 </button>
               </div>
             </form>
