@@ -40,25 +40,20 @@ export default function LoginPage() {
         void i18n.changeLanguage(result.user.locale);
       }
       toast.clear();
-      // Prefetch all first-page data before navigating.
-      // Awaiting workspaces + dashboard ensures AppShell finds them in cache
-      // immediately — no FullPageSpinner flash and no Dashboard skeleton on login.
-      // The remaining fetches (ideas, publications) run in parallel and finish
-      // in the background so those pages are instant too.
+      // Navigate first so RequireAuth sees isAuthenticated=true immediately.
+      // Prefetches run in the background after navigation — awaiting them before
+      // navigate caused any 401 from a prefetch to trigger clearAuth() and bounce
+      // the user back to the login page.
+      navigate('/', { replace: true });
       const pad = (n: number) => String(n).padStart(2, '0');
       const fmt = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
       const today = new Date();
       const end = new Date(today); end.setDate(end.getDate() + 14);
       const pubFilters = { status: 'queued,ready', from: fmt(today), to: fmt(end) };
-      // These two are awaited so the transition is seamless (no spinner/skeleton flash)
-      await Promise.all([
-        queryClient.prefetchQuery({ queryKey: ['workspaces'], queryFn: () => apiFetch('/api/workspaces') }),
-        queryClient.prefetchQuery({ queryKey: ['dashboard'],  queryFn: () => apiFetch('/api/dashboard') }),
-      ]);
-      // The rest finish in the background before the user navigates away
+      void queryClient.prefetchQuery({ queryKey: ['workspaces'], queryFn: () => apiFetch('/api/workspaces') });
+      void queryClient.prefetchQuery({ queryKey: ['dashboard'],  queryFn: () => apiFetch('/api/dashboard') });
       void queryClient.prefetchQuery({ queryKey: ['ideas', { status: 'active' }], queryFn: () => apiFetch('/api/ideas?status=active') });
       void queryClient.prefetchQuery({ queryKey: ['publishQueue', pubFilters],    queryFn: () => apiFetch(`/api/publications/queue?${new URLSearchParams(pubFilters).toString()}`) });
-      void navigate('/', { replace: true });
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {
         setErrorMsg(t('auth.invalid_credentials'));
