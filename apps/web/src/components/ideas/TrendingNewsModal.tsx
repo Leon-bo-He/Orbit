@@ -26,8 +26,9 @@ function SourceCard({ source }: { source: RssSource }) {
   const hasNext = page < pages;
 
   return (
-    <div className="border border-gray-200 rounded-xl p-4 bg-white flex flex-col gap-3 min-h-[220px]">
-      <div className="flex items-center gap-1.5 min-w-0">
+    <div className="border border-gray-200 rounded-xl p-4 bg-white flex flex-col gap-3 h-[360px]">
+      {/* Header */}
+      <div className="flex items-center gap-1.5 min-w-0 flex-shrink-0">
         <svg className="w-3.5 h-3.5 text-orange-500 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
           <path d="M3.75 3a.75.75 0 00-.75.75v.5c0 .414.336.75.75.75H4c6.075 0 11 4.925 11 11v.25c0 .414.336.75.75.75h.5a.75.75 0 00.75-.75V16C17 8.82 11.18 3 4 3h-.25z"/>
           <path d="M3 8.75A.75.75 0 013.75 8H4a8 8 0 018 8v.25a.75.75 0 01-.75.75h-.5a.75.75 0 01-.75-.75V16a6 6 0 00-6-6h-.25A.75.75 0 013 9.25v-.5zM7 15a2 2 0 11-4 0 2 2 0 014 0z"/>
@@ -52,7 +53,8 @@ function SourceCard({ source }: { source: RssSource }) {
 
       {articles.length > 0 && (
         <>
-          <ul className="space-y-2 flex-1">
+          {/* min-h-0 is required for overflow-y-auto to work inside a flex column */}
+          <ul className="space-y-2 flex-1 min-h-0 overflow-y-auto pr-1">
             {articles.map((article, i) => (
               <li key={i}>
                 <a
@@ -74,7 +76,7 @@ function SourceCard({ source }: { source: RssSource }) {
           </ul>
 
           {pages > 1 && (
-            <div className="flex items-center justify-between pt-1 border-t border-gray-100">
+            <div className="flex items-center justify-between pt-1 border-t border-gray-100 flex-shrink-0">
               <button
                 onClick={() => setPage((p) => p - 1)}
                 disabled={!hasPrev}
@@ -138,8 +140,8 @@ export function TrendingNewsModal({ onClose }: { onClose: () => void }) {
           </button>
         </div>
 
-        {/* Body */}
-        <div className="flex-1 overflow-y-auto px-5 py-4">
+        {/* Body — min-h-0 required so overflow-y-auto activates inside the flex column */}
+        <div className="flex-1 min-h-0 overflow-y-auto px-5 py-4">
           {sources.length === 0 && (
             <div className="flex flex-col items-center justify-center py-16 gap-4">
               <div className="w-14 h-14 rounded-full bg-orange-50 flex items-center justify-center">
@@ -171,7 +173,7 @@ export function TrendingNewsModal({ onClose }: { onClose: () => void }) {
         </div>
 
         {sources.length > 0 && (
-          <div className="border-t border-gray-100 px-5 py-3 flex justify-end">
+          <div className="border-t border-gray-100 px-5 py-3 flex justify-end flex-shrink-0">
             <button
               onClick={handleOpenSettings}
               className="text-xs text-gray-400 hover:text-indigo-500 transition-colors"
