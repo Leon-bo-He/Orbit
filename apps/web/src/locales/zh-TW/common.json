@@ -148,7 +148,10 @@
       "rss_sources_desc": "在靈感頁「熱門資訊」面板中顯示的訂閱源。",
       "rss_add_source": "新增來源",
       "rss_source_name_placeholder": "例如：TechCrunch",
-      "rss_source_url_placeholder": "https://example.com/feed.xml"
+      "rss_source_url_placeholder": "https://example.com/feed.xml",
+      "rss_remove_confirm_title": "移除 RSS 來源？",
+      "rss_remove_confirm_desc": "此操作將永久刪除「{{name}}」的所有快取文章。",
+      "rss_removing": "移除中…"
     },
     "notifications": {
       "section_timing": "提醒設定",

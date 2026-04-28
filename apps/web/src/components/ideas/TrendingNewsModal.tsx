@@ -1,59 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRssStore, type RssSource } from '../../store/rss.store.js';
 import { useUiStore } from '../../store/ui.store.js';
-
-interface RssArticle {
-  title: string;
-  link: string;
-  pubDate: string;
-}
-
-function parseRssXml(xml: string): RssArticle[] {
-  const doc = new DOMParser().parseFromString(xml, 'text/xml');
-
-  // Detect XML parse failure (DOMParser returns a <parsererror> document on bad input)
-  if (doc.documentElement.tagName === 'parsererror' || doc.getElementsByTagName('parsererror').length > 0) {
-    throw new Error('xml_parse_error');
-  }
-
-  const text = (col: HTMLCollectionOf<Element>) => col[0]?.textContent?.trim() ?? '';
-
-  // RSS 2.0 — use getElementsByTagName; querySelector can silently fail on namespaced XML docs
-  const items = Array.from(doc.getElementsByTagName('item'));
-  if (items.length > 0) {
-    return items.slice(0, 6)
-      .map((item) => ({
-        title: text(item.getElementsByTagName('title')),
-        link: text(item.getElementsByTagName('link')) ||
-              item.getElementsByTagName('link')[0]?.getAttribute('href') ?? '',
-        pubDate: text(item.getElementsByTagName('pubDate')),
-      }))
-      .filter((a) => a.title);
-  }
-
-  // Atom
-  const entries = Array.from(doc.getElementsByTagName('entry'));
-  return entries.slice(0, 6)
-    .map((entry) => ({
-      title: text(entry.getElementsByTagName('title')),
-      link: entry.getElementsByTagName('link')[0]?.getAttribute('href') ??
-            text(entry.getElementsByTagName('link')),
-      pubDate: text(entry.getElementsByTagName('published')) ||
-               text(entry.getElementsByTagName('updated')),
-    }))
-    .filter((a) => a.title);
-}
-
-async function fetchFeed(url: string): Promise<RssArticle[]> {
-  const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
-  const res = await fetch(proxy);
-  if (!res.ok) throw new Error('fetch_failed');
-  const json = await res.json() as { contents: string | null };
-  // allorigins returns null contents when the target URL is unreachable or blocked
-  if (!json.contents) throw new Error('empty_response');
-  return parseRssXml(json.contents);
-}
+import { useRssFeed } from '../../api/rss.js';
 
 function formatDate(raw: string): string {
   if (!raw) return '';
@@ -68,64 +17,82 @@ function formatDate(raw: string): string {
 
 function SourceCard({ source }: { source: RssSource }) {
   const { t } = useTranslation('ideas');
-  const [articles, setArticles] = useState<RssArticle[] | null>(null);
-  const [error, setError] = useState(false);
+  const [page, setPage] = useState(1);
+  const { data, isLoading, isError, isFetching } = useRssFeed(source.url, page);
 
-  useEffect(() => {
-    let cancelled = false;
-    setArticles(null);
-    setError(false);
-    fetchFeed(source.url)
-      .then((data) => { if (!cancelled) setArticles(data); })
-      .catch(() => { if (!cancelled) setError(true); });
-    return () => { cancelled = true; };
-  }, [source.url]);
+  const articles = data?.articles ?? [];
+  const pages = data?.pages ?? 1;
+  const hasPrev = page > 1;
+  const hasNext = page < pages;
 
   return (
-    <div className="border border-gray-200 rounded-xl p-4 bg-white flex flex-col gap-3 min-h-[180px]">
+    <div className="border border-gray-200 rounded-xl p-4 bg-white flex flex-col gap-3 min-h-[220px]">
       <div className="flex items-center gap-1.5 min-w-0">
         <svg className="w-3.5 h-3.5 text-orange-500 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
           <path d="M3.75 3a.75.75 0 00-.75.75v.5c0 .414.336.75.75.75H4c6.075 0 11 4.925 11 11v.25c0 .414.336.75.75.75h.5a.75.75 0 00.75-.75V16C17 8.82 11.18 3 4 3h-.25z"/>
           <path d="M3 8.75A.75.75 0 013.75 8H4a8 8 0 018 8v.25a.75.75 0 01-.75.75h-.5a.75.75 0 01-.75-.75V16a6 6 0 00-6-6h-.25A.75.75 0 013 9.25v-.5zM7 15a2 2 0 11-4 0 2 2 0 014 0z"/>
         </svg>
         <span className="text-sm font-semibold text-gray-800 truncate">{source.name}</span>
+        {isFetching && <div className="w-3 h-3 border-2 border-indigo-200 border-t-indigo-500 rounded-full animate-spin ml-auto flex-shrink-0"/>}
       </div>
 
-      {!articles && !error && (
+      {isLoading && (
         <div className="flex-1 flex items-center justify-center">
           <div className="w-4 h-4 border-2 border-indigo-300 border-t-indigo-600 rounded-full animate-spin"/>
         </div>
       )}
 
-      {error && (
+      {isError && (
         <p className="text-xs text-red-400 flex-1 flex items-center">{t('trending_news.fetch_error')}</p>
       )}
 
-      {articles && articles.length === 0 && (
+      {!isLoading && !isError && articles.length === 0 && (
         <p className="text-xs text-gray-400 flex-1 flex items-center">{t('trending_news.no_articles')}</p>
       )}
 
-      {articles && articles.length > 0 && (
-        <ul className="space-y-2 flex-1">
-          {articles.map((article, i) => (
-            <li key={i}>
-              <a
-                href={article.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex items-start gap-1.5"
+      {articles.length > 0 && (
+        <>
+          <ul className="space-y-2 flex-1">
+            {articles.map((article, i) => (
+              <li key={i}>
+                <a
+                  href={article.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-start gap-1.5"
+                >
+                  <span className="mt-[5px] w-1 h-1 rounded-full bg-gray-300 group-hover:bg-indigo-400 flex-shrink-0 transition-colors"/>
+                  <span className="text-xs text-gray-700 group-hover:text-indigo-600 transition-colors leading-snug line-clamp-2">
+                    {article.title}
+                    {article.pubDate && (
+                      <span className="ml-1.5 text-gray-400 font-normal">{formatDate(article.pubDate)}</span>
+                    )}
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+
+          {pages > 1 && (
+            <div className="flex items-center justify-between pt-1 border-t border-gray-100">
+              <button
+                onClick={() => setPage((p) => p - 1)}
+                disabled={!hasPrev}
+                className="text-xs text-gray-500 hover:text-indigo-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors px-1"
               >
-                <span className="mt-[5px] w-1 h-1 rounded-full bg-gray-300 group-hover:bg-indigo-400 flex-shrink-0 transition-colors"/>
-                <span className="text-xs text-gray-700 group-hover:text-indigo-600 transition-colors leading-snug line-clamp-2">
-                  {article.title}
-                  {article.pubDate && (
-                    <span className="ml-1.5 text-gray-400 font-normal">{formatDate(article.pubDate)}</span>
-                  )}
-                </span>
-              </a>
-            </li>
-          ))}
-        </ul>
+                ‹ {t('trending_news.page_prev')}
+              </button>
+              <span className="text-xs text-gray-400">{page} / {pages}</span>
+              <button
+                onClick={() => setPage((p) => p + 1)}
+                disabled={!hasNext}
+                className="text-xs text-gray-500 hover:text-indigo-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors px-1"
+              >
+                {t('trending_news.page_next')} ›
+              </button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
@@ -173,7 +140,6 @@ export function TrendingNewsModal({ onClose }: { onClose: () => void }) {
 
         {/* Body */}
         <div className="flex-1 overflow-y-auto px-5 py-4">
-          {/* Empty state */}
           {sources.length === 0 && (
             <div className="flex flex-col items-center justify-center py-16 gap-4">
               <div className="w-14 h-14 rounded-full bg-orange-50 flex items-center justify-center">
@@ -195,7 +161,6 @@ export function TrendingNewsModal({ onClose }: { onClose: () => void }) {
             </div>
           )}
 
-          {/* Sources grid */}
           {sources.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {sources.map((source) => (
@@ -205,7 +170,6 @@ export function TrendingNewsModal({ onClose }: { onClose: () => void }) {
           )}
         </div>
 
-        {/* Footer — manage link when sources exist */}
         {sources.length > 0 && (
           <div className="border-t border-gray-100 px-5 py-3 flex justify-end">
             <button

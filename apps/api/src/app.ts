@@ -23,6 +23,7 @@ import { PlanService } from './domain/plan/plan.service.js';
 import { MetricService } from './domain/metric/metric.service.js';
 import { UserService } from './domain/user/user.service.js';
 import { NotificationChannelService } from './domain/notification-channel/notification-channel.service.js';
+import { RssService } from './domain/rss/rss.service.js';
 
 // Infrastructure repositories
 import { WorkspaceRepository } from './infrastructure/db/repositories/workspace.repository.js';
@@ -33,6 +34,7 @@ import { PlanRepository } from './infrastructure/db/repositories/plan.repository
 import { MetricRepository } from './infrastructure/db/repositories/metric.repository.js';
 import { UserRepository } from './infrastructure/db/repositories/user.repository.js';
 import { NotificationChannelRepository } from './infrastructure/db/repositories/notification-channel.repository.js';
+import { RssCacheRepository } from './infrastructure/db/repositories/rss-cache.repository.js';
 
 export interface Services {
   workspace: WorkspaceService;
@@ -43,6 +45,7 @@ export interface Services {
   metric: MetricService;
   user: UserService;
   notificationChannel: NotificationChannelService;
+  rss: RssService;
 }
 
 function createServices(): Services {
@@ -56,6 +59,7 @@ function createServices(): Services {
     metric: new MetricService(new MetricRepository()),
     user: new UserService(new UserRepository()),
     notificationChannel: new NotificationChannelService(new NotificationChannelRepository()),
+    rss: new RssService(new RssCacheRepository()),
   };
 }
 

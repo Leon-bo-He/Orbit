@@ -19,6 +19,7 @@ import { CalendarPicker } from '../components/ui/CalendarPicker.js';
 import i18n, { SUPPORTED_LOCALES, type SupportedLocale } from '../i18n/index.js';
 import { toast } from '../store/toast.store.js';
 import { useRssStore } from '../store/rss.store.js';
+import { useDeleteRssFeed } from '../api/rss.js';
 
 type Section = 'account' | 'appearance' | 'workspaces' | 'platforms' | 'notifications' | 'data';
 
@@ -359,6 +360,16 @@ function DataPanel() {
   const [showRssAddForm, setShowRssAddForm] = useState(false);
   const [rssNewName, setRssNewName] = useState('');
   const [rssNewUrl, setRssNewUrl] = useState('');
+  const [confirmRemoveSourceId, setConfirmRemoveSourceId] = useState<string | null>(null);
+  const deleteRssFeed = useDeleteRssFeed();
+
+  async function handleConfirmRemoveSource() {
+    const source = rssSources.find((s) => s.id === confirmRemoveSourceId);
+    if (!source) return;
+    await deleteRssFeed.mutateAsync(source.url);
+    removeRssSource(source.id);
+    setConfirmRemoveSourceId(null);
+  }
 
   function handleRssAdd(e: React.FormEvent) {
     e.preventDefault();
@@ -778,7 +789,7 @@ function DataPanel() {
                 </div>
               </div>
               <button
-                onClick={() => removeRssSource(source.id)}
+                onClick={() => setConfirmRemoveSourceId(source.id)}
                 className="text-xs px-2.5 py-1 rounded-md border border-red-200 text-red-500 hover:bg-red-50 transition-colors flex-shrink-0"
               >
                 {t('action.remove')}
@@ -832,6 +843,36 @@ function DataPanel() {
           )}
         </div>
       </div>
+
+      {confirmRemoveSourceId && (() => {
+        const source = rssSources.find((s) => s.id === confirmRemoveSourceId);
+        return (
+          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/40">
+            <div className="bg-white rounded-xl shadow-xl p-6 max-w-sm w-full space-y-4">
+              <h3 className="text-sm font-semibold text-gray-900">{t('settings.general.rss_remove_confirm_title')}</h3>
+              <p className="text-sm text-gray-600">
+                {t('settings.general.rss_remove_confirm_desc', { name: source?.name ?? '' })}
+              </p>
+              <div className="flex justify-end gap-2 pt-2">
+                <button
+                  onClick={() => setConfirmRemoveSourceId(null)}
+                  disabled={deleteRssFeed.isPending}
+                  className="text-sm px-4 py-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-50"
+                >
+                  {t('action.cancel')}
+                </button>
+                <button
+                  onClick={() => void handleConfirmRemoveSource()}
+                  disabled={deleteRssFeed.isPending}
+                  className="text-sm px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 disabled:opacity-50"
+                >
+                  {deleteRssFeed.isPending ? t('settings.general.rss_removing') : t('action.remove')}
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {showArchivedIdeasDeleteConfirm && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/40">

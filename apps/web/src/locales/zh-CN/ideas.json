@@ -68,6 +68,8 @@
     "open_settings": "打开设置",
     "manage_sources": "在设置中管理订阅来源",
     "fetch_error": "加载订阅失败",
-    "no_articles": "暂无文章"
+    "no_articles": "暂无文章",
+    "page_prev": "上一页",
+    "page_next": "下一页"
   }
 }

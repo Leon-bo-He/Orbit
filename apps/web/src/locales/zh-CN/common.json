@@ -148,7 +148,10 @@
       "rss_sources_desc": "在灵感页「热门资讯」面板中显示的订阅源。",
       "rss_add_source": "添加来源",
       "rss_source_name_placeholder": "例如：36氪",
-      "rss_source_url_placeholder": "https://example.com/feed.xml"
+      "rss_source_url_placeholder": "https://example.com/feed.xml",
+      "rss_remove_confirm_title": "移除 RSS 来源？",
+      "rss_remove_confirm_desc": "此操作将永久删除「{{name}}」的所有缓存文章。",
+      "rss_removing": "移除中…"
     },
     "notifications": {
       "section_timing": "提醒设置",

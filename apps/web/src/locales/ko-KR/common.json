@@ -148,7 +148,10 @@
       "rss_sources_desc": "아이디어 페이지의 '트렌딩 뉴스' 패널에 표시할 피드입니다.",
       "rss_add_source": "소스 추가",
       "rss_source_name_placeholder": "예: TechCrunch",
-      "rss_source_url_placeholder": "https://example.com/feed.xml"
+      "rss_source_url_placeholder": "https://example.com/feed.xml",
+      "rss_remove_confirm_title": "RSS 소스를 제거하시겠습니까?",
+      "rss_remove_confirm_desc": "\"{{name}}\"의 캐시된 모든 기사가 영구적으로 삭제됩니다.",
+      "rss_removing": "제거 중…"
     },
     "notifications": {
       "section_timing": "타이밍",

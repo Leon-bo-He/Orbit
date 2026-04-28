@@ -9,3 +9,5 @@ export * from './publications';
 export * from './metrics';
 export * from './custom-platforms';
 export * from './notification-channels';
+export * from './rss-feeds';
+export * from './rss-articles';

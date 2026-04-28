@@ -68,6 +68,8 @@
     "open_settings": "Open Settings",
     "manage_sources": "Manage sources in Settings",
     "fetch_error": "Failed to load feed",
-    "no_articles": "No articles found"
+    "no_articles": "No articles found",
+    "page_prev": "Prev",
+    "page_next": "Next"
   }
 }

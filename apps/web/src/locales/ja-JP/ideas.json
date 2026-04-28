@@ -68,6 +68,8 @@
     "open_settings": "設定を開く",
     "manage_sources": "設定でソースを管理",
     "fetch_error": "フィードの読み込みに失敗しました",
-    "no_articles": "記事が見つかりません"
+    "no_articles": "記事が見つかりません",
+    "page_prev": "前へ",
+    "page_next": "次へ"
   }
 }

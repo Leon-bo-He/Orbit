@@ -148,7 +148,10 @@
       "rss_sources_desc": "アイデアページの「トレンドニュース」パネルに表示するフィード。",
       "rss_add_source": "ソースを追加",
       "rss_source_name_placeholder": "例：TechCrunch",
-      "rss_source_url_placeholder": "https://example.com/feed.xml"
+      "rss_source_url_placeholder": "https://example.com/feed.xml",
+      "rss_remove_confirm_title": "RSSソースを削除しますか？",
+      "rss_remove_confirm_desc": "「{{name}}」のキャッシュ済み記事がすべて完全に削除されます。",
+      "rss_removing": "削除中…"
     },
     "notifications": {
       "section_timing": "タイミング",

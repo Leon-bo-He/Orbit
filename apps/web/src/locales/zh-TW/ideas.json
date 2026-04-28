@@ -68,6 +68,8 @@
     "open_settings": "開啟設定",
     "manage_sources": "在設定中管理訂閱來源",
     "fetch_error": "載入訂閱失敗",
-    "no_articles": "暫無文章"
+    "no_articles": "暫無文章",
+    "page_prev": "上一頁",
+    "page_next": "下一頁"
   }
 }
