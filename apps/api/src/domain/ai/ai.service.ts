@@ -5,7 +5,7 @@ import type { AiConfigRow } from '../../db/schema/ai-configs.js';
 import { ValidationError } from '../errors.js';
 import { redis } from '../../redis/client.js';
 
-const LOCK_TTL_S = 120; // matches the 60s AI timeout + buffer
+const LOCK_TTL_S = 360; // matches the 5min AI timeout ceiling + buffer
 const LOCK_POLL_MS = 2_000;
 const LOCK_WAIT_MAX_MS = 90_000;
 
@@ -72,6 +72,8 @@ export class AiService {
   }
 
   private async callAiApi(config: AiConfigRow, prompt: string, maxTokens = 1024): Promise<string> {
+    // Scale timeout with output size: ~100ms per token as a rough ceiling, min 60s, max 5min
+    const timeoutMs = Math.min(Math.max(60_000, maxTokens * 100), 300_000);
     const baseUrl = config.baseUrl.replace(/\/$/, '');
     const endpoint = `${baseUrl}/chat/completions`;
 
@@ -93,7 +95,7 @@ export class AiService {
           max_tokens: maxTokens,
           stream: true,
         }),
-        signal: AbortSignal.timeout(60_000),
+        signal: AbortSignal.timeout(timeoutMs),
       });
 
       console.log('[AI] ← status:', res.status);
