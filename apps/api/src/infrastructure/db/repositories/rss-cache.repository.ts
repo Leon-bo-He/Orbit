@@ -19,14 +19,18 @@ export class RssCacheRepository {
   async insertArticles(feedUrl: string, articles: { link: string; title: string; pubDate: string }[]): Promise<void> {
     if (articles.length === 0) return;
     await db.insert(rssArticles)
-      .values(articles.map((a) => ({ feedUrl, link: a.link, title: a.title, pubDate: a.pubDate })))
+      .values(articles.map((a) => {
+        const parsed = a.pubDate ? new Date(a.pubDate) : null;
+        const pubDateTs = parsed && !isNaN(parsed.getTime()) ? parsed : null;
+        return { feedUrl, link: a.link, title: a.title, pubDate: a.pubDate, pubDateTs };
+      }))
       .onConflictDoNothing();
   }
 
   findArticles(feedUrl: string, offset: number, limit: number): Promise<RssArticleRow[]> {
     return db.select().from(rssArticles)
       .where(eq(rssArticles.feedUrl, feedUrl))
-      .orderBy(sql`${rssArticles.firstSeenAt} DESC, ${rssArticles.id} ASC`)
+      .orderBy(sql`${rssArticles.pubDateTs} DESC NULLS LAST, ${rssArticles.firstSeenAt} DESC, ${rssArticles.id} ASC`)
       .offset(offset)
       .limit(limit);
   }
