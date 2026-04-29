@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from '@tanstack/react-query';
 import { useLogin } from '../../api/auth.js';
@@ -17,6 +17,8 @@ const THEME_ICONS: Record<Theme, string> = { system: '💻', light: '☀️', da
 export default function LoginPage() {
   const { t } = useTranslation('common');
   const navigate = useNavigate();
+  const location = useLocation();
+  const redirectTo = new URLSearchParams(location.search).get('redirect') ?? '/';
   const setAuth = useAuthStore((s) => s.setAuth);
   const queryClient = useQueryClient();
 
@@ -58,7 +60,7 @@ export default function LoginPage() {
       // The rest finish in the background before the user navigates away
       void queryClient.prefetchQuery({ queryKey: ['ideas', { status: 'active' }], queryFn: () => apiFetch('/api/ideas?status=active') });
       void queryClient.prefetchQuery({ queryKey: ['publishQueue', pubFilters],    queryFn: () => apiFetch(`/api/publications/queue?${new URLSearchParams(pubFilters).toString()}`) });
-      void navigate('/', { replace: true });
+      void navigate(redirectTo, { replace: true });
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {
         setErrorMsg(t('auth.invalid_credentials'));
