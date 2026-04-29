@@ -71,16 +71,13 @@ export class AiService {
     return accumulated;
   }
 
-  private async callAiApi(config: AiConfigRow, prompt: string, maxTokens = 1024): Promise<string> {
-    // Scale timeout with output size: ~100ms per token as a rough ceiling, min 60s, max 5min
-    const timeoutMs = Math.min(Math.max(60_000, maxTokens * 100), 300_000);
+  private async callAiApi(config: AiConfigRow, prompt: string): Promise<string> {
     const baseUrl = config.baseUrl.replace(/\/$/, '');
     const endpoint = `${baseUrl}/chat/completions`;
 
     console.log('[AI] →', {
       endpoint,
       model: config.model,
-      maxTokens,
       promptChars: prompt.length,
       promptPreview: prompt.slice(0, 200),
     });
@@ -92,10 +89,9 @@ export class AiService {
         body: JSON.stringify({
           model: config.model,
           messages: [{ role: 'user', content: prompt }],
-          max_tokens: maxTokens,
           stream: true,
         }),
-        signal: AbortSignal.timeout(timeoutMs),
+        signal: AbortSignal.timeout(300_000), // 5 min hard ceiling
       });
 
       console.log('[AI] ← status:', res.status);
@@ -171,7 +167,7 @@ Return ONLY the translated text with no explanation or extra commentary.
 
 ${text}`;
 
-    return this.callAiApi(config, prompt, 4096);
+    return this.callAiApi(config, prompt);
   }
 
   async translateTitles(userId: string, titles: string[], targetLanguage: string): Promise<string[]> {
@@ -186,7 +182,7 @@ Return ONLY a valid JSON array of translated strings in exactly the same order, 
 
 ${numbered}`;
 
-    const raw = await this.callAiApi(config, prompt, 2048);
+    const raw = await this.callAiApi(config, prompt);
 
     // Extract JSON array from response (model may wrap it in markdown code fences)
     const match = raw.match(/\[[\s\S]*\]/);
@@ -285,7 +281,7 @@ Rules:
 
     let content: string;
     try {
-      content = await this.callAiApi(config, prompt, 8192);
+      content = await this.callAiApi(config, prompt);
     } finally {
       await redis.del(lockKey);
     }
