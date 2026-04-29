@@ -1,4 +1,5 @@
 import i18n from 'i18next';
+import type { Resource } from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
 export const SUPPORTED_LOCALES = ['zh-CN', 'zh-TW', 'en-US', 'ja-JP', 'ko-KR'] as const;
@@ -22,19 +23,20 @@ function getStoredLocale(): SupportedLocale {
 // import: 'default' ensures each entry is the parsed JSON object directly.
 const localeModules = import.meta.glob('../locales/**/*.json', { eager: true, import: 'default' });
 
-const resources: Record<string, Record<string, unknown>> = {};
+const resources: Resource = {};
 for (const [path, mod] of Object.entries(localeModules)) {
   const match = path.match(/\/([^/]+)\/([^/]+)\.json$/);
   if (match) {
     const [, lang, ns] = match;
     if (lang && ns) {
       if (!resources[lang]) resources[lang] = {};
-      resources[lang][ns] = mod as Record<string, unknown>;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      resources[lang]![ns] = mod as any;
     }
   }
 }
 
-export const i18nReady = i18n
+void i18n
   .use(initReactI18next)
   .init({
     lng: getStoredLocale(),
