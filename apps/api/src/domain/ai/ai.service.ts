@@ -36,25 +36,38 @@ export class AiService {
 
   private async callAiApi(config: AiConfigRow, prompt: string, maxTokens = 1024): Promise<string> {
     const baseUrl = config.baseUrl.replace(/\/$/, '');
+    const endpoint = `${baseUrl}/chat/completions`;
+    const requestBody = {
+      model: config.model,
+      messages: [{ role: 'user', content: prompt }],
+      max_tokens: maxTokens,
+    };
+
+    console.log('[AI] →', {
+      endpoint,
+      model: config.model,
+      maxTokens,
+      promptChars: prompt.length,
+      promptPreview: prompt.slice(0, 200),
+    });
+
     try {
-      const res = await fetch(`${baseUrl}/chat/completions`, {
+      const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${config.apiKey}` },
-        body: JSON.stringify({
-          model: config.model,
-          messages: [{ role: 'user', content: prompt }],
-          max_tokens: maxTokens,
-        }),
+        body: JSON.stringify(requestBody),
         signal: AbortSignal.timeout(60_000),
       });
 
+      const rawBody = await res.text();
+      console.log('[AI] ←', { status: res.status, bodyPreview: rawBody.slice(0, 1000) });
+
       if (!res.ok) {
-        const body = await res.text().catch(() => '');
-        throw new ValidationError(`AI request failed (HTTP ${res.status})${body ? ': ' + body.slice(0, 200) : ''}`);
+        throw new ValidationError(`AI request failed (HTTP ${res.status})${rawBody ? ': ' + rawBody.slice(0, 200) : ''}`);
       }
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const json = await res.json() as any;
+      const json = JSON.parse(rawBody) as any;
       const choice = json?.choices?.[0];
 
       // Scan all output items — gpt-5.x may prepend a reasoning block at index 0
@@ -75,14 +88,17 @@ export class AiService {
       );
       if (typeof content !== 'string') content = String(content ?? '');
       content = content.trim();
+
+      console.log('[AI] content extracted:', content ? `"${content.slice(0, 200)}…"` : '(empty)');
+
       if (!content) {
-        const preview = JSON.stringify(json).slice(0, 800);
-        throw new ValidationError(`AI returned no content. Response: ${preview}`);
+        throw new ValidationError(`AI returned no content. Full response: ${rawBody.slice(0, 800)}`);
       }
       return content;
     } catch (err) {
       if (err instanceof ValidationError) throw err;
       const msg = err instanceof Error ? err.message : 'Unknown error';
+      console.error('[AI] error:', msg);
       throw new ValidationError(`Failed to reach AI service: ${msg}`);
     }
   }
