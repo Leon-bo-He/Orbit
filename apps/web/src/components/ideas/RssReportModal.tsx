@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
 import i18n from '../../i18n/index.js';
 import { useGetReport, useTranslateText } from '../../api/ai.js';
+import { useUiStore } from '../../store/ui.store.js';
 import type { RssSource } from '../../store/rss.store.js';
 
 type ReportType = 'daily' | 'weekly' | 'biweekly';
@@ -47,6 +48,7 @@ export function RssReportModal({ source, reportType, onClose }: Props) {
   const translateMutation = useTranslateText();
 
   const { query, forceRefresh, isRefreshing } = useGetReport(source.url, source.name, reportType);
+  const showRssTranslate = useUiStore((s) => s.showRssTranslate);
   const report = query.data;
   const isPending = query.isLoading || query.isFetching;
 
@@ -91,7 +93,7 @@ export function RssReportModal({ source, reportType, onClose }: Props) {
             )}
           </div>
           <div className="flex items-center gap-2 ml-3 flex-shrink-0">
-            <button
+            {showRssTranslate && <button
               onClick={() => void handleTranslate()}
               disabled={!report?.content || translateMutation.isPending}
               className={`inline-flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-md border transition-colors disabled:opacity-50 ${
@@ -110,7 +112,7 @@ export function RssReportModal({ source, reportType, onClose }: Props) {
                 : showTranslation
                 ? t('trending_news.show_original')
                 : t('trending_news.translate')}
-            </button>
+            </button>}
             <button
               onClick={handleRefresh}
               disabled={refreshing || isPending}

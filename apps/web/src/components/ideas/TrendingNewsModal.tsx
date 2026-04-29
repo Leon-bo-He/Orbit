@@ -204,6 +204,7 @@ function AllReportsModal({
 }) {
   const { t } = useTranslation('ideas');
   const qc = useQueryClient();
+  const showRssTranslate = useUiStore((s) => s.showRssTranslate);
   const [reports, setReports] = useState<Record<string, SourceReport>>(
     () => Object.fromEntries(sources.map((s) => [s.id, { loading: true, content: null, translatedContent: null, error: null, generatedAt: null }])),
   );
@@ -285,7 +286,7 @@ function AllReportsModal({
             {typeLabel} {t('report.title_suffix')} — {t('report.all_sources')}
           </h2>
           <div className="flex items-center gap-2">
-            <button
+            {showRssTranslate && <button
               onClick={() => void handleTranslateAll()}
               disabled={isLoading || isTranslating}
               className={`inline-flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-md border transition-colors disabled:opacity-50 ${
@@ -304,7 +305,7 @@ function AllReportsModal({
                 : showTranslations
                 ? t('trending_news.show_original')
                 : t('trending_news.translate')}
-            </button>
+            </button>}
             <button
               onClick={() => loadAll(true)}
               disabled={isLoading}
