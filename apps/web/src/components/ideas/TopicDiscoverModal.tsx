@@ -294,6 +294,7 @@ export function TopicDiscoverModal({ sources, onClose }: Props) {
       onClose={() => setIdeaPrefill(null)}
       initialTitle={ideaPrefill?.title}
       initialNote={ideaPrefill?.note}
+      zIndex={80}
     />
     </>
   );

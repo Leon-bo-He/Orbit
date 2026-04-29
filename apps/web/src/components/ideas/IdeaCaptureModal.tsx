@@ -8,11 +8,12 @@ interface IdeaCaptureModalProps {
   onClose: () => void;
   initialTitle?: string;
   initialNote?: string;
+  zIndex?: number;
 }
 
 type Priority = 'low' | 'medium' | 'high';
 
-export function IdeaCaptureModal({ open, onClose, initialTitle, initialNote }: IdeaCaptureModalProps) {
+export function IdeaCaptureModal({ open, onClose, initialTitle, initialNote, zIndex }: IdeaCaptureModalProps) {
   const { t } = useTranslation('ideas');
   const createIdea = useCreateIdea();
   const { data: workspaces } = useWorkspaces();
@@ -94,7 +95,8 @@ export function IdeaCaptureModal({ open, onClose, initialTitle, initialNote }: I
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+      className="fixed inset-0 flex items-center justify-center bg-black/40 p-4"
+      style={{ zIndex: zIndex ?? 50 }}
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg">
