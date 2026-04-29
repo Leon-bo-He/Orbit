@@ -3,6 +3,11 @@ import type { RssReportsRepository } from '../../infrastructure/db/repositories/
 import type { RssCacheRepository } from '../../infrastructure/db/repositories/rss-cache.repository.js';
 import type { AiConfigRow } from '../../db/schema/ai-configs.js';
 import { ValidationError } from '../errors.js';
+import { redis } from '../../redis/client.js';
+
+const LOCK_TTL_S = 120; // matches the 60s AI timeout + buffer
+const LOCK_POLL_MS = 2_000;
+const LOCK_WAIT_MAX_MS = 90_000;
 
 export type ReportType = 'daily' | 'weekly' | 'biweekly';
 
@@ -211,8 +216,29 @@ ${numbered}`;
       }
     }
 
+    // Deduplicate concurrent generation requests using a Redis lock.
+    // If another request is already generating this report, wait for it to
+    // finish and return from DB instead of spawning a second AI call.
+    const lockKey = `ai_report_lock:${userId}:${Buffer.from(feedUrl).toString('base64url')}:${reportType}`;
+    const acquired = await redis.set(lockKey, '1', 'EX', LOCK_TTL_S, 'NX');
+
+    if (!acquired) {
+      // Another request is generating — poll DB until the report appears
+      const deadline = Date.now() + LOCK_WAIT_MAX_MS;
+      while (Date.now() < deadline) {
+        await new Promise((r) => setTimeout(r, LOCK_POLL_MS));
+        const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
+        const ready = await this.reportsRepo.findRecent(userId, feedUrl, reportType, since);
+        if (ready) return { content: ready.content, cached: true, createdAt: ready.createdAt.toISOString() };
+      }
+      throw new ValidationError('Report generation is taking longer than expected. Please try again.');
+    }
+
     const config = await this.aiConfigRepo.findByUser(userId);
-    if (!config) throw new ValidationError('AI not configured. Please add your AI settings first.');
+    if (!config) {
+      await redis.del(lockKey);
+      throw new ValidationError('AI not configured. Please add your AI settings first.');
+    }
 
     let articles = await this.rssRepo.findArticlesByDateRange(feedUrl, timeCutoff(reportType));
     let periodLabel = PERIOD_LABELS[reportType];
@@ -255,7 +281,13 @@ Rules:
 - Do not invent or guess URLs
 - Be thorough and detailed`;
 
-    const content = await this.callAiApi(config, prompt, 8192);
+    let content: string;
+    try {
+      content = await this.callAiApi(config, prompt, 8192);
+    } finally {
+      await redis.del(lockKey);
+    }
+
     const inserted = await this.reportsRepo.insert(userId, feedUrl, reportType, content);
     return { content, cached: false, createdAt: inserted.createdAt.toISOString() };
   }
