@@ -240,14 +240,14 @@ ${numbered}`;
       throw new ValidationError('AI not configured. Please add your AI settings first.');
     }
 
-    let articles = await this.rssRepo.findArticlesByDateRange(feedUrl, timeCutoff(reportType));
-    let periodLabel = PERIOD_LABELS[reportType];
+    const articles = await this.rssRepo.findArticlesByDateRange(feedUrl, timeCutoff(reportType));
+    const periodLabel = PERIOD_LABELS[reportType];
     if (articles.length === 0) {
-      articles = await this.rssRepo.findArticles(feedUrl, 0, 30);
-      if (articles.length === 0) {
-        throw new ValidationError(`No articles found for "${feedName}". Fetch the feed first in Trending News.`);
-      }
-      periodLabel = 'recent history (no articles in the requested period)';
+      await redis.del(lockKey);
+      throw new ValidationError(
+        `No articles found for "${feedName}" in the past ${periodLabel}. ` +
+        `Try the Weekly or Biweekly report, or wait for the feed to publish new articles.`,
+      );
     }
 
     const articleList = articles
