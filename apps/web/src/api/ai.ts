@@ -56,6 +56,33 @@ export function useTranslateTitles() {
   });
 }
 
+export function useGetReport(feedUrl: string, feedName: string, reportType: 'daily' | 'weekly' | 'biweekly') {
+  const qc = useQueryClient();
+  const queryKey = ['rss-report', feedUrl, reportType];
+
+  const query = useQuery<RssReport>({
+    queryKey,
+    queryFn: () =>
+      apiFetch<RssReport>('/api/rss-reports', {
+        method: 'POST',
+        body: JSON.stringify({ feedUrl, feedName, reportType, force: false }),
+      }),
+    staleTime: 23 * 60 * 60 * 1000, // treat as fresh for 23h — matches backend 24h cache
+    retry: false,
+  });
+
+  const forceRefresh = useMutation<RssReport, Error>({
+    mutationFn: () =>
+      apiFetch<RssReport>('/api/rss-reports', {
+        method: 'POST',
+        body: JSON.stringify({ feedUrl, feedName, reportType, force: true }),
+      }),
+    onSuccess: (data) => qc.setQueryData(queryKey, data),
+  });
+
+  return { query, forceRefresh };
+}
+
 export function useGenerateReport() {
   return useMutation<RssReport, Error, {
     feedUrl: string;

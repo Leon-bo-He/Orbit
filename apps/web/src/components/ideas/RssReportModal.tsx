@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
 import i18n from '../../i18n/index.js';
-import { useGenerateReport, useTranslateText } from '../../api/ai.js';
+import { useGetReport, useTranslateText } from '../../api/ai.js';
 import type { RssSource } from '../../store/rss.store.js';
 
 type ReportType = 'daily' | 'weekly' | 'biweekly';
@@ -42,45 +42,37 @@ const MD_COMPONENTS: React.ComponentProps<typeof ReactMarkdown>['components'] = 
 
 export function RssReportModal({ source, reportType, onClose }: Props) {
   const { t } = useTranslation('ideas');
-  const [content, setContent] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [generatedAt, setGeneratedAt] = useState<Date | null>(null);
-  const [cached, setCached] = useState(false);
   const [translatedContent, setTranslatedContent] = useState<string | null>(null);
   const [showTranslation, setShowTranslation] = useState(false);
-  const generate = useGenerateReport();
   const translateMutation = useTranslateText();
 
-  async function load(force = false) {
-    setError(null);
-    setTranslatedContent(null);
-    setShowTranslation(false);
-    try {
-      const result = await generate.mutateAsync({ feedUrl: source.url, feedName: source.name, reportType, force });
-      setContent(result.content);
-      setCached(result.cached && !force);
-      setGeneratedAt(new Date(result.createdAt));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : t('report.error'));
-    }
-  }
+  const { query, forceRefresh } = useGetReport(source.url, source.name, reportType);
+  const report = query.data;
+  const isPending = query.isLoading || query.isFetching;
 
   async function handleTranslate() {
     if (showTranslation) { setShowTranslation(false); return; }
     if (translatedContent) { setShowTranslation(true); return; }
-    if (!content) return;
+    const text = report?.content;
+    if (!text) return;
     const targetLanguage = LOCALE_LANGUAGE[i18n.language] ?? i18n.language;
     try {
-      const result = await translateMutation.mutateAsync({ text: content, targetLanguage });
+      const result = await translateMutation.mutateAsync({ text, targetLanguage });
       setTranslatedContent(result.translated);
       setShowTranslation(true);
     } catch { /* show original on failure */ }
   }
 
-  useEffect(() => { void load(); }, []);
+  function handleRefresh() {
+    setTranslatedContent(null);
+    setShowTranslation(false);
+    forceRefresh.mutate();
+  }
 
   const typeLabel = t(`report.type_${reportType}`);
-  const displayContent = showTranslation ? translatedContent : content;
+  const displayContent = showTranslation ? translatedContent : report?.content;
+  const generatedAt = report ? new Date(report.createdAt) : null;
+  const refreshing = forceRefresh.isPending;
 
   return (
     <div className="fixed inset-0 z-[70] bg-black/50 flex items-center justify-center p-4" onClick={onClose}>
@@ -93,7 +85,7 @@ export function RssReportModal({ source, reportType, onClose }: Props) {
             </h2>
             {generatedAt && (
               <p className="text-xs text-gray-400 mt-0.5">
-                {cached ? t('report.cached') : t('report.fresh')} ·{' '}
+                {report?.cached ? t('report.cached') : t('report.fresh')} ·{' '}
                 {generatedAt.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
               </p>
             )}
@@ -101,7 +93,7 @@ export function RssReportModal({ source, reportType, onClose }: Props) {
           <div className="flex items-center gap-2 ml-3 flex-shrink-0">
             <button
               onClick={() => void handleTranslate()}
-              disabled={!content || translateMutation.isPending}
+              disabled={!report?.content || translateMutation.isPending}
               className={`inline-flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-md border transition-colors disabled:opacity-50 ${
                 showTranslation
                   ? 'border-indigo-300 bg-indigo-50 text-indigo-700 hover:bg-indigo-100'
@@ -120,11 +112,11 @@ export function RssReportModal({ source, reportType, onClose }: Props) {
                 : t('trending_news.translate')}
             </button>
             <button
-              onClick={() => void load(true)}
-              disabled={generate.isPending}
+              onClick={handleRefresh}
+              disabled={refreshing || isPending}
               className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-50 transition-colors"
             >
-              <svg className={`w-3 h-3 ${generate.isPending ? 'animate-spin' : ''}`} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <svg className={`w-3 h-3 ${refreshing ? 'animate-spin' : ''}`} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                 <path d="M14 8A6 6 0 1 1 8 2"/>
                 <path d="M14 2v4h-4"/>
               </svg>
@@ -140,15 +132,20 @@ export function RssReportModal({ source, reportType, onClose }: Props) {
 
         {/* Body */}
         <div className="flex-1 min-h-0 overflow-y-auto px-5 py-4">
-          {generate.isPending && !content && (
+          {(isPending || refreshing) && !report && (
             <div className="h-full flex flex-col items-center justify-center gap-3 py-12">
               <div className="w-6 h-6 border-2 border-indigo-300 border-t-indigo-600 rounded-full animate-spin"/>
               <p className="text-sm text-gray-500">{t('report.generating')}</p>
             </div>
           )}
-          {error && (
+          {query.isError && !report && (
             <div className="rounded-lg bg-red-50 border border-red-100 px-4 py-3">
-              <p className="text-sm text-red-600">{error}</p>
+              <p className="text-sm text-red-600">{query.error instanceof Error ? query.error.message : t('report.error')}</p>
+            </div>
+          )}
+          {forceRefresh.isError && (
+            <div className="rounded-lg bg-red-50 border border-red-100 px-4 py-3 mb-4">
+              <p className="text-sm text-red-600">{forceRefresh.error instanceof Error ? forceRefresh.error.message : t('report.error')}</p>
             </div>
           )}
           {displayContent && <ReactMarkdown components={MD_COMPONENTS}>{displayContent}</ReactMarkdown>}
