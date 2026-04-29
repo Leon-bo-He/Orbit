@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import ReactMarkdown from 'react-markdown';
 import { useGenerateReport } from '../../api/ai.js';
 import type { RssSource } from '../../store/rss.store.js';
 
@@ -86,7 +87,23 @@ export function RssReportModal({ source, reportType, onClose }: Props) {
             </div>
           )}
           {content && (
-            <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap">{content}</p>
+            <ReactMarkdown
+              components={{
+                h1: ({ children }) => <h1 className="text-base font-semibold text-gray-900 mt-4 mb-1 first:mt-0">{children}</h1>,
+                h2: ({ children }) => <h2 className="text-sm font-semibold text-gray-900 mt-3 mb-1 first:mt-0">{children}</h2>,
+                h3: ({ children }) => <h3 className="text-sm font-semibold text-gray-800 mt-2 mb-0.5">{children}</h3>,
+                p:  ({ children }) => <p  className="text-sm text-gray-700 leading-relaxed mb-2 last:mb-0">{children}</p>,
+                ul: ({ children }) => <ul className="text-sm text-gray-700 list-disc pl-5 mb-2 space-y-0.5">{children}</ul>,
+                ol: ({ children }) => <ol className="text-sm text-gray-700 list-decimal pl-5 mb-2 space-y-0.5">{children}</ol>,
+                li: ({ children }) => <li className="leading-snug">{children}</li>,
+                strong: ({ children }) => <strong className="font-semibold text-gray-900">{children}</strong>,
+                hr: () => <hr className="border-gray-200 my-3"/>,
+                blockquote: ({ children }) => <blockquote className="border-l-2 border-indigo-300 pl-3 italic text-gray-600 my-2">{children}</blockquote>,
+                code: ({ children }) => <code className="bg-gray-100 rounded px-1 py-0.5 text-xs font-mono text-gray-800">{children}</code>,
+              }}
+            >
+              {content}
+            </ReactMarkdown>
           )}
         </div>
 
