@@ -152,7 +152,12 @@
       "rss_source_url_placeholder": "https://example.com/feed.xml",
       "rss_remove_confirm_title": "Remove RSS source?",
       "rss_remove_confirm_desc": "This will permanently delete all cached articles for \"{{name}}\".",
-      "rss_removing": "Removing…"
+      "rss_removing": "Removing…",
+      "rss_export_opml": "Export OPML",
+      "rss_import_opml": "Import OPML",
+      "rss_opml_imported": "Added {{added}} new source(s)",
+      "rss_opml_parse_error": "Invalid OPML file",
+      "rss_opml_no_feeds": "No valid feeds found in the file"
     },
     "ai": {
       "section_title": "AI Configuration",

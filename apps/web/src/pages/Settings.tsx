@@ -363,6 +363,73 @@ function DataPanel() {
   const [rssNewUrl, setRssNewUrl] = useState('');
   const [confirmRemoveSourceId, setConfirmRemoveSourceId] = useState<string | null>(null);
   const deleteRssFeed = useDeleteRssFeed();
+  const opmlInputRef = useRef<HTMLInputElement>(null);
+
+  function handleOPMLExport() {
+    function esc(s: string) {
+      return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+    const lines = [
+      '<?xml version="1.0" encoding="UTF-8"?>',
+      '<opml version="2.0">',
+      '  <head>',
+      `    <title>Orbit RSS Sources</title>`,
+      `    <dateCreated>${new Date().toUTCString()}</dateCreated>`,
+      '  </head>',
+      '  <body>',
+      ...rssSources.map((s) => `    <outline type="rss" text="${esc(s.name)}" xmlUrl="${esc(s.url)}"/>`),
+      '  </body>',
+      '</opml>',
+    ];
+    const blob = new Blob([lines.join('\n')], { type: 'text/x-opml;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'orbit-rss-sources.opml';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function handleOPMLImport(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const text = ev.target?.result as string;
+      const doc = new DOMParser().parseFromString(text, 'text/xml');
+
+      if (doc.documentElement.tagName === 'parsererror' || doc.getElementsByTagName('parsererror').length > 0) {
+        toast.error(t('settings.general.rss_opml_parse_error'));
+        return;
+      }
+
+      const outlines = Array.from(doc.getElementsByTagName('outline'));
+      const feeds = outlines
+        .filter((o) => o.getAttribute('xmlUrl'))
+        .map((o) => ({
+          name: (o.getAttribute('text') || o.getAttribute('title') || o.getAttribute('xmlUrl'))!.trim(),
+          url: o.getAttribute('xmlUrl')!.trim(),
+        }));
+
+      if (feeds.length === 0) {
+        toast.error(t('settings.general.rss_opml_no_feeds'));
+        return;
+      }
+
+      const existing = new Set(rssSources.map((s) => s.url));
+      const fresh = feeds.filter((f) => !existing.has(f.url));
+      fresh.forEach((f) => addRssSource({ name: f.name, url: f.url }));
+
+      if (fresh.length === 0) {
+        toast.error(t('settings.general.rss_opml_no_feeds'));
+      } else {
+        toast.success(t('settings.general.rss_opml_imported', { added: fresh.length }));
+      }
+    };
+    reader.readAsText(file);
+  }
 
   async function handleConfirmRemoveSource() {
     const source = rssSources.find((s) => s.id === confirmRemoveSourceId);
@@ -775,7 +842,25 @@ function DataPanel() {
 
       {/* RSS Sources */}
       <div>
-        <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">{t('settings.general.section_rss_sources')}</p>
+        <div className="flex items-center justify-between mb-1">
+          <p className="text-xs font-medium text-gray-400 uppercase tracking-wide">{t('settings.general.section_rss_sources')}</p>
+          <div className="flex gap-1.5">
+            <input ref={opmlInputRef} type="file" accept=".opml,.xml" className="hidden" onChange={handleOPMLImport}/>
+            <button
+              onClick={() => opmlInputRef.current?.click()}
+              className="text-xs px-2 py-1 rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors"
+            >
+              {t('settings.general.rss_import_opml')}
+            </button>
+            <button
+              onClick={handleOPMLExport}
+              disabled={rssSources.length === 0}
+              className="text-xs px-2 py-1 rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 transition-colors"
+            >
+              {t('settings.general.rss_export_opml')}
+            </button>
+          </div>
+        </div>
         <div className="rounded-xl border border-gray-100 overflow-hidden divide-y divide-gray-100">
           {rssSources.map((source) => (
             <div key={source.id} className={ROW + ' px-4 gap-3'}>

@@ -152,7 +152,12 @@
       "rss_source_url_placeholder": "https://example.com/feed.xml",
       "rss_remove_confirm_title": "RSS 소스를 제거하시겠습니까?",
       "rss_remove_confirm_desc": "\"{{name}}\"의 캐시된 모든 기사가 영구적으로 삭제됩니다.",
-      "rss_removing": "제거 중…"
+      "rss_removing": "제거 중…",
+      "rss_export_opml": "OPML 내보내기",
+      "rss_import_opml": "OPML 가져오기",
+      "rss_opml_imported": "{{added}}개 소스를 추가했습니다",
+      "rss_opml_parse_error": "유효하지 않은 OPML 파일입니다",
+      "rss_opml_no_feeds": "파일에서 유효한 피드를 찾을 수 없습니다"
     },
     "ai": {
       "section_title": "AI 설정",

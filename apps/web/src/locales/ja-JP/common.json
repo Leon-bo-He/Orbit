@@ -152,7 +152,12 @@
       "rss_source_url_placeholder": "https://example.com/feed.xml",
       "rss_remove_confirm_title": "RSSソースを削除しますか？",
       "rss_remove_confirm_desc": "「{{name}}」のキャッシュ済み記事がすべて完全に削除されます。",
-      "rss_removing": "削除中…"
+      "rss_removing": "削除中…",
+      "rss_export_opml": "OPMLをエクスポート",
+      "rss_import_opml": "OPMLをインポート",
+      "rss_opml_imported": "{{added}}件のソースを追加しました",
+      "rss_opml_parse_error": "無効なOPMLファイルです",
+      "rss_opml_no_feeds": "ファイルに有効なフィードが見つかりません"
     },
     "ai": {
       "section_title": "AI設定",

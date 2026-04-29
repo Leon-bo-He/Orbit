@@ -152,7 +152,12 @@
       "rss_source_url_placeholder": "https://example.com/feed.xml",
       "rss_remove_confirm_title": "移除 RSS 來源？",
       "rss_remove_confirm_desc": "此操作將永久刪除「{{name}}」的所有快取文章。",
-      "rss_removing": "移除中…"
+      "rss_removing": "移除中…",
+      "rss_export_opml": "匯出 OPML",
+      "rss_import_opml": "匯入 OPML",
+      "rss_opml_imported": "已新增 {{added}} 個訂閱源",
+      "rss_opml_parse_error": "無效的 OPML 檔案",
+      "rss_opml_no_feeds": "檔案中未找到有效訂閱源"
     },
     "ai": {
       "section_title": "AI 設定",
