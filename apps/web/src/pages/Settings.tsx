@@ -358,6 +358,8 @@ function DataPanel() {
   const [showArchivedIdeasDeleteConfirm, setShowArchivedIdeasDeleteConfirm] = useState(false);
 
   const { sources: rssSources, addSource: addRssSource, removeSource: removeRssSource, updateSource: updateRssSource } = useRssStore();
+  const showRssTranslate = useUiStore((s) => s.showRssTranslate);
+  const setShowRssTranslate = useUiStore((s) => s.setShowRssTranslate);
   const [showRssAddForm, setShowRssAddForm] = useState(false);
   const [rssNewName, setRssNewName] = useState('');
   const [rssNewUrl, setRssNewUrl] = useState('');
@@ -973,16 +975,33 @@ function DataPanel() {
               </div>
             </form>
           ) : (
-            <div className={`${ROW} px-4 border-b-0`}>
-              <p className="text-xs text-gray-400">{t('settings.general.rss_sources_desc')}</p>
-              <button
-                onClick={() => setShowRssAddForm(true)}
-                className="text-sm px-3 py-1.5 rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors flex-shrink-0 inline-flex items-center gap-1"
-              >
-                <span className="text-base leading-none">+</span>
-                {t('settings.general.rss_add_source')}
-              </button>
-            </div>
+            <>
+              <div className={ROW + ' px-4'}>
+                <div>
+                  <p className={LABEL}>{t('settings.general.rss_translate_title')}</p>
+                  <p className="text-xs text-gray-400 mt-0.5">{t('settings.general.rss_translate_desc')}</p>
+                </div>
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={showRssTranslate}
+                  onClick={() => setShowRssTranslate(!showRssTranslate)}
+                  className={`relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors focus:outline-none ${showRssTranslate ? 'bg-indigo-600' : 'bg-gray-200'}`}
+                >
+                  <span className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition-transform ${showRssTranslate ? 'translate-x-4' : 'translate-x-0'}`}/>
+                </button>
+              </div>
+              <div className={`${ROW} px-4 border-b-0`}>
+                <p className="text-xs text-gray-400">{t('settings.general.rss_sources_desc')}</p>
+                <button
+                  onClick={() => setShowRssAddForm(true)}
+                  className="text-sm px-3 py-1.5 rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors flex-shrink-0 inline-flex items-center gap-1"
+                >
+                  <span className="text-base leading-none">+</span>
+                  {t('settings.general.rss_add_source')}
+                </button>
+              </div>
+            </>
           )}
         </div>
       </div>

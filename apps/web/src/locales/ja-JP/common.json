@@ -153,6 +153,8 @@
       "rss_remove_confirm_title": "RSSソースを削除しますか？",
       "rss_remove_confirm_desc": "「{{name}}」のキャッシュ済み記事がすべて完全に削除されます。",
       "rss_removing": "削除中…",
+      "rss_translate_title": "翻訳ボタンを表示",
+      "rss_translate_desc": "トレンドニュースに翻訳ボタンを表示します。",
       "rss_export_opml": "OPMLをエクスポート",
       "rss_import_opml": "OPMLをインポート",
       "rss_opml_imported": "{{added}}件のソースを追加しました",

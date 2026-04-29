@@ -422,6 +422,7 @@ export function TrendingNewsModal({ onClose }: { onClose: () => void }) {
   const { t } = useTranslation('ideas');
   const { sources } = useRssStore();
   const openSettings = useUiStore((s) => s.openSettings);
+  const showRssTranslate = useUiStore((s) => s.showRssTranslate);
   const qc = useQueryClient();
   const translateMutation = useTranslateTitles();
 
@@ -508,7 +509,7 @@ export function TrendingNewsModal({ onClose }: { onClose: () => void }) {
             <h2 className="text-sm font-semibold text-gray-900">{t('trending_news.title')}</h2>
           </div>
           <div className="flex items-center gap-2">
-            {sources.length > 0 && (
+            {sources.length > 0 && showRssTranslate && (
               <button
                 onClick={() => void handleTranslate()}
                 disabled={translateMutation.isPending}
