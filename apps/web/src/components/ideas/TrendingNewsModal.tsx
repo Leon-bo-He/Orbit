@@ -268,7 +268,7 @@ function AllReportsModal({
                   <span className="text-sm font-semibold text-gray-800">{source.name}</span>
                   {rep?.generatedAt && (
                     <span className="text-xs text-gray-400 ml-1">
-                      · {rep.generatedAt.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
+                      · {rep.generatedAt.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                     </span>
                   )}
                 </div>
