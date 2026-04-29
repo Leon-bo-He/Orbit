@@ -15,8 +15,13 @@ export interface RssFeedPage {
 }
 
 const REFETCH_INTERVAL_MS = 30 * 60 * 1000;
-const THREE_WEEKS_MS = 21 * 24 * 60 * 60 * 1000;
 const PAGE_SIZE = 10;
+
+function threeMonthsAgo(): Date {
+  const d = new Date();
+  d.setMonth(d.getMonth() - 3);
+  return d;
+}
 
 function extractText(val: unknown): string {
   if (val == null) return '';
@@ -96,9 +101,14 @@ export class RssService {
       const xml = await res.text();
       if (!xml.trim()) throw new Error('Empty RSS response');
 
-      const fresh = parseRss(xml);
+      const cutoff = threeMonthsAgo();
+      const fresh = parseRss(xml).filter((a) => {
+        if (!a.pubDate) return true;
+        const d = new Date(a.pubDate);
+        return !isNaN(d.getTime()) && d >= cutoff;
+      });
       await this.repo.insertArticles(url, fresh);
-      await this.repo.deleteExpiredArticles(url, new Date(Date.now() - THREE_WEEKS_MS));
+      await this.repo.deleteExpiredArticles(url, cutoff);
       await this.repo.upsertFeed(url);
     }
 

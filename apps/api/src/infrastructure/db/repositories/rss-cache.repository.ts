@@ -1,4 +1,4 @@
-import { and, eq, lt, sql } from 'drizzle-orm';
+import { and, eq, isNull, lt, or, sql } from 'drizzle-orm';
 import { db } from '../../../db/client.js';
 import { rssFeeds } from '../../../db/schema/rss-feeds.js';
 import { rssArticles } from '../../../db/schema/rss-articles.js';
@@ -49,7 +49,14 @@ export class RssCacheRepository {
   }
 
   async deleteExpiredArticles(feedUrl: string, before: Date): Promise<void> {
-    await db.delete(rssArticles)
-      .where(and(eq(rssArticles.feedUrl, feedUrl), lt(rssArticles.firstSeenAt, before)));
+    await db.delete(rssArticles).where(
+      and(
+        eq(rssArticles.feedUrl, feedUrl),
+        or(
+          lt(rssArticles.pubDateTs, before),
+          and(isNull(rssArticles.pubDateTs), lt(rssArticles.firstSeenAt, before)),
+        ),
+      ),
+    );
   }
 }
