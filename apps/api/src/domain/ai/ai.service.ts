@@ -34,14 +34,41 @@ export class AiService {
 
   // ─── Shared AI call helper ────────────────────────────────────────────────
 
+  // Read an SSE stream and accumulate delta.content chunks
+  private async readSseStream(body: ReadableStream<Uint8Array>): Promise<string> {
+    const reader = body.getReader();
+    const decoder = new TextDecoder();
+    let accumulated = '';
+    let buffer = '';
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() ?? '';
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (!trimmed.startsWith('data:')) continue;
+          const data = trimmed.slice(5).trim();
+          if (data === '[DONE]') return accumulated;
+          try {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const chunk = JSON.parse(data) as any;
+            const delta = chunk?.choices?.[0]?.delta?.content;
+            if (typeof delta === 'string') accumulated += delta;
+          } catch { /* skip malformed chunks */ }
+        }
+      }
+    } finally {
+      reader.releaseLock();
+    }
+    return accumulated;
+  }
+
   private async callAiApi(config: AiConfigRow, prompt: string, maxTokens = 1024): Promise<string> {
     const baseUrl = config.baseUrl.replace(/\/$/, '');
     const endpoint = `${baseUrl}/chat/completions`;
-    const requestBody = {
-      model: config.model,
-      messages: [{ role: 'user', content: prompt }],
-      max_tokens: maxTokens,
-    };
 
     console.log('[AI] →', {
       endpoint,
@@ -55,80 +82,28 @@ export class AiService {
       const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${config.apiKey}` },
-        body: JSON.stringify(requestBody),
+        body: JSON.stringify({
+          model: config.model,
+          messages: [{ role: 'user', content: prompt }],
+          max_tokens: maxTokens,
+          stream: true,
+        }),
         signal: AbortSignal.timeout(60_000),
       });
 
-      const rawBody = await res.text();
-      console.log('[AI] ←', { status: res.status, bodyPreview: rawBody.slice(0, 1000) });
+      console.log('[AI] ← status:', res.status);
 
       if (!res.ok) {
-        throw new ValidationError(`AI request failed (HTTP ${res.status})${rawBody ? ': ' + rawBody.slice(0, 200) : ''}`);
+        const errBody = await res.text().catch(() => '');
+        throw new ValidationError(`AI request failed (HTTP ${res.status})${errBody ? ': ' + errBody.slice(0, 200) : ''}`);
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const json = JSON.parse(rawBody) as any;
-      const choice = json?.choices?.[0];
+      if (!res.body) throw new ValidationError('AI response has no body.');
 
-      // Scan all output items — gpt-5.x may prepend a reasoning block at index 0
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const outputText: string = (Array.isArray(json?.output) ? json.output : []).reduce((acc: string, item: any) => {
-        if (acc) return acc;
-        const t = item?.content?.[0]?.text ?? item?.text;
-        return typeof t === 'string' ? t : acc;
-      }, '');
-
-      let content: string = (
-        choice?.message?.content                 // standard OpenAI chat completion
-        ?? choice?.message?.reasoning_content    // DeepSeek-R1 / reasoning models
-        ?? choice?.text                          // legacy completion format
-        ?? (outputText || undefined)             // OpenAI Responses API (gpt-5.x, any output index)
-        ?? json?.content?.[0]?.text              // Anthropic-style proxy
-        ?? ''
-      );
-      if (typeof content !== 'string') content = String(content ?? '');
-      content = content.trim();
-
-      // If content is still empty but the model generated tokens, the proxy failed to
-      // map the Responses API output back into choices[].message.content (known gpt-5.x bug).
-      // Fall back to calling the /responses endpoint directly.
-      if (!content) {
-        const completionTokens: number = json?.usage?.completion_tokens ?? 0;
-        console.log('[AI] content empty, completionTokens:', completionTokens, '— trying /responses endpoint');
-
-        if (completionTokens > 0) {
-          const respRes = await fetch(`${baseUrl}/responses`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${config.apiKey}` },
-            body: JSON.stringify({
-              model: config.model,
-              input: [{ role: 'user', content: prompt }],
-              max_output_tokens: maxTokens,
-            }),
-            signal: AbortSignal.timeout(60_000),
-          });
-          const respRaw = await respRes.text();
-          console.log('[AI] /responses ←', { status: respRes.status, bodyPreview: respRaw.slice(0, 1000) });
-
-          if (respRes.ok) {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const respJson = JSON.parse(respRaw) as any;
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const fromOutput: string = (Array.isArray(respJson?.output) ? respJson.output : []).reduce((acc: string, item: any) => {
-              if (acc) return acc;
-              const t = item?.content?.[0]?.text ?? item?.text;
-              return typeof t === 'string' ? t : acc;
-            }, '');
-            content = (respJson?.output_text ?? fromOutput ?? '').toString().trim();
-          }
-        }
-      }
-
+      const content = (await this.readSseStream(res.body)).trim();
       console.log('[AI] content extracted:', content ? `"${content.slice(0, 200)}…"` : '(empty)');
 
-      if (!content) {
-        throw new ValidationError(`AI returned no content. Full response: ${rawBody.slice(0, 800)}`);
-      }
+      if (!content) throw new ValidationError('AI returned no content.');
       return content;
     } catch (err) {
       if (err instanceof ValidationError) throw err;
