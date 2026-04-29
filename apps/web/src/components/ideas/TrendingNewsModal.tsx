@@ -201,11 +201,12 @@ function AllReportsModal({
     () => Object.fromEntries(sources.map((s) => [s.id, { loading: true, content: null, error: null }])),
   );
 
-  useLayoutEffect(() => {
+  function loadAll(force: boolean) {
+    setReports(Object.fromEntries(sources.map((s) => [s.id, { loading: true, content: null, error: null }])));
     sources.forEach((source) => {
       apiFetch<RssReport>('/api/rss-reports', {
         method: 'POST',
-        body: JSON.stringify({ feedUrl: source.url, feedName: source.name, reportType }),
+        body: JSON.stringify({ feedUrl: source.url, feedName: source.name, reportType, force }),
       })
         .then((r) =>
           setReports((prev) => ({ ...prev, [source.id]: { loading: false, content: r.content, error: null } })),
@@ -217,9 +218,11 @@ function AllReportsModal({
           })),
         );
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }
 
+  useLayoutEffect(() => { loadAll(false); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const isLoading = Object.values(reports).some((r) => r.loading);
   const typeLabel = t(`report.type_${reportType}`);
 
   return (
@@ -234,6 +237,21 @@ function AllReportsModal({
             <svg className="w-4 h-4" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
               <path d="M2 2l10 10M12 2L2 12"/>
             </svg>
+          </button>
+        </div>
+
+        {/* Footer */}
+        <div className="border-b border-gray-100 px-5 py-3 flex items-center justify-end flex-shrink-0">
+          <button
+            onClick={() => loadAll(true)}
+            disabled={isLoading}
+            className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-50 transition-colors"
+          >
+            <svg className={`w-3 h-3 ${isLoading ? 'animate-spin' : ''}`} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <path d="M14 8A6 6 0 1 1 8 2"/>
+              <path d="M14 2v4h-4"/>
+            </svg>
+            {t('report.refresh')}
           </button>
         </div>
 
