@@ -185,6 +185,7 @@ interface SourceReport {
   loading: boolean;
   content: string | null;
   error: string | null;
+  generatedAt: Date | null;
 }
 
 function AllReportsModal({
@@ -198,23 +199,23 @@ function AllReportsModal({
 }) {
   const { t } = useTranslation('ideas');
   const [reports, setReports] = useState<Record<string, SourceReport>>(
-    () => Object.fromEntries(sources.map((s) => [s.id, { loading: true, content: null, error: null }])),
+    () => Object.fromEntries(sources.map((s) => [s.id, { loading: true, content: null, error: null, generatedAt: null }])),
   );
 
   function loadAll(force: boolean) {
-    setReports(Object.fromEntries(sources.map((s) => [s.id, { loading: true, content: null, error: null }])));
+    setReports(Object.fromEntries(sources.map((s) => [s.id, { loading: true, content: null, error: null, generatedAt: null }])));
     sources.forEach((source) => {
       apiFetch<RssReport>('/api/rss-reports', {
         method: 'POST',
         body: JSON.stringify({ feedUrl: source.url, feedName: source.name, reportType, force }),
       })
         .then((r) =>
-          setReports((prev) => ({ ...prev, [source.id]: { loading: false, content: r.content, error: null } })),
+          setReports((prev) => ({ ...prev, [source.id]: { loading: false, content: r.content, error: null, generatedAt: new Date() } })),
         )
         .catch((err) =>
           setReports((prev) => ({
             ...prev,
-            [source.id]: { loading: false, content: null, error: err instanceof Error ? err.message : t('report.error') },
+            [source.id]: { loading: false, content: null, error: err instanceof Error ? err.message : t('report.error'), generatedAt: null },
           })),
         );
     });
@@ -233,26 +234,24 @@ function AllReportsModal({
           <h2 className="text-sm font-semibold text-gray-900">
             {typeLabel} {t('report.title_suffix')} — {t('report.all_sources')}
           </h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
-            <svg className="w-4 h-4" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-              <path d="M2 2l10 10M12 2L2 12"/>
-            </svg>
-          </button>
-        </div>
-
-        {/* Footer */}
-        <div className="border-b border-gray-100 px-5 py-3 flex items-center justify-end flex-shrink-0">
-          <button
-            onClick={() => loadAll(true)}
-            disabled={isLoading}
-            className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-50 transition-colors"
-          >
-            <svg className={`w-3 h-3 ${isLoading ? 'animate-spin' : ''}`} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-              <path d="M14 8A6 6 0 1 1 8 2"/>
-              <path d="M14 2v4h-4"/>
-            </svg>
-            {t('report.refresh')}
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => loadAll(true)}
+              disabled={isLoading}
+              className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-50 transition-colors"
+            >
+              <svg className={`w-3 h-3 ${isLoading ? 'animate-spin' : ''}`} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <path d="M14 8A6 6 0 1 1 8 2"/>
+                <path d="M14 2v4h-4"/>
+              </svg>
+              {t('report.refresh')}
+            </button>
+            <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
+              <svg className="w-4 h-4" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <path d="M2 2l10 10M12 2L2 12"/>
+              </svg>
+            </button>
+          </div>
         </div>
 
         {/* Body */}
@@ -267,6 +266,11 @@ function AllReportsModal({
                     <path d="M3 8.75A.75.75 0 013.75 8H4a8 8 0 018 8v.25a.75.75 0 01-.75.75h-.5a.75.75 0 01-.75-.75V16a6 6 0 00-6-6h-.25A.75.75 0 013 9.25v-.5zM7 15a2 2 0 11-4 0 2 2 0 014 0z"/>
                   </svg>
                   <span className="text-sm font-semibold text-gray-800">{source.name}</span>
+                  {rep?.generatedAt && (
+                    <span className="text-xs text-gray-400 ml-1">
+                      · {rep.generatedAt.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                  )}
                 </div>
 
                 {rep?.loading && (
