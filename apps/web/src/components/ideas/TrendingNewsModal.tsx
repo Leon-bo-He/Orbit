@@ -445,11 +445,38 @@ export function TrendingNewsModal({ onClose }: { onClose: () => void }) {
             </svg>
             <h2 className="text-sm font-semibold text-gray-900">{t('trending_news.title')}</h2>
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
-            <svg className="w-4 h-4" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-              <path d="M2 2l10 10M12 2L2 12"/>
-            </svg>
-          </button>
+          <div className="flex items-center gap-2">
+            {sources.length > 0 && (
+              <button
+                onClick={() => void handleTranslate()}
+                disabled={translateMutation.isPending}
+                className={`inline-flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-md border transition-colors disabled:opacity-50 ${
+                  showTranslations
+                    ? 'border-indigo-300 bg-indigo-50 text-indigo-700 hover:bg-indigo-100'
+                    : 'border-gray-200 text-gray-600 hover:bg-gray-50'
+                }`}
+              >
+                <svg className="w-3 h-3" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+                  <path d="M3 5h8M7 3v2M5 9c0 2 1.5 3.5 3 4M8 9c0 2-1.5 3.5-3 4"/>
+                  <path d="M11 14l2-5 2 5M12 12.5h2"/>
+                  <path d="M17 5l-4 4"/>
+                </svg>
+                {translateMutation.isPending
+                  ? t('trending_news.translating')
+                  : showTranslations
+                  ? t('trending_news.show_original')
+                  : t('trending_news.translate')}
+              </button>
+            )}
+            {translateError && (
+              <span className="text-xs text-red-500 truncate max-w-[160px]">{translateError}</span>
+            )}
+            <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
+              <svg className="w-4 h-4" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <path d="M2 2l10 10M12 2L2 12"/>
+              </svg>
+            </button>
+          </div>
         </div>
 
         {/* Body */}
@@ -507,32 +534,7 @@ export function TrendingNewsModal({ onClose }: { onClose: () => void }) {
 
         {/* Footer */}
         {sources.length > 0 && (
-          <div className="border-t border-gray-100 px-5 py-3 flex items-center justify-between flex-shrink-0">
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => void handleTranslate()}
-                disabled={translateMutation.isPending}
-                className={`inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md border transition-colors ${
-                  showTranslations
-                    ? 'border-indigo-300 bg-indigo-50 text-indigo-700 hover:bg-indigo-100'
-                    : 'border-gray-200 text-gray-600 hover:bg-gray-50'
-                } disabled:opacity-50`}
-              >
-                <svg className="w-3 h-3" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
-                  <path d="M3 5h8M7 3v2M5 9c0 2 1.5 3.5 3 4M8 9c0 2-1.5 3.5-3 4"/>
-                  <path d="M11 14l2-5 2 5M12 12.5h2"/>
-                  <path d="M17 5l-4 4"/>
-                </svg>
-                {translateMutation.isPending
-                  ? t('trending_news.translating')
-                  : showTranslations
-                  ? t('trending_news.show_original')
-                  : t('trending_news.translate')}
-              </button>
-              {translateError && (
-                <span className="text-xs text-red-500 truncate max-w-[200px]">{translateError}</span>
-              )}
-            </div>
+          <div className="border-t border-gray-100 px-5 py-3 flex items-center justify-end flex-shrink-0">
             <button
               onClick={handleOpenSettings}
               className="text-xs text-gray-400 hover:text-indigo-500 transition-colors"
