@@ -173,7 +173,8 @@
       "saved": "저장됨 ✓",
       "test": "연결 테스트",
       "test_ok": "✓ 연결 성공",
-      "test_fail": "✗ 연결 실패"
+      "test_fail": "✗ 연결 실패",
+      "save_ok": "✓ 설정이 저장되었습니다"
     },
     "notifications": {
       "section_timing": "타이밍",

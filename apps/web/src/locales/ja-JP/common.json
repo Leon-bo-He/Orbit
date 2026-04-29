@@ -173,7 +173,8 @@
       "saved": "保存済み ✓",
       "test": "接続テスト",
       "test_ok": "✓ 接続成功",
-      "test_fail": "✗ 接続失敗"
+      "test_fail": "✗ 接続失敗",
+      "save_ok": "✓ 設定を保存しました"
     },
     "notifications": {
       "section_timing": "タイミング",

@@ -173,7 +173,8 @@
       "saved": "已保存 ✓",
       "test": "测试连接",
       "test_ok": "✓ 连接成功",
-      "test_fail": "✗ 连接失败"
+      "test_fail": "✗ 连接失败",
+      "save_ok": "✓ 设置已保存"
     },
     "notifications": {
       "section_timing": "提醒设置",
