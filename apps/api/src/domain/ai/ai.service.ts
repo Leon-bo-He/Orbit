@@ -116,6 +116,11 @@ export class AiService {
     }
   }
 
+  /** Public wrapper used by BriefService to reuse the shared callAiApi helper. */
+  async callBriefPrompt(config: AiConfigRow, prompt: string): Promise<string> {
+    return this.callAiApi(config, prompt);
+  }
+
   // ─── Public methods ───────────────────────────────────────────────────────
 
   async getConfig(userId: string) {

@@ -22,6 +22,8 @@ import { TitlesSection } from '../components/brief/TitlesSection.js';
 import { OutlineSection } from '../components/brief/OutlineSection.js';
 import { ReferencesSection } from '../components/brief/ReferencesSection.js';
 import type { CreateContentReferenceInput, CreatePlanTemplateInput } from '@orbit/shared';
+import { AiGenerateButton } from '../components/brief/AiGenerateButton.js';
+import type { BriefContext } from '../api/brief.js';
 
 // ── Accordion ────────────────────────────────────────────────────────────────
 
@@ -29,19 +31,23 @@ interface AccordionProps {
   title: string;
   defaultOpen?: boolean;
   children: React.ReactNode;
+  action?: React.ReactNode;
 }
 
-function Accordion({ title, defaultOpen = false, children }: AccordionProps) {
+function Accordion({ title, defaultOpen = false, children, action }: AccordionProps) {
   const [open, setOpen] = useState(defaultOpen);
   return (
     <div className="border border-gray-200 rounded-lg overflow-hidden">
-      <button
-        onClick={() => setOpen((v) => !v)}
-        className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 hover:bg-gray-100 text-left"
-      >
-        <span className="text-sm font-semibold text-gray-800">{title}</span>
-        <span className={`text-gray-400 transition-transform ${open ? 'rotate-90' : ''}`}>›</span>
-      </button>
+      <div className="flex items-center bg-gray-50 hover:bg-gray-100 transition-colors px-4 py-3">
+        <button
+          onClick={() => setOpen((v) => !v)}
+          className="flex-1 flex items-center justify-between text-left"
+        >
+          <span className="text-sm font-semibold text-gray-800">{title}</span>
+          <span className={`text-gray-400 transition-transform mr-2 ${open ? 'rotate-90' : ''}`}>›</span>
+        </button>
+        {action && <div onClick={(e) => e.stopPropagation()}>{action}</div>}
+      </div>
       {open && <div className="px-4 py-4">{children}</div>}
     </div>
   );
@@ -158,6 +164,40 @@ export default function ContentBrief() {
     deleteTemplate.mutate(templateId);
   }
 
+  // Pending AI-generated titles — shown in a confirm dialog before applying
+  const [pendingTitles, setPendingTitles] = useState<ContentPlan['titleCandidates'] | null>(null);
+
+  function handleTitlesGenerated(result: unknown) {
+    setPendingTitles(result as ContentPlan['titleCandidates']);
+  }
+
+  function applyTitles(mode: 'replace' | 'add') {
+    if (!pendingTitles) return;
+    const existing = (localPlan.titleCandidates ?? []) as ContentPlan['titleCandidates'];
+    if (mode === 'replace') {
+      handleChange({ titleCandidates: pendingTitles });
+    } else {
+      // Merge — mark existing primaries unchanged, new ones as non-primary
+      const merged = [
+        ...existing,
+        ...pendingTitles.map((t) => ({ ...t, isPrimary: false })),
+      ];
+      handleChange({ titleCandidates: merged });
+    }
+    setPendingTitles(null);
+  }
+
+  // Build AI context from current plan + content
+  const briefContext: BriefContext = {
+    contentTitle: content?.title ?? '',
+    contentType: content?.contentType ?? '',
+    audience: localPlan.audience
+      ? `${(localPlan.audience as { ageRange?: string }).ageRange ?? ''} — ${(localPlan.audience as { painPoints?: string }).painPoints ?? ''}`
+      : undefined,
+    goals: (localPlan.goals as string[] | undefined) ?? [],
+    hooks: (localPlan.hooks as { coreHook?: string } | null | undefined)?.coreHook ?? undefined,
+  };
+
   if (!content) {
     return (
       <div className="p-8 text-center text-gray-400">
@@ -203,15 +243,20 @@ export default function ContentBrief() {
       <div className="max-w-3xl mx-auto px-6 py-6 space-y-3">
         {/* ① Format Config */}
         <Accordion title={t('brief.sections.format')} defaultOpen>
-          <FormatSection
-            contentType={content.contentType}
-            plan={localPlan}
-            onChange={handleChange}
-          />
+          <FormatSection contentType={content.contentType} plan={localPlan} onChange={handleChange} />
         </Accordion>
 
         {/* ② Audience Profile */}
-        <Accordion title={t('brief.sections.audience')}>
+        <Accordion
+          title={t('brief.sections.audience')}
+          action={
+            <AiGenerateButton
+              section="audience"
+              context={briefContext}
+              onResult={(r) => handleChange({ audience: r as ContentPlan['audience'] })}
+            />
+          }
+        >
           <AudienceSection
             plan={localPlan}
             templates={templates}
@@ -223,26 +268,101 @@ export default function ContentBrief() {
         </Accordion>
 
         {/* ③ Content Goals */}
-        <Accordion title={t('brief.sections.goals')}>
+        <Accordion
+          title={t('brief.sections.goals')}
+          action={
+            <AiGenerateButton
+              section="goals"
+              context={briefContext}
+              onResult={(r) => {
+                const g = r as { goals?: ContentPlan['goals']; goalDescription?: string; kpiTargets?: ContentPlan['kpiTargets'] };
+                handleChange({ goals: g.goals, goalDescription: g.goalDescription, kpiTargets: g.kpiTargets });
+              }}
+            />
+          }
+        >
           <GoalsSection plan={localPlan} onChange={handleChange} />
         </Accordion>
 
         {/* ④ Hook Analysis */}
-        <Accordion title={t('brief.sections.hooks')}>
+        <Accordion
+          title={t('brief.sections.hooks')}
+          action={
+            <AiGenerateButton
+              section="hooks"
+              context={briefContext}
+              onResult={(r) => handleChange({ hooks: r as ContentPlan['hooks'] })}
+            />
+          }
+        >
           <HooksSection plan={localPlan} onChange={handleChange} />
         </Accordion>
 
         {/* ⑤ Title Candidates */}
-        <Accordion title={t('brief.sections.titles')}>
+        <Accordion
+          title={t('brief.sections.titles')}
+          action={
+            <AiGenerateButton
+              section="titles"
+              context={briefContext}
+              onResult={handleTitlesGenerated}
+            />
+          }
+        >
           <TitlesSection plan={localPlan} onChange={handleChange} />
         </Accordion>
 
+        {/* AI Titles confirm dialog */}
+        {pendingTitles && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+            <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6 space-y-4">
+              <h3 className="text-sm font-semibold text-gray-900">{t('brief.ai.titles_dialog_title')}</h3>
+              <ul className="space-y-1.5 max-h-48 overflow-y-auto">
+                {pendingTitles.map((title, i) => (
+                  <li key={i} className="text-sm text-gray-700 px-3 py-1.5 bg-gray-50 rounded-md">
+                    {title.text}
+                  </li>
+                ))}
+              </ul>
+              <div className="flex justify-end gap-2 pt-2">
+                <button
+                  onClick={() => setPendingTitles(null)}
+                  className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50"
+                >
+                  {t('action.cancel', { ns: 'common' })}
+                </button>
+                <button
+                  onClick={() => applyTitles('add')}
+                  className="text-sm px-3 py-1.5 rounded-lg border border-indigo-200 text-indigo-600 hover:bg-indigo-50"
+                >
+                  {t('brief.ai.titles_add')}
+                </button>
+                <button
+                  onClick={() => applyTitles('replace')}
+                  className="text-sm px-3 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700"
+                >
+                  {t('brief.ai.titles_replace')}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* ⑥ Content Outline */}
-        <Accordion title={t('brief.sections.outline')}>
+        <Accordion
+          title={t('brief.sections.outline')}
+          action={
+            <AiGenerateButton
+              section="outline"
+              context={briefContext}
+              onResult={(r) => handleChange({ outline: r as ContentPlan['outline'] })}
+            />
+          }
+        >
           <OutlineSection plan={localPlan} onChange={handleChange} />
         </Accordion>
 
-        {/* ⑦ Competitive References */}
+        {/* ⑦ Competitive References — no AI generation, keep as-is */}
         <Accordion title={t('brief.sections.references')}>
           <ReferencesSection
             contentId={contentId}

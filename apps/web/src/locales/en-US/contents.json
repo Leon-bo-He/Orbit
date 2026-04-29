@@ -97,6 +97,14 @@
     },
     "saving": "Saving…",
     "saved": "Saved",
+    "ai": {
+      "generate": "AI Generate",
+      "generating": "Generating…",
+      "error": "AI generation failed",
+      "titles_dialog_title": "AI generated these titles — apply how?",
+      "titles_add": "Add to existing",
+      "titles_replace": "Replace all"
+    },
     "not_found": "Content not found",
     "format": {
       "duration_label": "Duration",

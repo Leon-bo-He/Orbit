@@ -16,6 +16,7 @@ import { uploadRoutes } from './upload.js';
 import { notificationsRoutes } from './notifications.js';
 import { rssRoutes } from './rss.js';
 import { aiRoutes } from './ai.js';
+import { briefRoutes } from './brief.js';
 
 export function registerRoutes(app: FastifyInstance, svc: Services) {
   healthRoutes(app);
@@ -34,4 +35,5 @@ export function registerRoutes(app: FastifyInstance, svc: Services) {
   notificationsRoutes(app, svc.user, svc.notificationChannel);
   rssRoutes(app, svc.rss);
   aiRoutes(app, svc.ai, svc.user);
+  briefRoutes(app, svc.brief, svc.user);
 }
