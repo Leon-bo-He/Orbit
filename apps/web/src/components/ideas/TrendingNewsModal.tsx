@@ -205,8 +205,10 @@ function AllReportsModal({
   const [showTranslations, setShowTranslations] = useState(false);
   const translateMutation = useTranslateText();
   const [isTranslating, setIsTranslating] = useState(false);
+  const [isForcing, setIsForcing] = useState(false);
 
   function loadAll(force: boolean) {
+    setIsForcing(force);
     setReports(Object.fromEntries(sources.map((s) => [s.id, { loading: true, content: null, translatedContent: null, error: null, generatedAt: null }])));
     setShowTranslations(false);
     sources.forEach((source) => {
@@ -331,7 +333,7 @@ function AllReportsModal({
                 {rep?.loading && (
                   <div className="flex items-center gap-2 py-4 text-gray-400">
                     <div className="w-4 h-4 border-2 border-indigo-200 border-t-indigo-500 rounded-full animate-spin flex-shrink-0"/>
-                    <span className="text-xs">{t('report.generating')}</span>
+                    {isForcing && <span className="text-xs">{t('report.generating')}</span>}
                   </div>
                 )}
                 {rep?.error && (
@@ -505,7 +507,7 @@ export function TrendingNewsModal({ onClose }: { onClose: () => void }) {
           {sources.length > 0 && (
             <div className="flex flex-col gap-4">
               {/* All-sources report strip */}
-              <div className="flex items-center justify-end gap-2">
+              <div className="flex items-center justify-start gap-2">
                 <span className="text-xs text-gray-400">{t('trending_news.all_sources_report')}</span>
                 {(['daily', 'weekly', 'biweekly'] as const).map((type) => (
                   <button
