@@ -199,6 +199,7 @@ function AllReportsModal({
   onClose: () => void;
 }) {
   const { t } = useTranslation('ideas');
+  const qc = useQueryClient();
   const [reports, setReports] = useState<Record<string, SourceReport>>(
     () => Object.fromEntries(sources.map((s) => [s.id, { loading: true, content: null, translatedContent: null, error: null, generatedAt: null }])),
   );
@@ -216,9 +217,11 @@ function AllReportsModal({
         method: 'POST',
         body: JSON.stringify({ feedUrl: source.url, feedName: source.name, reportType, force }),
       })
-        .then((r) =>
-          setReports((prev) => ({ ...prev, [source.id]: { loading: false, content: r.content, translatedContent: null, error: null, generatedAt: new Date(r.createdAt) } })),
-        )
+        .then((r) => {
+          setReports((prev) => ({ ...prev, [source.id]: { loading: false, content: r.content, translatedContent: null, error: null, generatedAt: new Date(r.createdAt) } }));
+          // Populate the single-source report cache so opening the individual modal is instant
+          qc.setQueryData(['rss-report', source.url, reportType], r);
+        })
         .catch((err) =>
           setReports((prev) => ({
             ...prev,
