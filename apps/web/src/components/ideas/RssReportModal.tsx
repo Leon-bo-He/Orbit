@@ -46,7 +46,7 @@ export function RssReportModal({ source, reportType, onClose }: Props) {
   const [showTranslation, setShowTranslation] = useState(false);
   const translateMutation = useTranslateText();
 
-  const { query, forceRefresh } = useGetReport(source.url, source.name, reportType);
+  const { query, forceRefresh, isRefreshing } = useGetReport(source.url, source.name, reportType);
   const report = query.data;
   const isPending = query.isLoading || query.isFetching;
 
@@ -72,7 +72,7 @@ export function RssReportModal({ source, reportType, onClose }: Props) {
   const typeLabel = t(`report.type_${reportType}`);
   const displayContent = showTranslation ? translatedContent : report?.content;
   const generatedAt = report ? new Date(report.createdAt) : null;
-  const refreshing = forceRefresh.isPending;
+  const refreshing = isRefreshing;
 
   return (
     <div className="fixed inset-0 z-[70] bg-black/50 flex items-center justify-center p-4" onClick={onClose}>

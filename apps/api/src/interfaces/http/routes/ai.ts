@@ -76,8 +76,21 @@ export function aiRoutes(app: FastifyInstance, svc: AiService, userSvc: UserServ
     }
 
     const user = await userSvc.findById(sub);
+
+    if (force) {
+      // Fire-and-forget: detach from request lifecycle so closing the window
+      // doesn't cancel the AI call. The result is saved to DB; client polls.
+      setImmediate(() => {
+        void svc.getReport(sub, feedUrl, feedName, reportType as ReportType, true, user?.locale)
+          .catch((err: unknown) => {
+            app.log.error({ err }, '[AI] Background report generation failed');
+          });
+      });
+      return reply.code(202).send({ generating: true });
+    }
+
     return reply.send(
-      await svc.getReport(sub, feedUrl, feedName, reportType as ReportType, force ?? false, user?.locale),
+      await svc.getReport(sub, feedUrl, feedName, reportType as ReportType, false, user?.locale),
     );
   });
 }

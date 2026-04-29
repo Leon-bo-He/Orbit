@@ -59,6 +59,7 @@ export function useTranslateTitles() {
 export function useGetReport(feedUrl: string, feedName: string, reportType: 'daily' | 'weekly' | 'biweekly') {
   const qc = useQueryClient();
   const queryKey = ['rss-report', feedUrl, reportType];
+  const [polling, setPolling] = useState(false);
 
   const query = useQuery<RssReport>({
     queryKey,
@@ -67,20 +68,37 @@ export function useGetReport(feedUrl: string, feedName: string, reportType: 'dai
         method: 'POST',
         body: JSON.stringify({ feedUrl, feedName, reportType, force: false }),
       }),
-    staleTime: 23 * 60 * 60 * 1000, // treat as fresh for 23h — matches backend 24h cache
+    staleTime: 23 * 60 * 60 * 1000,
     retry: false,
+    refetchInterval: polling ? 3_000 : false,
+    refetchIntervalInBackground: true,
   });
 
-  const forceRefresh = useMutation<RssReport, Error>({
+  // Track the createdAt of the report that was current when refresh was triggered
+  const [refreshedAfter, setRefreshedAfter] = useState<string | null>(null);
+
+  // Stop polling once a report newer than when we triggered the refresh appears
+  const currentCreatedAt = query.data?.createdAt;
+  if (polling && refreshedAfter && currentCreatedAt && currentCreatedAt > refreshedAfter) {
+    setPolling(false);
+    setRefreshedAfter(null);
+  }
+
+  const forceRefresh = useMutation<void, Error>({
     mutationFn: () =>
-      apiFetch<RssReport>('/api/rss-reports', {
+      apiFetch<void>('/api/rss-reports', {
         method: 'POST',
         body: JSON.stringify({ feedUrl, feedName, reportType, force: true }),
       }),
-    onSuccess: (data) => qc.setQueryData(queryKey, data),
+    onSuccess: () => {
+      // Backend returns 202 immediately; start polling for the new report
+      setRefreshedAfter(query.data?.createdAt ?? new Date(0).toISOString());
+      setPolling(true);
+      void qc.invalidateQueries({ queryKey });
+    },
   });
 
-  return { query, forceRefresh };
+  return { query, forceRefresh, isRefreshing: polling || forceRefresh.isPending };
 }
 
 export function useGenerateReport() {
