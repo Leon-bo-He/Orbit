@@ -269,6 +269,12 @@ function AllReportsModal({
 
   const isLoading = Object.values(reports).some((r) => r.loading);
   const typeLabel = t(`report.type_${reportType}`);
+  const bodyRef = useRef<HTMLDivElement>(null);
+
+  function scrollToSource(sourceId: string) {
+    const el = bodyRef.current?.querySelector<HTMLElement>(`#allreport-${sourceId}`);
+    el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
 
   return (
     <div className="fixed inset-0 z-[70] bg-black/50 flex items-center justify-center p-4" onClick={onClose}>
@@ -318,12 +324,37 @@ function AllReportsModal({
           </div>
         </div>
 
+        {/* Source navigation strip */}
+        {sources.length > 1 && (
+          <div className="flex items-center gap-1.5 px-5 py-2 border-b border-gray-100 overflow-x-auto flex-shrink-0" style={{ scrollbarWidth: 'none' }}>
+            {sources.map((source) => {
+              const rep = reports[source.id];
+              return (
+                <button
+                  key={source.id}
+                  onClick={() => scrollToSource(source.id)}
+                  className={`inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full flex-shrink-0 transition-colors ${
+                    rep?.loading
+                      ? 'bg-gray-100 text-gray-400'
+                      : rep?.error
+                      ? 'bg-red-50 text-red-500 border border-red-200'
+                      : 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200'
+                  }`}
+                >
+                  {rep?.loading && <span className="w-2 h-2 rounded-full border border-current border-t-transparent animate-spin"/>}
+                  {source.name}
+                </button>
+              );
+            })}
+          </div>
+        )}
+
         {/* Body */}
-        <div className="flex-1 min-h-0 overflow-y-auto px-5 py-4 space-y-6">
+        <div ref={bodyRef} className="flex-1 min-h-0 overflow-y-auto px-5 py-4 space-y-6">
           {sources.map((source) => {
             const rep = reports[source.id];
             return (
-              <div key={source.id}>
+              <div key={source.id} id={`allreport-${source.id}`}>
                 <div className="flex items-center gap-1.5 mb-2">
                   <svg className="w-3.5 h-3.5 text-orange-500 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
                     <path d="M3.75 3a.75.75 0 00-.75.75v.5c0 .414.336.75.75.75H4c6.075 0 11 4.925 11 11v.25c0 .414.336.75.75.75h.5a.75.75 0 00.75-.75V16C17 8.82 11.18 3 4 3h-.25z"/>
