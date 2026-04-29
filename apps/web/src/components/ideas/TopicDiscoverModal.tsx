@@ -22,6 +22,26 @@ function childrenToText(children: React.ReactNode): string {
   return '';
 }
 
+/** Extract { text, href } link pairs from React children. */
+function childrenToLinks(children: React.ReactNode): { text: string; href: string }[] {
+  if (!children) return [];
+  if (Array.isArray(children)) return children.flatMap(childrenToLinks);
+  if (typeof children === 'object' && 'props' in (children as React.ReactElement)) {
+    const el = children as React.ReactElement<{ href?: string; children?: React.ReactNode }>;
+    if (el.type === 'a' && el.props.href) {
+      return [{ text: childrenToText(el.props.children), href: el.props.href }];
+    }
+    return childrenToLinks(el.props.children);
+  }
+  return [];
+}
+
+function buildNote(text: string, links: { text: string; href: string }[]): string {
+  if (links.length === 0) return text;
+  const linkLines = links.map((l) => `- ${l.text}: ${l.href}`).join('\n');
+  return `${text}\n\nSources:\n${linkLines}`;
+}
+
 function makeMdComponents(
   onAddIdea: (title: string, note: string) => void,
 ): React.ComponentProps<typeof ReactMarkdown>['components'] {
@@ -33,9 +53,9 @@ function makeMdComponents(
     p: ({ children }) => {
       const text = childrenToText(children).trim();
       if (text.length < 20) return <p className="text-sm text-gray-700 leading-relaxed mb-2 last:mb-0">{children}</p>;
-      // Use the preceding li title as the idea title; fall back to first sentence of this paragraph
+      const links = childrenToLinks(children);
       const title = lastLiTitle || text.split(/[。！？.!?]/)[0].trim().slice(0, 120);
-      const note = text;
+      const note = buildNote(text, links);
       return (
         <div className="flex items-start gap-2 mb-2 last:mb-0">
           <p className="flex-1 min-w-0 text-sm text-gray-700 leading-relaxed">{children}</p>
@@ -55,15 +75,16 @@ function makeMdComponents(
     ul: ({ children }) => <ul className="text-sm text-gray-700 list-disc pl-5 mb-2 space-y-1">{children}</ul>,
     li: ({ children }) => {
       const text = childrenToText(children).trim();
-      // Strip markdown bold markers and use the full text as the topic title
+      const links = childrenToLinks(children);
       const title = text.replace(/^\*+|\*+$/g, '').split('\n')[0].trim().slice(0, 150);
+      const note = buildNote('', links);
       lastLiTitle = title;
       return (
         <li className="leading-snug">
           <div className="flex items-start gap-2">
             <div className="flex-1 min-w-0">{children}</div>
             <button
-              onClick={() => onAddIdea(title, '')}
+              onClick={() => onAddIdea(title, note)}
               title="Add to Ideas"
               className="flex-shrink-0 mt-0.5 inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded border border-indigo-200 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors"
             >
