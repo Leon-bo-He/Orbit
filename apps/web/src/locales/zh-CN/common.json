@@ -167,7 +167,7 @@
       "api_key_placeholder": "sk-…",
       "api_key_set": "••••••••（已设置）",
       "model": "模型",
-      "model_placeholder": "gpt-4o-mini",
+      "model_placeholder": "gpt-5.4",
       "desc": "用于生成 RSS 订阅的亮点报告。",
       "save": "保存",
       "saved": "已保存 ✓",

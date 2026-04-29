@@ -167,7 +167,7 @@
       "api_key_placeholder": "sk-…",
       "api_key_set": "••••••••  (set)",
       "model": "Model",
-      "model_placeholder": "gpt-4o-mini",
+      "model_placeholder": "gpt-5.4",
       "desc": "Used to generate RSS report highlights.",
       "save": "Save",
       "saved": "Saved ✓",

@@ -41,7 +41,7 @@ export class AiService {
 
     const baseUrl = (overrides.baseUrl?.trim() || (stored?.baseUrl ?? '')).replace(/\/$/, '');
     const apiKey  = overrides.apiKey?.trim() || (stored?.apiKey ?? '');
-    const model   = overrides.model?.trim() || stored?.model || 'gpt-4o-mini';
+    const model   = overrides.model?.trim() || stored?.model || 'gpt-5.4';
 
     if (!baseUrl || !apiKey) {
       return { ok: false, error: 'Base URL and API key are required.' };

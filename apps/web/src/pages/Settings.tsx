@@ -1966,7 +1966,7 @@ function AiPanel() {
 
   const [baseUrl, setBaseUrl] = useState('');
   const [apiKey, setApiKey] = useState('');
-  const [model, setModel] = useState('gpt-4o-mini');
+  const [model, setModel] = useState('gpt-5.4');
   const [saved, setSaved] = useState(false);
   const [testResult, setTestResult] = useState<{ ok: boolean; error?: string } | null>(null);
 
@@ -1979,8 +1979,8 @@ function AiPanel() {
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
-    if (!baseUrl.trim() || !apiKey.trim()) return;
-    await saveConfig.mutateAsync({ baseUrl: baseUrl.trim(), apiKey: apiKey.trim(), model: model.trim() || 'gpt-4o-mini' });
+    if (!baseUrl.trim() || (!apiKey.trim() && !config?.apiKeySet)) return;
+    await saveConfig.mutateAsync({ baseUrl: baseUrl.trim(), apiKey: apiKey.trim(), model: model.trim() || 'gpt-5.4' });
     setApiKey('');
     setSaved(true);
     setTestResult(null);
@@ -2047,7 +2047,7 @@ function AiPanel() {
               </button>
               <button
                 type="submit"
-                disabled={saveConfig.isPending || !baseUrl.trim() || !apiKey.trim()}
+                disabled={saveConfig.isPending || !baseUrl.trim() || (!apiKey.trim() && !config?.apiKeySet)}
                 className="text-sm px-3 py-1.5 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-40 transition-colors"
               >
                 {saved ? t('settings.ai.saved') : saveConfig.isPending ? '…' : t('settings.ai.save')}

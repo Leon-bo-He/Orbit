@@ -18,7 +18,7 @@ export function aiRoutes(app: FastifyInstance, svc: AiService) {
     await svc.saveConfig(sub, {
       baseUrl: baseUrl.trim(),
       apiKey: apiKey.trim(),
-      model: (model?.trim() || 'gpt-4o-mini'),
+      model: (model?.trim() || 'gpt-5.4'),
     });
     return reply.code(204).send();
   });

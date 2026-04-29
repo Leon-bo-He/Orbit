@@ -167,7 +167,7 @@
       "api_key_placeholder": "sk-…",
       "api_key_set": "••••••••（設定済み）",
       "model": "モデル",
-      "model_placeholder": "gpt-4o-mini",
+      "model_placeholder": "gpt-5.4",
       "desc": "RSSフィードのハイライトレポート生成に使用します。",
       "save": "保存",
       "saved": "保存済み ✓",
