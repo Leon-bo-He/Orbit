@@ -134,9 +134,22 @@ Be concise and factual.`;
         throw new ValidationError(`AI request failed (HTTP ${res.status})${body ? ': ' + body.slice(0, 200) : ''}`);
       }
 
-      const json = await res.json() as { choices?: { message?: { content?: string } }[] };
-      content = json.choices?.[0]?.message?.content?.trim() ?? '';
-      if (!content) throw new ValidationError('AI returned an empty response.');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const json = await res.json() as any;
+      const choice = json?.choices?.[0];
+      content = (
+        choice?.message?.content          // standard chat completion
+        ?? choice?.message?.reasoning_content // some reasoning models
+        ?? choice?.text                    // legacy completion format
+        ?? json?.content?.[0]?.text        // Anthropic-style proxy
+        ?? ''
+      );
+      if (typeof content !== 'string') content = String(content ?? '');
+      content = content.trim();
+      if (!content) {
+        const preview = JSON.stringify(json).slice(0, 400);
+        throw new ValidationError(`AI returned no content. Response: ${preview}`);
+      }
     } catch (err) {
       if (err instanceof ValidationError) throw err;
       const msg = err instanceof Error ? err.message : 'Unknown error';
