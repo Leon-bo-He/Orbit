@@ -59,5 +59,50 @@
   "toast_created": "アイデアを作成しました",
   "toast_create_failed": "アイデアの作成に失敗しました：{{message}}",
   "toast_saved": "アイデアを保存しました",
-  "toast_update_failed": "アイデアの更新に失敗しました：{{message}}"
+  "toast_update_failed": "アイデアの更新に失敗しました：{{message}}",
+  "trending_news": {
+    "button": "トレンドニュース",
+    "title": "トレンドニュース",
+    "no_sources_heading": "RSSソースがありません",
+    "no_sources_body": "設定 > データからRSSフィードを追加して、お気に入りのソースをフォローしましょう。",
+    "open_settings": "設定を開く",
+    "manage_sources": "設定でソースを管理",
+    "fetch_error": "フィードの読み込みに失敗しました",
+    "no_articles": "記事が見つかりません",
+    "page_prev": "前へ",
+    "page_next": "次へ",
+    "all_sources_report": "全ソース：",
+    "translate": "翻訳",
+    "translating": "翻訳中…",
+    "show_original": "原文表示",
+    "translate_error": "翻訳に失敗しました",
+    "report_daily": "日次",
+    "report_weekly": "週次",
+    "report_biweekly": "隔週",
+    "topic_discover": "AIトピック発見"
+  },
+  "report": {
+    "title_suffix": "レポート",
+    "type_daily": "日次",
+    "type_weekly": "週次",
+    "type_biweekly": "隔週",
+    "generating": "レポートを生成中…",
+    "error": "レポートの生成に失敗しました",
+    "refresh": "更新",
+    "cached": "キャッシュ",
+    "fresh": "生成済み",
+    "all_sources": "全ソース"
+  },
+  "topic_discover": {
+    "title": "AIトピック発見",
+    "sources": "RSSソース",
+    "select_all": "全選択",
+    "time_period": "期間",
+    "additional_req": "追加要件",
+    "additional_req_placeholder": "例：AI動向に注目…",
+    "sources_selected": "ソース選択済み",
+    "discover_btn": "トピックを発見",
+    "discovering": "トピックを探しています…",
+    "back": "戻る"
+  }
 }

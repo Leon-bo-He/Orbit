@@ -79,7 +79,8 @@
       "workspaces": "Workspaces",
       "platforms": "Platforms",
       "notifications": "Notifications",
-      "data": "Data"
+      "data": "Data",
+      "ai": "AI"
     },
     "platforms": {
       "builtin_title": "Built-in Platforms",
@@ -143,7 +144,41 @@
       "archived_ideas_export_success": "Exported {{count}} archived ideas",
       "archived_ideas_delete_success": "Deleted {{count}} archived ideas",
       "archived_ideas_export_error": "Export failed: {{message}}",
-      "archived_ideas_delete_error": "Delete failed: {{message}}"
+      "archived_ideas_delete_error": "Delete failed: {{message}}",
+      "section_rss_sources": "RSS Sources",
+      "rss_sources_desc": "Feeds shown in the Trending News panel on the Ideas page.",
+      "rss_add_source": "Add Source",
+      "rss_source_name_placeholder": "e.g. TechCrunch",
+      "rss_source_url_placeholder": "https://example.com/feed.xml",
+      "rss_remove_confirm_title": "Remove RSS source?",
+      "rss_remove_confirm_desc": "This will permanently delete all cached articles for \"{{name}}\".",
+      "rss_removing": "Removing…",
+      "rss_translate_title": "Show Translate Button",
+      "rss_translate_desc": "Display the translate button in Trending News.",
+      "rss_folder_placeholder": "Folder (optional)",
+      "rss_folder_add": "＋ Add folder",
+      "rss_export_opml": "Export OPML",
+      "rss_import_opml": "Import OPML",
+      "rss_opml_imported": "Added {{added}} new source(s)",
+      "rss_opml_parse_error": "Invalid OPML file",
+      "rss_opml_no_feeds": "No valid feeds found in the file"
+    },
+    "ai": {
+      "section_title": "AI Configuration",
+      "base_url": "Base URL",
+      "base_url_placeholder": "https://api.openai.com/v1",
+      "api_key": "API Key",
+      "api_key_placeholder": "sk-…",
+      "api_key_set": "••••••••  (set)",
+      "model": "Model",
+      "model_placeholder": "gpt-5.4",
+      "desc": "Used to generate RSS report highlights.",
+      "save": "Save",
+      "saved": "Saved ✓",
+      "test": "Test Connection",
+      "test_ok": "✓ Connection successful",
+      "test_fail": "✗ Connection failed",
+      "save_ok": "✓ Settings saved"
     },
     "notifications": {
       "section_timing": "Timing",

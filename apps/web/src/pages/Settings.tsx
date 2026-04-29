@@ -18,8 +18,11 @@ import { PlatformIcon } from '../components/ui/PlatformIcon.js';
 import { CalendarPicker } from '../components/ui/CalendarPicker.js';
 import i18n, { SUPPORTED_LOCALES, type SupportedLocale } from '../i18n/index.js';
 import { toast } from '../store/toast.store.js';
+import { useRssStore } from '../store/rss.store.js';
+import { useDeleteRssFeed } from '../api/rss.js';
+import { useAiConfig, useSaveAiConfig, useTestAiConnection } from '../api/ai.js';
 
-type Section = 'account' | 'appearance' | 'workspaces' | 'platforms' | 'notifications' | 'data';
+type Section = 'account' | 'appearance' | 'workspaces' | 'platforms' | 'notifications' | 'data' | 'ai';
 
 
 const LOCALE_META: Record<SupportedLocale, { label: string }> = {
@@ -353,6 +356,124 @@ function DataPanel() {
   const [exportingArchivedIdeas, setExportingArchivedIdeas] = useState(false);
   const [deletingArchivedIdeas, setDeletingArchivedIdeas] = useState(false);
   const [showArchivedIdeasDeleteConfirm, setShowArchivedIdeasDeleteConfirm] = useState(false);
+
+  const { sources: rssSources, addSource: addRssSource, removeSource: removeRssSource, updateSource: updateRssSource } = useRssStore();
+  const showRssTranslate = useUiStore((s) => s.showRssTranslate);
+  const setShowRssTranslate = useUiStore((s) => s.setShowRssTranslate);
+  const [showRssAddForm, setShowRssAddForm] = useState(false);
+  const [rssNewName, setRssNewName] = useState('');
+  const [rssNewUrl, setRssNewUrl] = useState('');
+  const [rssNewFolder, setRssNewFolder] = useState('');
+  const [editFolderSourceId, setEditFolderSourceId] = useState<string | null>(null);
+  const [editFolderValue, setEditFolderValue] = useState('');
+  const [confirmRemoveSourceId, setConfirmRemoveSourceId] = useState<string | null>(null);
+  const deleteRssFeed = useDeleteRssFeed();
+  const opmlInputRef = useRef<HTMLInputElement>(null);
+
+  function handleOPMLExport() {
+    function esc(s: string) {
+      return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+    const lines = [
+      '<?xml version="1.0" encoding="UTF-8"?>',
+      '<opml version="2.0">',
+      '  <head>',
+      `    <title>Orbit RSS Sources</title>`,
+      `    <dateCreated>${new Date().toUTCString()}</dateCreated>`,
+      '  </head>',
+      '  <body>',
+      ...rssSources.map((s) => `    <outline type="rss" text="${esc(s.name)}" xmlUrl="${esc(s.url)}"${s.folder ? ` category="${esc(s.folder)}"` : ''}"/>`),
+      '  </body>',
+      '</opml>',
+    ];
+    const blob = new Blob([lines.join('\n')], { type: 'text/x-opml;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'orbit-rss-sources.opml';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function handleOPMLImport(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const text = ev.target?.result as string;
+      const doc = new DOMParser().parseFromString(text, 'text/xml');
+
+      if (doc.documentElement.tagName === 'parsererror' || doc.getElementsByTagName('parsererror').length > 0) {
+        toast.error(t('settings.general.rss_opml_parse_error'));
+        return;
+      }
+
+      const outlines = Array.from(doc.getElementsByTagName('outline'));
+      const feeds = outlines
+        .filter((o) => o.getAttribute('xmlUrl'))
+        .map((o) => {
+          // Folder: prefer Orbit's own `category` attr, then fall back to the
+          // parent <outline> text if this is a nested OPML (common in other apps)
+          const parent = o.parentElement;
+          const parentFolder =
+            parent?.tagName === 'outline' && !parent.getAttribute('xmlUrl')
+              ? (parent.getAttribute('text') || parent.getAttribute('title') || '').trim()
+              : '';
+          const folder = (o.getAttribute('category') || parentFolder || '').trim() || undefined;
+          return {
+            name: (o.getAttribute('text') || o.getAttribute('title') || o.getAttribute('xmlUrl'))!.trim(),
+            url: o.getAttribute('xmlUrl')!.trim(),
+            folder,
+          };
+        });
+
+      if (feeds.length === 0) {
+        toast.error(t('settings.general.rss_opml_no_feeds'));
+        return;
+      }
+
+      const existing = new Set(rssSources.map((s) => s.url));
+      const fresh = feeds.filter((f) => !existing.has(f.url));
+      fresh.forEach((f) => addRssSource({ name: f.name, url: f.url, folder: f.folder }));
+
+      if (fresh.length === 0) {
+        toast.error(t('settings.general.rss_opml_no_feeds'));
+      } else {
+        toast.success(t('settings.general.rss_opml_imported', { added: fresh.length }));
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  async function handleConfirmRemoveSource() {
+    const source = rssSources.find((s) => s.id === confirmRemoveSourceId);
+    if (!source) return;
+    await deleteRssFeed.mutateAsync(source.url);
+    removeRssSource(source.id);
+    setConfirmRemoveSourceId(null);
+  }
+
+  function handleRssAdd(e: React.FormEvent) {
+    e.preventDefault();
+    if (!rssNewName.trim() || !rssNewUrl.trim()) return;
+    addRssSource({ name: rssNewName.trim(), url: rssNewUrl.trim(), folder: rssNewFolder.trim() || undefined });
+    setRssNewName('');
+    setRssNewUrl('');
+    setRssNewFolder('');
+    setShowRssAddForm(false);
+  }
+
+  function handleFolderEdit(sourceId: string, currentFolder: string | undefined) {
+    setEditFolderSourceId(sourceId);
+    setEditFolderValue(currentFolder ?? '');
+  }
+
+  function handleFolderSave(sourceId: string) {
+    updateRssSource(sourceId, { folder: editFolderValue.trim() || undefined });
+    setEditFolderSourceId(null);
+  }
 
   async function handleExport() {
     setExporting(true);
@@ -745,6 +866,175 @@ function DataPanel() {
           </div>
         </div>
       )}
+
+      {/* RSS Sources */}
+      <div>
+        <div className="flex items-center justify-between mb-1">
+          <p className="text-xs font-medium text-gray-400 uppercase tracking-wide">{t('settings.general.section_rss_sources')}</p>
+          <div className="flex gap-1.5">
+            <input ref={opmlInputRef} type="file" accept=".opml,.xml" className="hidden" onChange={handleOPMLImport}/>
+            <button
+              onClick={() => opmlInputRef.current?.click()}
+              className="text-xs px-2 py-1 rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors"
+            >
+              {t('settings.general.rss_import_opml')}
+            </button>
+            <button
+              onClick={handleOPMLExport}
+              disabled={rssSources.length === 0}
+              className="text-xs px-2 py-1 rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 transition-colors"
+            >
+              {t('settings.general.rss_export_opml')}
+            </button>
+          </div>
+        </div>
+        <div className="rounded-xl border border-gray-100 overflow-hidden divide-y divide-gray-100">
+          {rssSources.map((source) => (
+            <div key={source.id} className="px-4 py-3 flex flex-col gap-1.5 border-b border-gray-100 last:border-b-0">
+              <div className="flex items-center gap-2 min-w-0">
+                <svg className="w-3.5 h-3.5 text-orange-400 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M3.75 3a.75.75 0 00-.75.75v.5c0 .414.336.75.75.75H4c6.075 0 11 4.925 11 11v.25c0 .414.336.75.75.75h.5a.75.75 0 00.75-.75V16C17 8.82 11.18 3 4 3h-.25z"/>
+                  <path d="M3 8.75A.75.75 0 013.75 8H4a8 8 0 018 8v.25a.75.75 0 01-.75.75h-.5a.75.75 0 01-.75-.75V16a6 6 0 00-6-6h-.25A.75.75 0 013 9.25v-.5zM7 15a2 2 0 11-4 0 2 2 0 014 0z"/>
+                </svg>
+                <div className="min-w-0 flex-1">
+                  <p className={LABEL + ' truncate'}>{source.name}</p>
+                  <p className="text-xs text-gray-400 truncate">{source.url}</p>
+                </div>
+                <button
+                  onClick={() => setConfirmRemoveSourceId(source.id)}
+                  className="text-xs px-2.5 py-1 rounded-md border border-red-200 text-red-500 hover:bg-red-50 transition-colors flex-shrink-0"
+                >
+                  {t('action.remove')}
+                </button>
+              </div>
+              {/* Folder inline editor */}
+              {editFolderSourceId === source.id ? (
+                <div className="flex gap-2 items-center ml-5">
+                  <input
+                    autoFocus
+                    value={editFolderValue}
+                    onChange={(e) => setEditFolderValue(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === 'Enter') handleFolderSave(source.id); if (e.key === 'Escape') setEditFolderSourceId(null); }}
+                    placeholder={t('settings.general.rss_folder_placeholder')}
+                    className="flex-1 text-xs px-2 py-1 rounded border border-gray-200 focus:outline-none focus:ring-1 focus:ring-indigo-300"
+                  />
+                  <button onClick={() => handleFolderSave(source.id)} className="text-xs px-2 py-1 rounded bg-indigo-600 text-white hover:bg-indigo-700 transition-colors">{t('action.save')}</button>
+                  <button onClick={() => setEditFolderSourceId(null)} className="text-xs px-2 py-1 rounded border border-gray-200 text-gray-500 hover:bg-gray-50 transition-colors">{t('action.cancel')}</button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => handleFolderEdit(source.id, source.folder)}
+                  className="ml-5 text-left text-xs text-gray-400 hover:text-indigo-500 transition-colors"
+                >
+                  {source.folder
+                    ? `📁 ${source.folder}`
+                    : t('settings.general.rss_folder_add')}
+                </button>
+              )}
+            </div>
+          ))}
+          {showRssAddForm ? (
+            <form onSubmit={handleRssAdd} className="px-4 py-3 flex flex-col gap-2">
+              <div className="flex gap-2">
+                <input
+                  autoFocus
+                  value={rssNewName}
+                  onChange={(e) => setRssNewName(e.target.value)}
+                  placeholder={t('settings.general.rss_source_name_placeholder')}
+                  className="flex-1 text-sm px-3 py-1.5 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-colors"
+                />
+                <input
+                  value={rssNewUrl}
+                  onChange={(e) => setRssNewUrl(e.target.value)}
+                  placeholder={t('settings.general.rss_source_url_placeholder')}
+                  type="url"
+                  className="flex-[2] text-sm px-3 py-1.5 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-colors"
+                />
+              </div>
+              <input
+                value={rssNewFolder}
+                onChange={(e) => setRssNewFolder(e.target.value)}
+                placeholder={t('settings.general.rss_folder_placeholder')}
+                className="text-sm px-3 py-1.5 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-colors"
+              />
+              <div className="flex gap-2 justify-end">
+                <button
+                  type="button"
+                  onClick={() => { setShowRssAddForm(false); setRssNewName(''); setRssNewUrl(''); setRssNewFolder(''); }}
+                  className="text-sm px-3 py-1.5 rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors"
+                >
+                  {t('action.cancel')}
+                </button>
+                <button
+                  type="submit"
+                  disabled={!rssNewName.trim() || !rssNewUrl.trim()}
+                  className="text-sm px-3 py-1.5 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-40 transition-colors"
+                >
+                  {t('action.add')}
+                </button>
+              </div>
+            </form>
+          ) : (
+            <>
+              <div className={ROW + ' px-4'}>
+                <div>
+                  <p className={LABEL}>{t('settings.general.rss_translate_title')}</p>
+                  <p className="text-xs text-gray-400 mt-0.5">{t('settings.general.rss_translate_desc')}</p>
+                </div>
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={showRssTranslate}
+                  onClick={() => setShowRssTranslate(!showRssTranslate)}
+                  className={`relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors focus:outline-none ${showRssTranslate ? 'bg-indigo-600' : 'bg-gray-200'}`}
+                >
+                  <span className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition-transform ${showRssTranslate ? 'translate-x-4' : 'translate-x-0'}`}/>
+                </button>
+              </div>
+              <div className={`${ROW} px-4 border-b-0`}>
+                <p className="text-xs text-gray-400">{t('settings.general.rss_sources_desc')}</p>
+                <button
+                  onClick={() => setShowRssAddForm(true)}
+                  className="text-sm px-3 py-1.5 rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors flex-shrink-0 inline-flex items-center gap-1"
+                >
+                  <span className="text-base leading-none">+</span>
+                  {t('settings.general.rss_add_source')}
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+
+      {confirmRemoveSourceId && (() => {
+        const source = rssSources.find((s) => s.id === confirmRemoveSourceId);
+        return (
+          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/40">
+            <div className="bg-white rounded-xl shadow-xl p-6 max-w-sm w-full space-y-4">
+              <h3 className="text-sm font-semibold text-gray-900">{t('settings.general.rss_remove_confirm_title')}</h3>
+              <p className="text-sm text-gray-600">
+                {t('settings.general.rss_remove_confirm_desc', { name: source?.name ?? '' })}
+              </p>
+              <div className="flex justify-end gap-2 pt-2">
+                <button
+                  onClick={() => setConfirmRemoveSourceId(null)}
+                  disabled={deleteRssFeed.isPending}
+                  className="text-sm px-4 py-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-50"
+                >
+                  {t('action.cancel')}
+                </button>
+                <button
+                  onClick={() => void handleConfirmRemoveSource()}
+                  disabled={deleteRssFeed.isPending}
+                  className="text-sm px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 disabled:opacity-50"
+                >
+                  {deleteRssFeed.isPending ? t('settings.general.rss_removing') : t('action.remove')}
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {showArchivedIdeasDeleteConfirm && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/40">
@@ -1740,6 +2030,112 @@ function PlatformsPanel() {
   );
 }
 
+// ─── AI Panel ────────────────────────────────────────────────────────────────
+
+function AiPanel() {
+  const { t } = useTranslation('common');
+  const { data: config } = useAiConfig();
+  const saveConfig = useSaveAiConfig();
+  const testConnection = useTestAiConnection();
+
+  const [baseUrl, setBaseUrl] = useState('');
+  const [apiKey, setApiKey] = useState('');
+  const [model, setModel] = useState('gpt-5.4');
+  const [saved, setSaved] = useState(false);
+  const [testResult, setTestResult] = useState<{ ok: boolean; error?: string } | null>(null);
+
+  useEffect(() => {
+    if (config) {
+      setBaseUrl(config.baseUrl);
+      setModel(config.model);
+    }
+  }, [config]);
+
+  async function handleSave(e: React.FormEvent) {
+    e.preventDefault();
+    if (!baseUrl.trim() || (!apiKey.trim() && !config?.apiKeySet)) return;
+    await saveConfig.mutateAsync({ baseUrl: baseUrl.trim(), apiKey: apiKey.trim() || undefined, model: model.trim() || 'gpt-5.4' });
+    setApiKey('');
+    setSaved(true);
+    setTestResult({ ok: true, error: undefined });
+    setTimeout(() => setSaved(false), 3000);
+  }
+
+  async function handleTest() {
+    setTestResult(null);
+    const result = await testConnection.mutateAsync({
+      baseUrl: baseUrl.trim() || undefined,
+      apiKey: apiKey.trim() || undefined,
+      model: model.trim() || undefined,
+    });
+    setTestResult(result);
+  }
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">{t('settings.ai.section_title')}</p>
+        <form onSubmit={(e) => void handleSave(e)} className="rounded-xl border border-gray-100 overflow-hidden divide-y divide-gray-100">
+          <div className={ROW + ' px-4'}>
+            <span className={LABEL}>{t('settings.ai.base_url')}</span>
+            <input
+              value={baseUrl}
+              onChange={(e) => setBaseUrl(e.target.value)}
+              placeholder={t('settings.ai.base_url_placeholder')}
+              className="text-sm px-2.5 py-1 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-300 w-52 text-right"
+            />
+          </div>
+          <div className={ROW + ' px-4'}>
+            <span className={LABEL}>{t('settings.ai.api_key')}</span>
+            <input
+              type="password"
+              value={apiKey}
+              onChange={(e) => setApiKey(e.target.value)}
+              placeholder={config?.apiKeySet ? t('settings.ai.api_key_set') : t('settings.ai.api_key_placeholder')}
+              className="text-sm px-2.5 py-1 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-300 w-52 text-right"
+            />
+          </div>
+          <div className={ROW + ' px-4'}>
+            <span className={LABEL}>{t('settings.ai.model')}</span>
+            <input
+              value={model}
+              onChange={(e) => setModel(e.target.value)}
+              placeholder={t('settings.ai.model_placeholder')}
+              className="text-sm px-2.5 py-1 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-300 w-52 text-right"
+            />
+          </div>
+          <div className="px-4 py-3 flex flex-col gap-2">
+            {testResult && (
+              <p className={`text-xs px-3 py-2 rounded-md ${testResult.ok ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-600'}`}>
+                {testResult.ok
+                  ? (saved ? t('settings.ai.save_ok') : t('settings.ai.test_ok'))
+                  : `${t('settings.ai.test_fail')}: ${testResult.error ?? ''}`}
+              </p>
+            )}
+            <div className="flex gap-2 justify-end">
+              <button
+                type="button"
+                onClick={() => void handleTest()}
+                disabled={testConnection.isPending || saveConfig.isPending}
+                className="text-sm px-3 py-1.5 rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 transition-colors"
+              >
+                {testConnection.isPending ? '…' : t('settings.ai.test')}
+              </button>
+              <button
+                type="submit"
+                disabled={saveConfig.isPending || !baseUrl.trim() || (!apiKey.trim() && !config?.apiKeySet)}
+                className="text-sm px-3 py-1.5 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-40 transition-colors"
+              >
+                {saved ? t('settings.ai.saved') : saveConfig.isPending ? '…' : t('settings.ai.save')}
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
 // ─── Settings Modal ───────────────────────────────────────────────────────────
 
 const NAV_ICONS: Record<Section, React.ReactNode> = {
@@ -1787,6 +2183,12 @@ const NAV_ICONS: Record<Section, React.ReactNode> = {
       <path d="M3 9v4c0 1.38 3.13 2.5 7 2.5s7-1.12 7-2.5V9" strokeLinecap="round"/>
     </svg>
   ),
+  ai: (
+    <svg className="w-[15px] h-[15px]" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6">
+      <path d="M10 3l1.5 3.5L15 8l-3.5 1.5L10 13l-1.5-3.5L5 8l3.5-1.5L10 3z" strokeLinejoin="round"/>
+      <path d="M4 14l.8 1.8L6.5 16l-1.7.8L4 18.5l-.8-1.7L1.5 16l1.7-.8L4 14z" strokeLinejoin="round"/>
+    </svg>
+  ),
 };
 
 export function SettingsModal({ onClose, initialSection }: { onClose: () => void; initialSection?: string }) {
@@ -1800,6 +2202,7 @@ export function SettingsModal({ onClose, initialSection }: { onClose: () => void
     { id: 'platforms',     label: t('settings.sections.platforms')     },
     { id: 'notifications', label: t('settings.sections.notifications') },
     { id: 'data',          label: t('settings.sections.data')          },
+    { id: 'ai',            label: t('settings.sections.ai')            },
   ];
 
   useEffect(() => {
@@ -1892,6 +2295,7 @@ export function SettingsModal({ onClose, initialSection }: { onClose: () => void
             {section === 'platforms'     && <PlatformsPanel />}
             {section === 'notifications' && <NotificationsPanel />}
             {section === 'data'          && <DataPanel />}
+            {section === 'ai'            && <AiPanel />}
           </div>
         </div>
       </div>

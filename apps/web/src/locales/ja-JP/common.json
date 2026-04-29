@@ -79,7 +79,8 @@
       "workspaces": "ワークスペース",
       "platforms": "プラットフォーム",
       "notifications": "通知",
-      "data": "データ"
+      "data": "データ",
+      "ai": "AI"
     },
     "platforms": {
       "builtin_title": "組み込みプラットフォーム",
@@ -143,7 +144,39 @@
       "archived_ideas_export_success": "アーカイブ済みアイデアを {{count}} 件エクスポートしました",
       "archived_ideas_delete_success": "アーカイブ済みアイデアを {{count}} 件削除しました",
       "archived_ideas_export_error": "エクスポート失敗：{{message}}",
-      "archived_ideas_delete_error": "削除失敗：{{message}}"
+      "archived_ideas_delete_error": "削除失敗：{{message}}",
+      "section_rss_sources": "RSSソース",
+      "rss_sources_desc": "アイデアページの「トレンドニュース」パネルに表示するフィード。",
+      "rss_add_source": "ソースを追加",
+      "rss_source_name_placeholder": "例：TechCrunch",
+      "rss_source_url_placeholder": "https://example.com/feed.xml",
+      "rss_remove_confirm_title": "RSSソースを削除しますか？",
+      "rss_remove_confirm_desc": "「{{name}}」のキャッシュ済み記事がすべて完全に削除されます。",
+      "rss_removing": "削除中…",
+      "rss_translate_title": "翻訳ボタンを表示",
+      "rss_translate_desc": "トレンドニュースに翻訳ボタンを表示します。",
+      "rss_export_opml": "OPMLをエクスポート",
+      "rss_import_opml": "OPMLをインポート",
+      "rss_opml_imported": "{{added}}件のソースを追加しました",
+      "rss_opml_parse_error": "無効なOPMLファイルです",
+      "rss_opml_no_feeds": "ファイルに有効なフィードが見つかりません"
+    },
+    "ai": {
+      "section_title": "AI設定",
+      "base_url": "ベースURL",
+      "base_url_placeholder": "https://api.openai.com/v1",
+      "api_key": "APIキー",
+      "api_key_placeholder": "sk-…",
+      "api_key_set": "••••••••（設定済み）",
+      "model": "モデル",
+      "model_placeholder": "gpt-5.4",
+      "desc": "RSSフィードのハイライトレポート生成に使用します。",
+      "save": "保存",
+      "saved": "保存済み ✓",
+      "test": "接続テスト",
+      "test_ok": "✓ 接続成功",
+      "test_fail": "✗ 接続失敗",
+      "save_ok": "✓ 設定を保存しました"
     },
     "notifications": {
       "section_timing": "タイミング",

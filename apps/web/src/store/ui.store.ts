@@ -34,6 +34,7 @@ interface UiState {
   disabledCustomPlatforms: string[];
   publicationTemplates: PublicationTemplate[];
   platformBundles: PlatformBundle[];
+  showRssTranslate: boolean;
   settingsSection: string | null; // null = closed
   setActiveWorkspace: (id: string | null) => void;
   setLocale: (locale: SupportedLocale) => void;
@@ -41,6 +42,7 @@ interface UiState {
   setTheme: (theme: Theme) => void;
   toggleBuiltinPlatform: (id: string) => void;
   toggleCustomPlatform: (id: string) => void;
+  setShowRssTranslate: (v: boolean) => void;
   openSettings: (section?: string) => void;
   closeSettings: () => void;
   savePublicationTemplate: (tpl: Omit<PublicationTemplate, 'id'>) => PublicationTemplate;
@@ -60,9 +62,11 @@ export const useUiStore = create<UiState>()(
       disabledCustomPlatforms: [],
       publicationTemplates: [],
       platformBundles: [],
+      showRssTranslate: true,
       settingsSection: null,
       setActiveWorkspace: (id) => set({ activeWorkspaceId: id }),
       setLocale: (locale) => set({ locale }),
+      setShowRssTranslate: (v) => set({ showRssTranslate: v }),
       toggleSidebar: () => set((s) => ({ sidebarCollapsed: !s.sidebarCollapsed })),
       setTheme: (theme) => set({ theme }),
       toggleBuiltinPlatform: (id) =>

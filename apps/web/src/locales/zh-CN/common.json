@@ -79,7 +79,8 @@
       "workspaces": "工作空间",
       "platforms": "平台管理",
       "notifications": "通知",
-      "data": "数据"
+      "data": "数据",
+      "ai": "AI"
     },
     "platforms": {
       "builtin_title": "内置平台",
@@ -143,7 +144,41 @@
       "archived_ideas_export_success": "已导出 {{count}} 条归档灵感",
       "archived_ideas_delete_success": "已删除 {{count}} 条归档灵感",
       "archived_ideas_export_error": "导出失败：{{message}}",
-      "archived_ideas_delete_error": "删除失败：{{message}}"
+      "archived_ideas_delete_error": "删除失败：{{message}}",
+      "section_rss_sources": "RSS 来源",
+      "rss_sources_desc": "在灵感页「热门资讯」面板中显示的订阅源。",
+      "rss_add_source": "添加来源",
+      "rss_source_name_placeholder": "例如：36氪",
+      "rss_source_url_placeholder": "https://example.com/feed.xml",
+      "rss_remove_confirm_title": "移除 RSS 来源？",
+      "rss_remove_confirm_desc": "此操作将永久删除「{{name}}」的所有缓存文章。",
+      "rss_removing": "移除中…",
+      "rss_translate_title": "显示翻译按钮",
+      "rss_translate_desc": "在热门资讯中显示翻译按钮。",
+      "rss_folder_placeholder": "分组（可选）",
+      "rss_folder_add": "＋ 添加分组",
+      "rss_export_opml": "导出 OPML",
+      "rss_import_opml": "导入 OPML",
+      "rss_opml_imported": "已添加 {{added}} 个订阅源",
+      "rss_opml_parse_error": "无效的 OPML 文件",
+      "rss_opml_no_feeds": "文件中未找到有效订阅源"
+    },
+    "ai": {
+      "section_title": "AI 配置",
+      "base_url": "接口地址",
+      "base_url_placeholder": "https://api.openai.com/v1",
+      "api_key": "API 密钥",
+      "api_key_placeholder": "sk-…",
+      "api_key_set": "••••••••（已设置）",
+      "model": "模型",
+      "model_placeholder": "gpt-5.4",
+      "desc": "用于生成 RSS 订阅的亮点报告。",
+      "save": "保存",
+      "saved": "已保存 ✓",
+      "test": "测试连接",
+      "test_ok": "✓ 连接成功",
+      "test_fail": "✗ 连接失败",
+      "save_ok": "✓ 设置已保存"
     },
     "notifications": {
       "section_timing": "提醒设置",

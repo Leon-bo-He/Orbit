@@ -79,7 +79,8 @@
       "workspaces": "워크스페이스",
       "platforms": "플랫폼",
       "notifications": "알림",
-      "data": "데이터"
+      "data": "데이터",
+      "ai": "AI"
     },
     "platforms": {
       "builtin_title": "기본 플랫폼",
@@ -143,7 +144,39 @@
       "archived_ideas_export_success": "보관된 아이디어 {{count}}개를 내보냈습니다",
       "archived_ideas_delete_success": "보관된 아이디어 {{count}}개를 삭제했습니다",
       "archived_ideas_export_error": "내보내기 실패: {{message}}",
-      "archived_ideas_delete_error": "삭제 실패: {{message}}"
+      "archived_ideas_delete_error": "삭제 실패: {{message}}",
+      "section_rss_sources": "RSS 소스",
+      "rss_sources_desc": "아이디어 페이지의 '트렌딩 뉴스' 패널에 표시할 피드입니다.",
+      "rss_add_source": "소스 추가",
+      "rss_source_name_placeholder": "예: TechCrunch",
+      "rss_source_url_placeholder": "https://example.com/feed.xml",
+      "rss_remove_confirm_title": "RSS 소스를 제거하시겠습니까?",
+      "rss_remove_confirm_desc": "\"{{name}}\"의 캐시된 모든 기사가 영구적으로 삭제됩니다.",
+      "rss_removing": "제거 중…",
+      "rss_translate_title": "번역 버튼 표시",
+      "rss_translate_desc": "트렌딩 뉴스에 번역 버튼을 표시합니다.",
+      "rss_export_opml": "OPML 내보내기",
+      "rss_import_opml": "OPML 가져오기",
+      "rss_opml_imported": "{{added}}개 소스를 추가했습니다",
+      "rss_opml_parse_error": "유효하지 않은 OPML 파일입니다",
+      "rss_opml_no_feeds": "파일에서 유효한 피드를 찾을 수 없습니다"
+    },
+    "ai": {
+      "section_title": "AI 설정",
+      "base_url": "기본 URL",
+      "base_url_placeholder": "https://api.openai.com/v1",
+      "api_key": "API 키",
+      "api_key_placeholder": "sk-…",
+      "api_key_set": "••••••••（설정됨）",
+      "model": "모델",
+      "model_placeholder": "gpt-5.4",
+      "desc": "RSS 피드 하이라이트 리포트 생성에 사용됩니다.",
+      "save": "저장",
+      "saved": "저장됨 ✓",
+      "test": "연결 테스트",
+      "test_ok": "✓ 연결 성공",
+      "test_fail": "✗ 연결 실패",
+      "save_ok": "✓ 설정이 저장되었습니다"
     },
     "notifications": {
       "section_timing": "타이밍",

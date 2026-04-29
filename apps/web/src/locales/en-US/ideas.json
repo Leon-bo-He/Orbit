@@ -59,5 +59,50 @@
   "toast_created": "Idea created",
   "toast_create_failed": "Failed to create idea: {{message}}",
   "toast_saved": "Idea saved",
-  "toast_update_failed": "Failed to update idea: {{message}}"
+  "toast_update_failed": "Failed to update idea: {{message}}",
+  "trending_news": {
+    "button": "Trending News",
+    "title": "Trending News",
+    "no_sources_heading": "No RSS sources yet",
+    "no_sources_body": "Add RSS feeds in Settings > Data to follow your favorite sources.",
+    "open_settings": "Open Settings",
+    "manage_sources": "Manage sources in Settings",
+    "fetch_error": "Failed to load feed",
+    "no_articles": "No articles found",
+    "page_prev": "Prev",
+    "page_next": "Next",
+    "all_sources_report": "AI Report for All Sources:",
+    "translate": "Translate",
+    "translating": "Translating…",
+    "show_original": "Original",
+    "translate_error": "Translation failed",
+    "report_daily": "Daily",
+    "report_weekly": "Weekly",
+    "report_biweekly": "Biweekly",
+    "topic_discover": "AI Topic Discover"
+  },
+  "topic_discover": {
+    "title": "AI Topic Discovery",
+    "sources": "RSS Sources",
+    "select_all": "Select All",
+    "time_period": "Time Period",
+    "additional_req": "Additional Requirements",
+    "additional_req_placeholder": "e.g. Focus on AI developments, highlight startup news, ignore politics…",
+    "sources_selected": "source(s) selected",
+    "discover_btn": "Discover Topics",
+    "discovering": "Discovering interesting topics…",
+    "back": "Back to settings"
+  },
+  "report": {
+    "title_suffix": "Report",
+    "type_daily": "Daily",
+    "type_weekly": "Weekly",
+    "type_biweekly": "Biweekly",
+    "generating": "Generating report…",
+    "error": "Failed to generate report",
+    "refresh": "Refresh",
+    "cached": "Cached",
+    "fresh": "Just generated",
+    "all_sources": "All Sources"
+  }
 }

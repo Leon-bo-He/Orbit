@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useMe } from '../../api/auth.js';
 import { useAuthStore } from '../../store/auth.store.js';
 import { useUiStore } from '../../store/ui.store.js';
-import { apiFetch, setAccessToken, registerUnauthorizedHandler } from '../../api/client.js';
+import { apiFetch, setAccessToken, registerUnauthorizedHandler, registerTokenRefreshedHandler } from '../../api/client.js';
 import { FullPageSpinner } from '../ui/FullPageSpinner.js';
 import { useTheme } from '../../hooks/useTheme.js';
 import i18n from '../../i18n/index.js';
@@ -41,7 +41,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
   // RequireAuth will then redirect to /login automatically.
   useEffect(() => {
     registerUnauthorizedHandler(clearAuth);
-  }, [clearAuth]);
+    registerTokenRefreshedHandler((token) => {
+      // Update in-memory token and persist to store without full re-auth cycle
+      setAccessToken(token);
+      setAuth(useAuthStore.getState().user!, token);
+    });
+  }, [clearAuth, setAuth]);
 
   useEffect(() => {
     if (initialized.current) return;

@@ -59,5 +59,50 @@
   "toast_created": "아이디어가 생성되었습니다",
   "toast_create_failed": "아이디어 생성 실패: {{message}}",
   "toast_saved": "아이디어가 저장되었습니다",
-  "toast_update_failed": "아이디어 업데이트 실패: {{message}}"
+  "toast_update_failed": "아이디어 업데이트 실패: {{message}}",
+  "trending_news": {
+    "button": "트렌딩 뉴스",
+    "title": "트렌딩 뉴스",
+    "no_sources_heading": "RSS 소스가 없습니다",
+    "no_sources_body": "설정 > 데이터에서 RSS 피드를 추가하여 좋아하는 소스를 팔로우하세요.",
+    "open_settings": "설정 열기",
+    "manage_sources": "설정에서 소스 관리",
+    "fetch_error": "피드 로드 실패",
+    "no_articles": "기사를 찾을 수 없습니다",
+    "page_prev": "이전",
+    "page_next": "다음",
+    "all_sources_report": "모든 소스：",
+    "translate": "번역",
+    "translating": "번역 중…",
+    "show_original": "원문 보기",
+    "translate_error": "번역 실패",
+    "report_daily": "일간",
+    "report_weekly": "주간",
+    "report_biweekly": "격주",
+    "topic_discover": "AI 토픽 발견"
+  },
+  "report": {
+    "title_suffix": "리포트",
+    "type_daily": "일간",
+    "type_weekly": "주간",
+    "type_biweekly": "격주",
+    "generating": "리포트 생성 중…",
+    "error": "리포트 생성 실패",
+    "refresh": "새로고침",
+    "cached": "캐시됨",
+    "fresh": "방금 생성됨",
+    "all_sources": "모든 소스"
+  },
+  "topic_discover": {
+    "title": "AI 토픽 발견",
+    "sources": "RSS 소스",
+    "select_all": "전체 선택",
+    "time_period": "기간",
+    "additional_req": "추가 요건",
+    "additional_req_placeholder": "예: AI 동향 집중…",
+    "sources_selected": "개 소스 선택됨",
+    "discover_btn": "토픽 발견",
+    "discovering": "토픽을 찾는 중…",
+    "back": "돌아가기"
+  }
 }

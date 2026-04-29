@@ -56,6 +56,7 @@ export interface IContentCreatorRepository {
     workspaceId: string;
     ideaId: string;
     title: string;
+    notes?: string | null;
     contentType: string;
     tags: string[];
     stageHistory: { stage: string; timestamp: string }[];
@@ -98,6 +99,7 @@ export class IdeaService {
       workspaceId,
       ideaId,
       title: title ?? idea.title,
+      notes: idea.note ?? null,
       contentType: contentType ?? 'article',
       tags: (idea.tags as string[]) ?? [],
       stageHistory: [

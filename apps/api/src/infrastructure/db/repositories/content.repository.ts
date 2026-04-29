@@ -39,6 +39,7 @@ export class ContentRepository implements IContentRepository, IContentCreatorRep
     workspaceId: string;
     ideaId: string;
     title: string;
+    notes?: string | null;
     contentType: string;
     tags: string[];
     stageHistory: { stage: string; timestamp: string }[];
@@ -47,6 +48,7 @@ export class ContentRepository implements IContentRepository, IContentCreatorRep
       workspaceId: data.workspaceId,
       ideaId: data.ideaId,
       title: data.title,
+      notes: data.notes ?? null,
       contentType: data.contentType,
       stage: 'planned',
       tags: data.tags,
