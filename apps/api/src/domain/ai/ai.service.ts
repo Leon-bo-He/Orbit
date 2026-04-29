@@ -89,6 +89,41 @@ export class AiService {
       if (typeof content !== 'string') content = String(content ?? '');
       content = content.trim();
 
+      // If content is still empty but the model generated tokens, the proxy failed to
+      // map the Responses API output back into choices[].message.content (known gpt-5.x bug).
+      // Fall back to calling the /responses endpoint directly.
+      if (!content) {
+        const completionTokens: number = json?.usage?.completion_tokens ?? 0;
+        console.log('[AI] content empty, completionTokens:', completionTokens, '— trying /responses endpoint');
+
+        if (completionTokens > 0) {
+          const respRes = await fetch(`${baseUrl}/responses`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${config.apiKey}` },
+            body: JSON.stringify({
+              model: config.model,
+              input: [{ role: 'user', content: prompt }],
+              max_output_tokens: maxTokens,
+            }),
+            signal: AbortSignal.timeout(60_000),
+          });
+          const respRaw = await respRes.text();
+          console.log('[AI] /responses ←', { status: respRes.status, bodyPreview: respRaw.slice(0, 1000) });
+
+          if (respRes.ok) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const respJson = JSON.parse(respRaw) as any;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const fromOutput: string = (Array.isArray(respJson?.output) ? respJson.output : []).reduce((acc: string, item: any) => {
+              if (acc) return acc;
+              const t = item?.content?.[0]?.text ?? item?.text;
+              return typeof t === 'string' ? t : acc;
+            }, '');
+            content = (respJson?.output_text ?? fromOutput ?? '').toString().trim();
+          }
+        }
+      }
+
       console.log('[AI] content extracted:', content ? `"${content.slice(0, 200)}…"` : '(empty)');
 
       if (!content) {
