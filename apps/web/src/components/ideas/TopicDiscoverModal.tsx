@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
 import { useDiscoverTopics } from '../../api/ai.js';
+import { IdeaCaptureModal } from './IdeaCaptureModal.js';
 import type { RssSource } from '../../store/rss.store.js';
 
 type ReportType = 'daily' | 'weekly' | 'biweekly';
@@ -11,20 +12,57 @@ interface Props {
   onClose: () => void;
 }
 
-const MD_COMPONENTS: React.ComponentProps<typeof ReactMarkdown>['components'] = {
-  h2: ({ children }) => <h2 className="text-sm font-semibold text-gray-900 mt-4 mb-1 first:mt-0">{children}</h2>,
-  h3: ({ children }) => <h3 className="text-sm font-semibold text-gray-800 mt-3 mb-0.5">{children}</h3>,
-  p:  ({ children }) => <p  className="text-sm text-gray-700 leading-relaxed mb-2 last:mb-0">{children}</p>,
-  ul: ({ children }) => <ul className="text-sm text-gray-700 list-disc pl-5 mb-2 space-y-0.5">{children}</ul>,
-  li: ({ children }) => <li className="leading-snug">{children}</li>,
-  strong: ({ children }) => <strong className="font-semibold text-gray-900">{children}</strong>,
-  hr: () => <hr className="border-gray-200 my-3"/>,
-  a: ({ href, children }) => (
-    <a href={href} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:text-indigo-800 hover:underline transition-colors">
-      {children}
-    </a>
-  ),
-};
+/** Extract plain text from React children (used to prefill idea title). */
+function childrenToText(children: React.ReactNode): string {
+  if (typeof children === 'string') return children;
+  if (Array.isArray(children)) return children.map(childrenToText).join('');
+  if (typeof children === 'object' && children !== null && 'props' in (children as React.ReactElement)) {
+    return childrenToText((children as React.ReactElement).props.children);
+  }
+  return '';
+}
+
+function makeMdComponents(
+  onAddIdea: (title: string, note: string) => void,
+): React.ComponentProps<typeof ReactMarkdown>['components'] {
+  return {
+    h2: ({ children }) => <h2 className="text-sm font-semibold text-gray-900 mt-4 mb-1 first:mt-0">{children}</h2>,
+    h3: ({ children }) => <h3 className="text-sm font-semibold text-gray-800 mt-3 mb-0.5">{children}</h3>,
+    p:  ({ children }) => <p  className="text-sm text-gray-700 leading-relaxed mb-2 last:mb-0">{children}</p>,
+    ul: ({ children }) => <ul className="text-sm text-gray-700 list-disc pl-5 mb-2 space-y-1">{children}</ul>,
+    li: ({ children }) => {
+      const text = childrenToText(children).trim();
+      // Split on first " — " or ": " to separate title from description
+      const dashIdx = text.indexOf(' — ');
+      const colonIdx = text.indexOf(': ');
+      const splitAt = dashIdx !== -1 ? dashIdx : colonIdx !== -1 ? colonIdx : -1;
+      const title = splitAt !== -1 ? text.slice(0, splitAt).replace(/^\*+|\*+$/g, '').trim() : text.slice(0, 100);
+      const note = splitAt !== -1 ? text.slice(splitAt + (dashIdx !== -1 ? 3 : 2)).trim() : '';
+      return (
+        <li className="leading-snug flex items-start gap-1.5 group">
+          <span className="flex-1 min-w-0">{children}</span>
+          <button
+            onClick={() => onAddIdea(title, note)}
+            title="Add to Ideas"
+            className="opacity-0 group-hover:opacity-100 flex-shrink-0 mt-0.5 inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-700 hover:bg-indigo-200 transition-all"
+          >
+            <svg className="w-2.5 h-2.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <path d="M8 3v10M3 8h10"/>
+            </svg>
+            Idea
+          </button>
+        </li>
+      );
+    },
+    strong: ({ children }) => <strong className="font-semibold text-gray-900">{children}</strong>,
+    hr: () => <hr className="border-gray-200 my-3"/>,
+    a: ({ href, children }) => (
+      <a href={href} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:text-indigo-800 hover:underline transition-colors">
+        {children}
+      </a>
+    ),
+  };
+}
 
 export function TopicDiscoverModal({ sources, onClose }: Props) {
   const { t } = useTranslation('ideas');
@@ -36,6 +74,9 @@ export function TopicDiscoverModal({ sources, onClose }: Props) {
   const [additionalReqs, setAdditionalReqs] = useState('');
   const [result, setResult] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [ideaPrefill, setIdeaPrefill] = useState<{ title: string; note: string } | null>(null);
+
+  const mdComponents = makeMdComponents((title, note) => setIdeaPrefill({ title, note }));
 
   // Group sources by folder
   const folders = [...new Set(sources.map((s) => s.folder ?? ''))].sort((a, b) =>
@@ -85,6 +126,7 @@ export function TopicDiscoverModal({ sources, onClose }: Props) {
   const someSelected = selectedIds.size > 0 && !allSelected;
 
   return (
+    <>
     <div className="fixed inset-0 z-[70] bg-black/50 flex items-center justify-center p-4" onClick={onClose}>
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
@@ -203,7 +245,7 @@ export function TopicDiscoverModal({ sources, onClose }: Props) {
           )}
 
           {result && (
-            <ReactMarkdown components={MD_COMPONENTS}>{result}</ReactMarkdown>
+            <ReactMarkdown components={mdComponents}>{result}</ReactMarkdown>
           )}
         </div>
 
@@ -245,5 +287,14 @@ export function TopicDiscoverModal({ sources, onClose }: Props) {
         </div>
       </div>
     </div>
+
+    {/* Idea capture — pre-filled from the topic */}
+    <IdeaCaptureModal
+      open={!!ideaPrefill}
+      onClose={() => setIdeaPrefill(null)}
+      initialTitle={ideaPrefill?.title}
+      initialNote={ideaPrefill?.note}
+    />
+    </>
   );
 }

@@ -6,11 +6,13 @@ import { useWorkspaces } from '../../api/workspaces.js';
 interface IdeaCaptureModalProps {
   open: boolean;
   onClose: () => void;
+  initialTitle?: string;
+  initialNote?: string;
 }
 
 type Priority = 'low' | 'medium' | 'high';
 
-export function IdeaCaptureModal({ open, onClose }: IdeaCaptureModalProps) {
+export function IdeaCaptureModal({ open, onClose, initialTitle, initialNote }: IdeaCaptureModalProps) {
   const { t } = useTranslation('ideas');
   const createIdea = useCreateIdea();
   const { data: workspaces } = useWorkspaces();
@@ -24,12 +26,14 @@ export function IdeaCaptureModal({ open, onClose }: IdeaCaptureModalProps) {
 
   const titleRef = useRef<HTMLInputElement>(null);
 
-  // Autofocus title when modal opens
+  // Prefill when opened with initial values
   useEffect(() => {
     if (open) {
+      if (initialTitle !== undefined) setTitle(initialTitle);
+      if (initialNote !== undefined) setNote(initialNote);
       setTimeout(() => titleRef.current?.focus(), 50);
     }
-  }, [open]);
+  }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Reset form when closed
   useEffect(() => {
