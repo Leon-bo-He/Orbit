@@ -15,7 +15,7 @@ export interface RssFeedPage {
 }
 
 const REFETCH_INTERVAL_MS = 30 * 60 * 1000;
-const PAGE_SIZE = 10;
+const MAX_PAGE_SIZE = 50;
 
 function threeMonthsAgo(): Date {
   const d = new Date();
@@ -88,7 +88,8 @@ export class RssService {
     await this.repo.deleteFeed(url);
   }
 
-  async getFeed(url: string, page = 1): Promise<RssFeedPage> {
+  async getFeed(url: string, page = 1, pageSize = 10): Promise<RssFeedPage> {
+    const safePageSize = Math.min(Math.max(1, pageSize), MAX_PAGE_SIZE);
     const feed = await this.repo.findFeed(url);
     const stale = !feed || Date.now() - feed.lastFetchedAt.getTime() > REFETCH_INTERVAL_MS;
 
@@ -114,7 +115,7 @@ export class RssService {
 
     const safePage = Math.max(1, page);
     const [rows, total] = await Promise.all([
-      this.repo.findArticles(url, (safePage - 1) * PAGE_SIZE, PAGE_SIZE),
+      this.repo.findArticles(url, (safePage - 1) * safePageSize, safePageSize),
       this.repo.countArticles(url),
     ]);
 
@@ -122,7 +123,7 @@ export class RssService {
       articles: rows.map((r) => ({ title: r.title, link: r.link, pubDate: r.pubDate })),
       total,
       page: safePage,
-      pages: Math.max(1, Math.ceil(total / PAGE_SIZE)),
+      pages: Math.max(1, Math.ceil(total / safePageSize)),
     };
   }
 }

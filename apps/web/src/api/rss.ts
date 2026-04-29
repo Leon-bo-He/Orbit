@@ -25,13 +25,13 @@ export function useDeleteRssFeed() {
   });
 }
 
-export function useRssFeed(url: string, page: number) {
+export function useRssFeed(url: string, page: number, pageSize: number) {
   return useQuery<RssFeedPage>({
-    queryKey: ['rss', url, page],
+    queryKey: ['rss', url, page, pageSize],
     queryFn: () =>
-      apiFetch<RssFeedPage>(`/api/rss?url=${encodeURIComponent(url)}&page=${page}`),
+      apiFetch<RssFeedPage>(`/api/rss?url=${encodeURIComponent(url)}&page=${page}&pageSize=${pageSize}`),
     staleTime: 15 * 60 * 1000,
-    placeholderData: (prev) => prev, // keep previous page visible while loading next
+    placeholderData: (prev) => prev,
     retry: 1,
   });
 }

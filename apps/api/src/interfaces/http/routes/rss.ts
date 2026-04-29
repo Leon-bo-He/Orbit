@@ -3,7 +3,7 @@ import type { RssService } from '../../../domain/rss/rss.service.js';
 
 export function rssRoutes(app: FastifyInstance, svc: RssService) {
   app.get('/api/rss', { onRequest: [app.authenticate] }, async (req, reply) => {
-    const { url, page } = req.query as { url?: string; page?: string };
+    const { url, page, pageSize } = req.query as { url?: string; page?: string; pageSize?: string };
     if (!url) return reply.code(400).send({ error: 'url query parameter is required' });
 
     try {
@@ -13,7 +13,8 @@ export function rssRoutes(app: FastifyInstance, svc: RssService) {
     }
 
     const pageNum = Math.max(1, parseInt(page ?? '1', 10) || 1);
-    return reply.send(await svc.getFeed(url, pageNum));
+    const pageSizeNum = Math.max(1, parseInt(pageSize ?? '10', 10) || 10);
+    return reply.send(await svc.getFeed(url, pageNum, pageSizeNum));
   });
 
   app.delete('/api/rss', { onRequest: [app.authenticate] }, async (req, reply) => {

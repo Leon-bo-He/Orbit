@@ -15,10 +15,16 @@ function formatDate(raw: string): string {
 
 // ─── Source Card ─────────────────────────────────────────────────────────────
 
+// Card dimensions — change CARD_HEIGHT_PX to resize; page size auto-adjusts.
+const CARD_HEIGHT_PX = 340;
+const ARTICLE_ROW_PX = 41;  // text-xs leading-snug line-clamp-2 (33px) + space-y-2 gap (8px)
+const CARD_CHROME_PX = 96;  // padding + header + flex gaps + pagination bar
+const PAGE_SIZE = Math.max(1, Math.floor((CARD_HEIGHT_PX - CARD_CHROME_PX + 8) / ARTICLE_ROW_PX));
+
 function SourceCard({ source }: { source: RssSource }) {
   const { t } = useTranslation('ideas');
   const [page, setPage] = useState(1);
-  const { data, isLoading, isError, isFetching } = useRssFeed(source.url, page);
+  const { data, isLoading, isError, isFetching } = useRssFeed(source.url, page, PAGE_SIZE);
 
   const articles = data?.articles ?? [];
   const pages = data?.pages ?? 1;
@@ -26,7 +32,7 @@ function SourceCard({ source }: { source: RssSource }) {
   const hasNext = page < pages;
 
   return (
-    <div className="border border-gray-200 rounded-xl p-4 bg-white flex flex-col gap-3 h-[520px] overflow-hidden">
+    <div className="border border-gray-200 rounded-xl p-4 bg-white flex flex-col gap-3 overflow-hidden" style={{ height: CARD_HEIGHT_PX }}>
       {/* Header */}
       <div className="flex items-center gap-1.5 min-w-0 flex-shrink-0">
         <svg className="w-3.5 h-3.5 text-orange-500 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
