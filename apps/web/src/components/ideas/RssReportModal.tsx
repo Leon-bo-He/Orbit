@@ -138,14 +138,13 @@ export function RssReportModal({ source, reportType, onClose }: Props) {
               <p className="text-sm text-gray-500">{t('report.generating')}</p>
             </div>
           )}
-          {query.isError && !report && (
-            <div className="rounded-lg bg-red-50 border border-red-100 px-4 py-3">
-              <p className="text-sm text-red-600">{query.error instanceof Error ? query.error.message : t('report.error')}</p>
-            </div>
-          )}
-          {forceRefresh.isError && (
+          {(forceRefresh.isError || (query.isError && !report)) && (
             <div className="rounded-lg bg-red-50 border border-red-100 px-4 py-3 mb-4">
-              <p className="text-sm text-red-600">{forceRefresh.error instanceof Error ? forceRefresh.error.message : t('report.error')}</p>
+              <p className="text-sm text-red-600">
+                {forceRefresh.isError
+                  ? (forceRefresh.error instanceof Error ? forceRefresh.error.message : t('report.error'))
+                  : (query.error instanceof Error ? query.error.message : t('report.error'))}
+              </p>
             </div>
           )}
           {displayContent && <ReactMarkdown components={MD_COMPONENTS}>{displayContent}</ReactMarkdown>}
