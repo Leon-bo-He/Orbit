@@ -7,10 +7,10 @@
     "planned": "Topic Confirmed",
     "planning": "Content Planning",
     "creating": "In Production",
-    "ready": "Scheduled",
+    "ready": "Ready",
     "publishing": "Publishing",
     "published": "Published",
-    "reviewed": "Post-Review Done",
+    "reviewed": "Reviewed",
     "archived": "Archived"
   },
   "brief": {
