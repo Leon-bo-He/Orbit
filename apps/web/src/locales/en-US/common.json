@@ -173,7 +173,7 @@
       "saved": "Saved ✓",
       "test": "Test Connection",
       "test_ok": "✓ Connection successful",
-      "test_fail": "✗ Connection failed"
+      "test_fail": "✗ Connection failed",\n      "save_ok": "✓ Settings saved"
     },
     "notifications": {
       "section_timing": "Timing",

@@ -1983,8 +1983,8 @@ function AiPanel() {
     await saveConfig.mutateAsync({ baseUrl: baseUrl.trim(), apiKey: apiKey.trim(), model: model.trim() || 'gpt-5.4' });
     setApiKey('');
     setSaved(true);
-    setTestResult(null);
-    setTimeout(() => setSaved(false), 2000);
+    setTestResult({ ok: true, error: undefined });
+    setTimeout(() => setSaved(false), 3000);
   }
 
   async function handleTest() {
@@ -2033,7 +2033,9 @@ function AiPanel() {
           <div className="px-4 py-3 flex flex-col gap-2">
             {testResult && (
               <p className={`text-xs px-3 py-2 rounded-md ${testResult.ok ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-600'}`}>
-                {testResult.ok ? t('settings.ai.test_ok') : `${t('settings.ai.test_fail')}: ${testResult.error ?? ''}`}
+                {testResult.ok
+                  ? (saved ? t('settings.ai.save_ok') : t('settings.ai.test_ok'))
+                  : `${t('settings.ai.test_fail')}: ${testResult.error ?? ''}`}
               </p>
             )}
             <div className="flex gap-2 justify-end">
