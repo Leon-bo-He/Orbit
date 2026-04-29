@@ -28,7 +28,30 @@ function makeMdComponents(
   return {
     h2: ({ children }) => <h2 className="text-sm font-semibold text-gray-900 mt-4 mb-1 first:mt-0">{children}</h2>,
     h3: ({ children }) => <h3 className="text-sm font-semibold text-gray-800 mt-3 mb-0.5">{children}</h3>,
-    p:  ({ children }) => <p  className="text-sm text-gray-700 leading-relaxed mb-2 last:mb-0">{children}</p>,
+    p: ({ children }) => {
+      const text = childrenToText(children).trim();
+      if (text.length < 20) return <p className="text-sm text-gray-700 leading-relaxed mb-2 last:mb-0">{children}</p>;
+      const dashIdx = text.indexOf(' — ');
+      const colonIdx = text.indexOf(': ');
+      const splitAt = dashIdx !== -1 ? dashIdx : colonIdx !== -1 ? colonIdx : -1;
+      const title = splitAt !== -1 ? text.slice(0, splitAt).replace(/^\*+|\*+$/g, '').trim() : text.slice(0, 120);
+      const note = splitAt !== -1 ? text.slice(splitAt + (dashIdx !== -1 ? 3 : 2)).trim() : text;
+      return (
+        <div className="flex items-start gap-2 mb-2 last:mb-0 group">
+          <p className="flex-1 min-w-0 text-sm text-gray-700 leading-relaxed">{children}</p>
+          <button
+            onClick={() => onAddIdea(title, note)}
+            title="Add to Ideas"
+            className="flex-shrink-0 mt-0.5 inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded border border-indigo-200 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors"
+          >
+            <svg className="w-2.5 h-2.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <path d="M8 3v10M3 8h10"/>
+            </svg>
+            Idea
+          </button>
+        </div>
+      );
+    },
     ul: ({ children }) => <ul className="text-sm text-gray-700 list-disc pl-5 mb-2 space-y-1">{children}</ul>,
     li: ({ children }) => {
       const text = childrenToText(children).trim();
