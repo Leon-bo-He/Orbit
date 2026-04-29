@@ -153,6 +153,8 @@
       "rss_remove_confirm_title": "Remove RSS source?",
       "rss_remove_confirm_desc": "This will permanently delete all cached articles for \"{{name}}\".",
       "rss_removing": "Removing…",
+      "rss_folder_placeholder": "Folder (optional)",
+      "rss_folder_add": "＋ Add folder",
       "rss_export_opml": "Export OPML",
       "rss_import_opml": "Import OPML",
       "rss_opml_imported": "Added {{added}} new source(s)",

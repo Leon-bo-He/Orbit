@@ -104,6 +104,9 @@ function SourceCard({ source, translations, showTranslations }: SourceCardProps)
           <path d="M3 8.75A.75.75 0 013.75 8H4a8 8 0 018 8v.25a.75.75 0 01-.75.75h-.5a.75.75 0 01-.75-.75V16a6 6 0 00-6-6h-.25A.75.75 0 013 9.25v-.5zM7 15a2 2 0 11-4 0 2 2 0 014 0z"/>
         </svg>
         <span className="text-sm font-semibold text-gray-800 truncate">{source.name}</span>
+        {source.folder && (
+          <span className="text-xs text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded truncate max-w-[80px]">{source.folder}</span>
+        )}
         {isFetching && <div className="w-3 h-3 border-2 border-indigo-200 border-t-indigo-500 rounded-full animate-spin ml-auto flex-shrink-0"/>}
       </div>
 

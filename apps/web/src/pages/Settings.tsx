@@ -357,10 +357,13 @@ function DataPanel() {
   const [deletingArchivedIdeas, setDeletingArchivedIdeas] = useState(false);
   const [showArchivedIdeasDeleteConfirm, setShowArchivedIdeasDeleteConfirm] = useState(false);
 
-  const { sources: rssSources, addSource: addRssSource, removeSource: removeRssSource } = useRssStore();
+  const { sources: rssSources, addSource: addRssSource, removeSource: removeRssSource, updateSource: updateRssSource } = useRssStore();
   const [showRssAddForm, setShowRssAddForm] = useState(false);
   const [rssNewName, setRssNewName] = useState('');
   const [rssNewUrl, setRssNewUrl] = useState('');
+  const [rssNewFolder, setRssNewFolder] = useState('');
+  const [editFolderSourceId, setEditFolderSourceId] = useState<string | null>(null);
+  const [editFolderValue, setEditFolderValue] = useState('');
   const [confirmRemoveSourceId, setConfirmRemoveSourceId] = useState<string | null>(null);
   const deleteRssFeed = useDeleteRssFeed();
   const opmlInputRef = useRef<HTMLInputElement>(null);
@@ -442,10 +445,21 @@ function DataPanel() {
   function handleRssAdd(e: React.FormEvent) {
     e.preventDefault();
     if (!rssNewName.trim() || !rssNewUrl.trim()) return;
-    addRssSource({ name: rssNewName.trim(), url: rssNewUrl.trim() });
+    addRssSource({ name: rssNewName.trim(), url: rssNewUrl.trim(), folder: rssNewFolder.trim() || undefined });
     setRssNewName('');
     setRssNewUrl('');
+    setRssNewFolder('');
     setShowRssAddForm(false);
+  }
+
+  function handleFolderEdit(sourceId: string, currentFolder: string | undefined) {
+    setEditFolderSourceId(sourceId);
+    setEditFolderValue(currentFolder ?? '');
+  }
+
+  function handleFolderSave(sourceId: string) {
+    updateRssSource(sourceId, { folder: editFolderValue.trim() || undefined });
+    setEditFolderSourceId(null);
   }
 
   async function handleExport() {
@@ -863,23 +877,47 @@ function DataPanel() {
         </div>
         <div className="rounded-xl border border-gray-100 overflow-hidden divide-y divide-gray-100">
           {rssSources.map((source) => (
-            <div key={source.id} className={ROW + ' px-4 gap-3'}>
-              <div className="flex items-center gap-2 min-w-0 flex-1">
+            <div key={source.id} className="px-4 py-3 flex flex-col gap-1.5 border-b border-gray-100 last:border-b-0">
+              <div className="flex items-center gap-2 min-w-0">
                 <svg className="w-3.5 h-3.5 text-orange-400 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
                   <path d="M3.75 3a.75.75 0 00-.75.75v.5c0 .414.336.75.75.75H4c6.075 0 11 4.925 11 11v.25c0 .414.336.75.75.75h.5a.75.75 0 00.75-.75V16C17 8.82 11.18 3 4 3h-.25z"/>
                   <path d="M3 8.75A.75.75 0 013.75 8H4a8 8 0 018 8v.25a.75.75 0 01-.75.75h-.5a.75.75 0 01-.75-.75V16a6 6 0 00-6-6h-.25A.75.75 0 013 9.25v-.5zM7 15a2 2 0 11-4 0 2 2 0 014 0z"/>
                 </svg>
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <p className={LABEL + ' truncate'}>{source.name}</p>
                   <p className="text-xs text-gray-400 truncate">{source.url}</p>
                 </div>
+                <button
+                  onClick={() => setConfirmRemoveSourceId(source.id)}
+                  className="text-xs px-2.5 py-1 rounded-md border border-red-200 text-red-500 hover:bg-red-50 transition-colors flex-shrink-0"
+                >
+                  {t('action.remove')}
+                </button>
               </div>
-              <button
-                onClick={() => setConfirmRemoveSourceId(source.id)}
-                className="text-xs px-2.5 py-1 rounded-md border border-red-200 text-red-500 hover:bg-red-50 transition-colors flex-shrink-0"
-              >
-                {t('action.remove')}
-              </button>
+              {/* Folder inline editor */}
+              {editFolderSourceId === source.id ? (
+                <div className="flex gap-2 items-center ml-5">
+                  <input
+                    autoFocus
+                    value={editFolderValue}
+                    onChange={(e) => setEditFolderValue(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === 'Enter') handleFolderSave(source.id); if (e.key === 'Escape') setEditFolderSourceId(null); }}
+                    placeholder={t('settings.general.rss_folder_placeholder')}
+                    className="flex-1 text-xs px-2 py-1 rounded border border-gray-200 focus:outline-none focus:ring-1 focus:ring-indigo-300"
+                  />
+                  <button onClick={() => handleFolderSave(source.id)} className="text-xs px-2 py-1 rounded bg-indigo-600 text-white hover:bg-indigo-700 transition-colors">{t('action.save')}</button>
+                  <button onClick={() => setEditFolderSourceId(null)} className="text-xs px-2 py-1 rounded border border-gray-200 text-gray-500 hover:bg-gray-50 transition-colors">{t('action.cancel')}</button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => handleFolderEdit(source.id, source.folder)}
+                  className="ml-5 text-left text-xs text-gray-400 hover:text-indigo-500 transition-colors"
+                >
+                  {source.folder
+                    ? `📁 ${source.folder}`
+                    : t('settings.general.rss_folder_add')}
+                </button>
+              )}
             </div>
           ))}
           {showRssAddForm ? (
@@ -900,10 +938,16 @@ function DataPanel() {
                   className="flex-[2] text-sm px-3 py-1.5 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-colors"
                 />
               </div>
+              <input
+                value={rssNewFolder}
+                onChange={(e) => setRssNewFolder(e.target.value)}
+                placeholder={t('settings.general.rss_folder_placeholder')}
+                className="text-sm px-3 py-1.5 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-colors"
+              />
               <div className="flex gap-2 justify-end">
                 <button
                   type="button"
-                  onClick={() => { setShowRssAddForm(false); setRssNewName(''); setRssNewUrl(''); }}
+                  onClick={() => { setShowRssAddForm(false); setRssNewName(''); setRssNewUrl(''); setRssNewFolder(''); }}
                   className="text-sm px-3 py-1.5 rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors"
                 >
                   {t('action.cancel')}

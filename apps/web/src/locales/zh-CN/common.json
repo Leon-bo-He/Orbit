@@ -153,6 +153,8 @@
       "rss_remove_confirm_title": "移除 RSS 来源？",
       "rss_remove_confirm_desc": "此操作将永久删除「{{name}}」的所有缓存文章。",
       "rss_removing": "移除中…",
+      "rss_folder_placeholder": "分组（可选）",
+      "rss_folder_add": "＋ 添加分组",
       "rss_export_opml": "导出 OPML",
       "rss_import_opml": "导入 OPML",
       "rss_opml_imported": "已添加 {{added}} 个订阅源",
