@@ -184,6 +184,7 @@ type ReportType = 'daily' | 'weekly' | 'biweekly';
 interface SourceReport {
   loading: boolean;
   content: string | null;
+  translatedContent: string | null;
   error: string | null;
   generatedAt: Date | null;
 }
@@ -199,26 +200,50 @@ function AllReportsModal({
 }) {
   const { t } = useTranslation('ideas');
   const [reports, setReports] = useState<Record<string, SourceReport>>(
-    () => Object.fromEntries(sources.map((s) => [s.id, { loading: true, content: null, error: null, generatedAt: null }])),
+    () => Object.fromEntries(sources.map((s) => [s.id, { loading: true, content: null, translatedContent: null, error: null, generatedAt: null }])),
   );
+  const [showTranslations, setShowTranslations] = useState(false);
+  const translateMutation = useTranslateTitles();
 
   function loadAll(force: boolean) {
-    setReports(Object.fromEntries(sources.map((s) => [s.id, { loading: true, content: null, error: null, generatedAt: null }])));
+    setReports(Object.fromEntries(sources.map((s) => [s.id, { loading: true, content: null, translatedContent: null, error: null, generatedAt: null }])));
+    setShowTranslations(false);
     sources.forEach((source) => {
       apiFetch<RssReport>('/api/rss-reports', {
         method: 'POST',
         body: JSON.stringify({ feedUrl: source.url, feedName: source.name, reportType, force }),
       })
         .then((r) =>
-          setReports((prev) => ({ ...prev, [source.id]: { loading: false, content: r.content, error: null, generatedAt: new Date(r.createdAt) } })),
+          setReports((prev) => ({ ...prev, [source.id]: { loading: false, content: r.content, translatedContent: null, error: null, generatedAt: new Date(r.createdAt) } })),
         )
         .catch((err) =>
           setReports((prev) => ({
             ...prev,
-            [source.id]: { loading: false, content: null, error: err instanceof Error ? err.message : t('report.error'), generatedAt: null },
+            [source.id]: { loading: false, content: null, translatedContent: null, error: err instanceof Error ? err.message : t('report.error'), generatedAt: null },
           })),
         );
     });
+  }
+
+  async function handleTranslateAll() {
+    if (showTranslations) { setShowTranslations(false); return; }
+
+    const targetLanguage = LOCALE_LANGUAGE[i18n.language] ?? i18n.language;
+    const sourceList = sources.filter((s) => reports[s.id]?.content);
+    const contents = sourceList.map((s) => reports[s.id]!.content!);
+    if (contents.length === 0) return;
+
+    try {
+      const result = await translateMutation.mutateAsync({ titles: contents, targetLanguage });
+      setReports((prev) => {
+        const next = { ...prev };
+        sourceList.forEach((s, i) => {
+          next[s.id] = { ...next[s.id]!, translatedContent: result.translations[i] ?? next[s.id]!.content };
+        });
+        return next;
+      });
+      setShowTranslations(true);
+    } catch { /* show original on failure */ }
   }
 
   useLayoutEffect(() => { loadAll(false); }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -235,6 +260,26 @@ function AllReportsModal({
             {typeLabel} {t('report.title_suffix')} — {t('report.all_sources')}
           </h2>
           <div className="flex items-center gap-2">
+            <button
+              onClick={() => void handleTranslateAll()}
+              disabled={isLoading || translateMutation.isPending}
+              className={`inline-flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-md border transition-colors disabled:opacity-50 ${
+                showTranslations
+                  ? 'border-indigo-300 bg-indigo-50 text-indigo-700 hover:bg-indigo-100'
+                  : 'border-gray-200 text-gray-600 hover:bg-gray-50'
+              }`}
+            >
+              <svg className="w-3 h-3" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+                <path d="M3 5h8M7 3v2M5 9c0 2 1.5 3.5 3 4M8 9c0 2-1.5 3.5-3 4"/>
+                <path d="M11 14l2-5 2 5M12 12.5h2"/>
+                <path d="M17 5l-4 4"/>
+              </svg>
+              {translateMutation.isPending
+                ? t('trending_news.translating')
+                : showTranslations
+                ? t('trending_news.show_original')
+                : t('trending_news.translate')}
+            </button>
             <button
               onClick={() => loadAll(true)}
               disabled={isLoading}
@@ -284,7 +329,7 @@ function AllReportsModal({
                     <p className="text-xs text-red-600">{rep.error}</p>
                   </div>
                 )}
-                {rep?.content && (
+                {(rep?.content || rep?.translatedContent) && (
                   <div className="border border-gray-100 rounded-lg px-4 py-3 bg-gray-50">
                     <ReactMarkdown
                       components={{
@@ -304,7 +349,7 @@ function AllReportsModal({
                         ),
                       }}
                     >
-                      {rep.content}
+                      {(showTranslations && rep?.translatedContent) || rep?.content || ''}
                     </ReactMarkdown>
                   </div>
                 )}
