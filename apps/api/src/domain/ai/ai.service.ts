@@ -188,11 +188,13 @@ ${numbered}`;
     reportType: ReportType,
     force: boolean,
     locale = 'en-US',
-  ): Promise<{ content: string; cached: boolean }> {
+  ): Promise<{ content: string; cached: boolean; createdAt: string }> {
     if (!force) {
       const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
       const existing = await this.reportsRepo.findRecent(userId, feedUrl, reportType, since);
-      if (existing) return { content: existing.content, cached: true };
+      if (existing) {
+        return { content: existing.content, cached: true, createdAt: existing.createdAt.toISOString() };
+      }
     }
 
     const config = await this.aiConfigRepo.findByUser(userId);
@@ -240,7 +242,7 @@ Rules:
 - Be thorough and detailed`;
 
     const content = await this.callAiApi(config, prompt, 2048);
-    await this.reportsRepo.insert(userId, feedUrl, reportType, content);
-    return { content, cached: false };
+    const inserted = await this.reportsRepo.insert(userId, feedUrl, reportType, content);
+    return { content, cached: false, createdAt: inserted.createdAt.toISOString() };
   }
 }

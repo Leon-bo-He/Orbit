@@ -31,7 +31,7 @@ export function RssReportModal({ source, reportType, onClose }: Props) {
       });
       setContent(result.content);
       setCached(result.cached && !force);
-      setGeneratedAt(new Date());
+      setGeneratedAt(new Date(result.createdAt));
     } catch (err) {
       setError(err instanceof Error ? err.message : t('report.error'));
     }

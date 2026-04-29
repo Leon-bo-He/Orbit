@@ -210,7 +210,7 @@ function AllReportsModal({
         body: JSON.stringify({ feedUrl: source.url, feedName: source.name, reportType, force }),
       })
         .then((r) =>
-          setReports((prev) => ({ ...prev, [source.id]: { loading: false, content: r.content, error: null, generatedAt: new Date() } })),
+          setReports((prev) => ({ ...prev, [source.id]: { loading: false, content: r.content, error: null, generatedAt: new Date(r.createdAt) } })),
         )
         .catch((err) =>
           setReports((prev) => ({

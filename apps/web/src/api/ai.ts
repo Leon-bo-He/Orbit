@@ -10,6 +10,7 @@ export interface AiConfig {
 export interface RssReport {
   content: string;
   cached: boolean;
+  createdAt: string;
 }
 
 export function useAiConfig() {
