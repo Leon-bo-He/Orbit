@@ -84,16 +84,23 @@ export class AiService {
     const config = await this.aiConfigRepo.findByUser(userId);
     if (!config) throw new ValidationError('AI not configured. Please add your AI settings first.');
 
-    const articles = await this.rssRepo.findArticlesByDateRange(feedUrl, timeCutoff(reportType));
+    // Fetch articles for the requested period; fall back to most recent if none found
+    let articles = await this.rssRepo.findArticlesByDateRange(feedUrl, timeCutoff(reportType));
+    let periodLabel = PERIOD_LABELS[reportType];
     if (articles.length === 0) {
-      throw new ValidationError(`No articles found for ${feedName} in the past ${PERIOD_LABELS[reportType]}.`);
+      articles = await this.rssRepo.findArticles(feedUrl, 0, 30);
+      if (articles.length === 0) {
+        throw new ValidationError(`No articles found for "${feedName}". Fetch the feed first in Trending News.`);
+      }
+      periodLabel = 'recent history (no articles in the requested period)';
     }
 
     const articleList = articles
       .map((a) => `• ${a.title}${a.pubDate ? ` (${a.pubDate})` : ''}`)
+      .slice(0, 80) // cap to avoid oversized prompts
       .join('\n');
 
-    const prompt = `You are a news analyst. Summarize the key highlights from the "${feedName}" RSS feed for the past ${PERIOD_LABELS[reportType]}.
+    const prompt = `You are a news analyst. Summarize the key highlights from the "${feedName}" RSS feed for the past ${periodLabel}.
 
 Articles collected:
 ${articleList}
@@ -105,29 +112,36 @@ Write a concise report with:
 
 Be concise and factual.`;
 
-    const baseUrl = config.baseUrl.replace(/\/$/, '');
-    const res = await fetch(`${baseUrl}/chat/completions`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${config.apiKey}`,
-      },
-      body: JSON.stringify({
-        model: config.model,
-        messages: [{ role: 'user', content: prompt }],
-        max_tokens: 1024,
-      }),
-      signal: AbortSignal.timeout(60_000),
-    });
+    const apiBaseUrl = config.baseUrl.replace(/\/$/, '');
+    let content: string;
+    try {
+      const res = await fetch(`${apiBaseUrl}/chat/completions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${config.apiKey}`,
+        },
+        body: JSON.stringify({
+          model: config.model,
+          messages: [{ role: 'user', content: prompt }],
+          max_tokens: 1024,
+        }),
+        signal: AbortSignal.timeout(60_000),
+      });
 
-    if (!res.ok) {
-      const body = await res.text().catch(() => '');
-      throw new Error(`AI API error ${res.status}: ${body.slice(0, 200)}`);
+      if (!res.ok) {
+        const body = await res.text().catch(() => '');
+        throw new ValidationError(`AI request failed (HTTP ${res.status})${body ? ': ' + body.slice(0, 200) : ''}`);
+      }
+
+      const json = await res.json() as { choices?: { message?: { content?: string } }[] };
+      content = json.choices?.[0]?.message?.content?.trim() ?? '';
+      if (!content) throw new ValidationError('AI returned an empty response.');
+    } catch (err) {
+      if (err instanceof ValidationError) throw err;
+      const msg = err instanceof Error ? err.message : 'Unknown error';
+      throw new ValidationError(`Failed to reach AI service: ${msg}`);
     }
-
-    const json = await res.json() as { choices?: { message?: { content?: string } }[] };
-    const content = json.choices?.[0]?.message?.content?.trim();
-    if (!content) throw new Error('AI returned an empty response.');
 
     await this.reportsRepo.insert(userId, feedUrl, reportType, content);
     return { content, cached: false };
