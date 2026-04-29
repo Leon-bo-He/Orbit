@@ -20,10 +20,6 @@ export default function LoginPage() {
   const location = useLocation();
   const redirectTo = new URLSearchParams(location.search).get('redirect') ?? '/';
   const isAuthenticated = useAuthStore((s) => !!s.accessToken);
-
-  if (isAuthenticated) {
-    return <Navigate to={redirectTo} replace />;
-  }
   const setAuth = useAuthStore((s) => s.setAuth);
   const queryClient = useQueryClient();
 
@@ -75,6 +71,10 @@ export default function LoginPage() {
         setErrorMsg(t('status.error'));
       }
     }
+  }
+
+  if (isAuthenticated) {
+    return <Navigate to={redirectTo} replace />;
   }
 
   return (
