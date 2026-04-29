@@ -1,4 +1,4 @@
-import { useState, useLayoutEffect, useRef } from 'react';
+import { useState, useLayoutEffect, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from '@tanstack/react-query';
 import i18n from '../../i18n/index.js';
@@ -394,6 +394,27 @@ export function TrendingNewsModal({ onClose }: { onClose: () => void }) {
   const [showTranslations, setShowTranslations] = useState(false);
   const [translateError, setTranslateError] = useState<string | null>(null);
   const [allReportType, setAllReportType] = useState<ReportType | null>(null);
+
+  // Pre-warm the report cache for every source × report type so clicking a
+  // button shows data instantly with no loading flash.
+  useEffect(() => {
+    if (sources.length === 0) return;
+    const TYPES = ['daily', 'weekly', 'biweekly'] as const;
+    sources.forEach((source) => {
+      TYPES.forEach((type) => {
+        void qc.prefetchQuery({
+          queryKey: ['rss-report', source.url, type],
+          queryFn: () =>
+            apiFetch<RssReport>('/api/rss-reports', {
+              method: 'POST',
+              body: JSON.stringify({ feedUrl: source.url, feedName: source.name, reportType: type, force: false }),
+            }),
+          staleTime: 23 * 60 * 60 * 1000,
+        });
+      });
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function handleOpenSettings() {
     onClose();
