@@ -28,20 +28,33 @@ export class RssCacheRepository {
       .onConflictDoNothing();
   }
 
-  findArticles(feedUrl: string, offset: number, limit: number): Promise<RssArticleRow[]> {
-    return db.select().from(rssArticles)
-      .where(eq(rssArticles.feedUrl, feedUrl))
-      .orderBy(sql`COALESCE(${rssArticles.pubDateTs}, ${rssArticles.firstSeenAt}) DESC, ${rssArticles.id} ASC`)
-      .offset(offset)
-      .limit(limit);
+  async findArticles(feedUrl: string, offset: number, limit: number): Promise<RssArticleRow[]> {
+    // DISTINCT ON (title) keeps one row per unique title (most recent by date).
+    // The outer query re-sorts the deduplicated set for consistent pagination.
+    const result = await db.execute<RssArticleRow>(sql`
+      SELECT * FROM (
+        SELECT DISTINCT ON (title) *
+        FROM rss_articles
+        WHERE feed_url = ${feedUrl}
+        ORDER BY title, COALESCE(pub_date_ts, first_seen_at) DESC NULLS LAST, id ASC
+      ) deduped
+      ORDER BY COALESCE(pub_date_ts, first_seen_at) DESC NULLS LAST, id ASC
+      OFFSET ${offset}
+      LIMIT ${limit}
+    `);
+    return result.rows;
   }
 
   async countArticles(feedUrl: string): Promise<number> {
-    const [row] = await db
-      .select({ count: sql<number>`count(*)::int` })
-      .from(rssArticles)
-      .where(eq(rssArticles.feedUrl, feedUrl));
-    return row?.count ?? 0;
+    const result = await db.execute<{ count: number }>(sql`
+      SELECT COUNT(*) AS count FROM (
+        SELECT DISTINCT ON (title) id
+        FROM rss_articles
+        WHERE feed_url = ${feedUrl}
+        ORDER BY title, COALESCE(pub_date_ts, first_seen_at) DESC NULLS LAST
+      ) deduped
+    `);
+    return Number(result.rows[0]?.count ?? 0);
   }
 
   async deleteFeed(url: string): Promise<void> {
@@ -50,17 +63,19 @@ export class RssCacheRepository {
     await db.delete(rssFeeds).where(eq(rssFeeds.url, url));
   }
 
-  findArticlesByDateRange(feedUrl: string, since: Date): Promise<RssArticleRow[]> {
-    return db.select().from(rssArticles)
-      .where(and(
-        eq(rssArticles.feedUrl, feedUrl),
-        or(
-          gte(rssArticles.pubDateTs, since),
-          gte(rssArticles.firstSeenAt, since), // articles fetched recently (pub_date_ts may be older or null)
-        ),
-      ))
-      .orderBy(sql`COALESCE(${rssArticles.pubDateTs}, ${rssArticles.firstSeenAt}) DESC`)
-      .limit(100);
+  async findArticlesByDateRange(feedUrl: string, since: Date): Promise<RssArticleRow[]> {
+    const result = await db.execute<RssArticleRow>(sql`
+      SELECT * FROM (
+        SELECT DISTINCT ON (title) *
+        FROM rss_articles
+        WHERE feed_url = ${feedUrl}
+          AND (pub_date_ts >= ${since} OR first_seen_at >= ${since})
+        ORDER BY title, COALESCE(pub_date_ts, first_seen_at) DESC NULLS LAST, id ASC
+      ) deduped
+      ORDER BY COALESCE(pub_date_ts, first_seen_at) DESC NULLS LAST
+      LIMIT 100
+    `);
+    return result.rows;
   }
 
   async deleteExpiredArticles(feedUrl: string, before: Date): Promise<void> {
