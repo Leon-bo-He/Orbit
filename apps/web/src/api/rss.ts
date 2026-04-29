@@ -30,6 +30,7 @@ export function useRssFeed(url: string, page: number, pageSize: number) {
     queryKey: ['rss', url, page, pageSize],
     queryFn: () =>
       apiFetch<RssFeedPage>(`/api/rss?url=${encodeURIComponent(url)}&page=${page}&pageSize=${pageSize}`),
+    enabled: pageSize > 0,
     staleTime: 15 * 60 * 1000,
     placeholderData: (prev) => prev,
     retry: 1,

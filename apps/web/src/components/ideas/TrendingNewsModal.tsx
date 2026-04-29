@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useLayoutEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRssStore, type RssSource } from '../../store/rss.store.js';
 import { useUiStore } from '../../store/ui.store.js';
@@ -15,16 +15,24 @@ function formatDate(raw: string): string {
 
 // ─── Source Card ─────────────────────────────────────────────────────────────
 
-// Card dimensions — change CARD_HEIGHT_PX to resize; page size auto-adjusts.
-const CARD_HEIGHT_PX = 340;
-const ARTICLE_ROW_PX = 41;  // text-xs leading-snug line-clamp-2 (33px) + space-y-2 gap (8px)
-const CARD_CHROME_PX = 96;  // padding + header + flex gaps + pagination bar
-const PAGE_SIZE = Math.max(1, Math.floor((CARD_HEIGHT_PX - CARD_CHROME_PX + 8) / ARTICLE_ROW_PX));
+// text-xs leading-snug line-clamp-2 (33px) + space-y-2 gap (8px)
+const ARTICLE_ROW_PX = 41;
 
 function SourceCard({ source }: { source: RssSource }) {
   const { t } = useTranslation('ideas');
   const [page, setPage] = useState(1);
-  const { data, isLoading, isError, isFetching } = useRssFeed(source.url, page, PAGE_SIZE);
+  // 0 = not yet measured; query is disabled until measured
+  const [pageSize, setPageSize] = useState(0);
+  const articleAreaRef = useRef<HTMLDivElement>(null);
+
+  // Measure the article area once after mount and derive how many rows fit
+  useLayoutEffect(() => {
+    if (!articleAreaRef.current) return;
+    const h = articleAreaRef.current.clientHeight;
+    setPageSize(Math.max(1, Math.floor((h + 8) / ARTICLE_ROW_PX)));
+  }, []);
+
+  const { data, isLoading, isError, isFetching } = useRssFeed(source.url, page, pageSize);
 
   const articles = data?.articles ?? [];
   const pages = data?.pages ?? 1;
@@ -32,7 +40,7 @@ function SourceCard({ source }: { source: RssSource }) {
   const hasNext = page < pages;
 
   return (
-    <div className="border border-gray-200 rounded-xl p-4 bg-white flex flex-col gap-3 overflow-hidden" style={{ height: CARD_HEIGHT_PX }}>
+    <div className="border border-gray-200 rounded-xl p-4 bg-white flex flex-col gap-3 h-[340px] overflow-hidden">
       {/* Header */}
       <div className="flex items-center gap-1.5 min-w-0 flex-shrink-0">
         <svg className="w-3.5 h-3.5 text-orange-500 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
@@ -43,23 +51,21 @@ function SourceCard({ source }: { source: RssSource }) {
         {isFetching && <div className="w-3 h-3 border-2 border-indigo-200 border-t-indigo-500 rounded-full animate-spin ml-auto flex-shrink-0"/>}
       </div>
 
-      {isLoading && (
-        <div className="flex-1 flex items-center justify-center">
-          <div className="w-4 h-4 border-2 border-indigo-300 border-t-indigo-600 rounded-full animate-spin"/>
-        </div>
-      )}
-
-      {isError && (
-        <p className="text-xs text-red-400 flex-1 flex items-center">{t('trending_news.fetch_error')}</p>
-      )}
-
-      {!isLoading && !isError && articles.length === 0 && (
-        <p className="text-xs text-gray-400 flex-1 flex items-center">{t('trending_news.no_articles')}</p>
-      )}
-
-      {articles.length > 0 && (
-        <>
-          <ul className="space-y-2 flex-1 min-h-0">
+      {/* Article area — ref gives us the height used to calculate pageSize */}
+      <div ref={articleAreaRef} className="flex-1 min-h-0">
+        {(pageSize === 0 || isLoading) && (
+          <div className="h-full flex items-center justify-center">
+            <div className="w-4 h-4 border-2 border-indigo-300 border-t-indigo-600 rounded-full animate-spin"/>
+          </div>
+        )}
+        {isError && (
+          <p className="text-xs text-red-400 h-full flex items-center">{t('trending_news.fetch_error')}</p>
+        )}
+        {!isLoading && !isError && pageSize > 0 && articles.length === 0 && (
+          <p className="text-xs text-gray-400 h-full flex items-center">{t('trending_news.no_articles')}</p>
+        )}
+        {articles.length > 0 && (
+          <ul className="space-y-2">
             {articles.map((article, i) => (
               <li key={i}>
                 <a
@@ -79,28 +85,27 @@ function SourceCard({ source }: { source: RssSource }) {
               </li>
             ))}
           </ul>
+        )}
+      </div>
 
-          {pages > 1 && (
-            <div className="flex items-center justify-between pt-1 border-t border-gray-100 flex-shrink-0">
-              <button
-                onClick={() => setPage((p) => p - 1)}
-                disabled={!hasPrev}
-                className="text-xs text-gray-500 hover:text-indigo-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors px-1"
-              >
-                ‹ {t('trending_news.page_prev')}
-              </button>
-              <span className="text-xs text-gray-400">{page} / {pages}</span>
-              <button
-                onClick={() => setPage((p) => p + 1)}
-                disabled={!hasNext}
-                className="text-xs text-gray-500 hover:text-indigo-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors px-1"
-              >
-                {t('trending_news.page_next')} ›
-              </button>
-            </div>
-          )}
-        </>
-      )}
+      {/* Always rendered for stable height — invisible when only 1 page */}
+      <div className={`flex items-center justify-between pt-1 border-t border-gray-100 flex-shrink-0 ${pages <= 1 ? 'invisible' : ''}`}>
+        <button
+          onClick={() => setPage((p) => p - 1)}
+          disabled={!hasPrev}
+          className="text-xs text-gray-500 hover:text-indigo-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors px-1"
+        >
+          ‹ {t('trending_news.page_prev')}
+        </button>
+        <span className="text-xs text-gray-400">{page} / {pages}</span>
+        <button
+          onClick={() => setPage((p) => p + 1)}
+          disabled={!hasNext}
+          className="text-xs text-gray-500 hover:text-indigo-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors px-1"
+        >
+          {t('trending_news.page_next')} ›
+        </button>
+      </div>
     </div>
   );
 }
