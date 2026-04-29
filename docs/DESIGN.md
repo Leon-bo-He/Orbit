@@ -41,8 +41,8 @@
 |-------|-------|--------|
 | **Phase 1 — MVP** | Idea capture, multi-workspace Kanban, content briefs, scheduling calendar, manual-assist publishing, analytics, 5-locale i18n, PWA/offline, custom platforms | ✅ Done |
 | **Phase 2 — AI Skills** | RSS trending news with incremental storage, AI topic discovery, AI-generated reports (daily/weekly/biweekly) with caching, AI-assisted brief generation (audience, goals, hooks, titles, outline), title/article translation | ✅ Done |
-| **Phase 3 — Advanced Analytics** | Cross-platform performance comparison, trend charts, funnel analysis, audience insights, scheduled report delivery | 🔄 In progress |
-| **Phase 4 — Platform Integration** | Multi-platform API auto-publish (Douyin, WeChat, Xiaohongshu, YouTube, etc.), inbound and outbound webhooks | Planned |
+| **Phase 3 — Platform Integration** | Multi-platform API auto-publish (Douyin, WeChat, Xiaohongshu, YouTube, etc.), inbound and outbound webhooks | 🔄 In progress |
+| **Phase 4 — Advanced Analytics** | Cross-platform performance comparison, trend charts, funnel analysis, audience insights, scheduled report delivery | Planned |
 | **Phase 5 — Collaboration** | Multi-user team workspaces, approval workflows, role-based access control, member invites, activity audit logs | Planned |
 
 ---
