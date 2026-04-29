@@ -33,5 +33,5 @@ export function registerRoutes(app: FastifyInstance, svc: Services) {
   uploadRoutes(app);
   notificationsRoutes(app, svc.user, svc.notificationChannel);
   rssRoutes(app, svc.rss);
-  aiRoutes(app, svc.ai);
+  aiRoutes(app, svc.ai, svc.user);
 }

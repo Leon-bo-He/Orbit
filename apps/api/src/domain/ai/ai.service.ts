@@ -6,6 +6,14 @@ import { ValidationError } from '../errors.js';
 
 export type ReportType = 'daily' | 'weekly' | 'biweekly';
 
+const LOCALE_LANGUAGE: Record<string, string> = {
+  'zh-CN': 'Simplified Chinese (简体中文)',
+  'zh-TW': 'Traditional Chinese (繁體中文)',
+  'en-US': 'English',
+  'ja-JP': 'Japanese (日本語)',
+  'ko-KR': 'Korean (한국어)',
+};
+
 const PERIOD_LABELS: Record<ReportType, string> = {
   daily: '24 hours',
   weekly: '7 days',
@@ -153,6 +161,7 @@ ${numbered}`;
     feedName: string,
     reportType: ReportType,
     force: boolean,
+    locale = 'en-US',
   ): Promise<{ content: string; cached: boolean }> {
     if (!force) {
       const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
@@ -178,6 +187,7 @@ ${numbered}`;
       .map((a) => `• ${a.title}${a.pubDate ? ` (${a.pubDate})` : ''}`)
       .join('\n');
 
+    const language = LOCALE_LANGUAGE[locale] ?? 'English';
     const prompt = `You are a news analyst. Summarize the key highlights from the "${feedName}" RSS feed for the past ${periodLabel}.
 
 Articles collected:
@@ -188,7 +198,7 @@ Write a concise report with:
 **Main Topics** — primary themes covered
 **Brief Summary** — 2-3 sentences
 
-Be concise and factual.`;
+Be concise and factual. Write the entire report in ${language}.`;
 
     const content = await this.callAiApi(config, prompt, 1024);
     await this.reportsRepo.insert(userId, feedUrl, reportType, content);

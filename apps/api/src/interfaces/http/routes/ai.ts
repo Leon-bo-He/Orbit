@@ -1,9 +1,10 @@
 import type { FastifyInstance } from 'fastify';
 import type { AiService, ReportType } from '../../../domain/ai/ai.service.js';
+import type { UserService } from '../../../domain/user/user.service.js';
 
 const VALID_TYPES = new Set<ReportType>(['daily', 'weekly', 'biweekly']);
 
-export function aiRoutes(app: FastifyInstance, svc: AiService) {
+export function aiRoutes(app: FastifyInstance, svc: AiService, userSvc: UserService) {
   app.get('/api/ai-config', { onRequest: [app.authenticate] }, async (req, reply) => {
     const { sub } = req.user as { sub: string };
     return reply.send(await svc.getConfig(sub));
@@ -66,8 +67,9 @@ export function aiRoutes(app: FastifyInstance, svc: AiService) {
       return reply.code(400).send({ error: 'reportType must be daily, weekly, or biweekly' });
     }
 
+    const user = await userSvc.findById(sub);
     return reply.send(
-      await svc.getReport(sub, feedUrl, feedName, reportType as ReportType, force ?? false),
+      await svc.getReport(sub, feedUrl, feedName, reportType as ReportType, force ?? false, user?.locale),
     );
   });
 }
