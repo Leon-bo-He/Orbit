@@ -380,7 +380,7 @@ function DataPanel() {
       `    <dateCreated>${new Date().toUTCString()}</dateCreated>`,
       '  </head>',
       '  <body>',
-      ...rssSources.map((s) => `    <outline type="rss" text="${esc(s.name)}" xmlUrl="${esc(s.url)}"/>`),
+      ...rssSources.map((s) => `    <outline type="rss" text="${esc(s.name)}" xmlUrl="${esc(s.url)}"${s.folder ? ` category="${esc(s.folder)}"` : ''}"/>`),
       '  </body>',
       '</opml>',
     ];
@@ -411,10 +411,21 @@ function DataPanel() {
       const outlines = Array.from(doc.getElementsByTagName('outline'));
       const feeds = outlines
         .filter((o) => o.getAttribute('xmlUrl'))
-        .map((o) => ({
-          name: (o.getAttribute('text') || o.getAttribute('title') || o.getAttribute('xmlUrl'))!.trim(),
-          url: o.getAttribute('xmlUrl')!.trim(),
-        }));
+        .map((o) => {
+          // Folder: prefer Orbit's own `category` attr, then fall back to the
+          // parent <outline> text if this is a nested OPML (common in other apps)
+          const parent = o.parentElement;
+          const parentFolder =
+            parent?.tagName === 'outline' && !parent.getAttribute('xmlUrl')
+              ? (parent.getAttribute('text') || parent.getAttribute('title') || '').trim()
+              : '';
+          const folder = (o.getAttribute('category') || parentFolder || '').trim() || undefined;
+          return {
+            name: (o.getAttribute('text') || o.getAttribute('title') || o.getAttribute('xmlUrl'))!.trim(),
+            url: o.getAttribute('xmlUrl')!.trim(),
+            folder,
+          };
+        });
 
       if (feeds.length === 0) {
         toast.error(t('settings.general.rss_opml_no_feeds'));
@@ -423,7 +434,7 @@ function DataPanel() {
 
       const existing = new Set(rssSources.map((s) => s.url));
       const fresh = feeds.filter((f) => !existing.has(f.url));
-      fresh.forEach((f) => addRssSource({ name: f.name, url: f.url }));
+      fresh.forEach((f) => addRssSource({ name: f.name, url: f.url, folder: f.folder }));
 
       if (fresh.length === 0) {
         toast.error(t('settings.general.rss_opml_no_feeds'));
