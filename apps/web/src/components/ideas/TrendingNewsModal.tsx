@@ -26,7 +26,7 @@ function SourceCard({ source }: { source: RssSource }) {
   const hasNext = page < pages;
 
   return (
-    <div className="border border-gray-200 rounded-xl p-4 bg-white flex flex-col gap-3">
+    <div className="border border-gray-200 rounded-xl p-4 bg-white flex flex-col gap-3 h-[520px] overflow-hidden">
       {/* Header */}
       <div className="flex items-center gap-1.5 min-w-0 flex-shrink-0">
         <svg className="w-3.5 h-3.5 text-orange-500 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
@@ -53,7 +53,7 @@ function SourceCard({ source }: { source: RssSource }) {
 
       {articles.length > 0 && (
         <>
-          <ul className="space-y-2">
+          <ul className="space-y-2 flex-1 min-h-0">
             {articles.map((article, i) => (
               <li key={i}>
                 <a
