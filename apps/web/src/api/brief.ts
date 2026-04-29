@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { apiFetch } from './client.js';
 
-export type BriefSection = 'audience' | 'goals' | 'hooks' | 'titles' | 'outline' | 'format';
+export type BriefSection = 'audience' | 'goals' | 'hooks' | 'titles' | 'outline';
 
 export interface BriefContext {
   contentTitle: string;

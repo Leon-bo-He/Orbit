@@ -242,17 +242,7 @@ export default function ContentBrief() {
       {/* Content */}
       <div className="max-w-3xl mx-auto px-6 py-6 space-y-3">
         {/* ① Format Config */}
-        <Accordion
-          title={t('brief.sections.format')}
-          defaultOpen
-          action={
-            <AiGenerateButton
-              section="format"
-              context={briefContext}
-              onResult={(r) => handleChange({ formatConfig: r as ContentPlan['formatConfig'] })}
-            />
-          }
-        >
+        <Accordion title={t('brief.sections.format')} defaultOpen>
           <FormatSection contentType={content.contentType} plan={localPlan} onChange={handleChange} />
         </Accordion>
 

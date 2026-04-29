@@ -4,7 +4,7 @@ import type { UserService } from '../../../domain/user/user.service.js';
 import { ValidationError } from '../../../domain/errors.js';
 
 const VALID_SECTIONS = new Set<BriefSection>([
-  'audience', 'goals', 'hooks', 'titles', 'outline', 'format',
+  'audience', 'goals', 'hooks', 'titles', 'outline',
 ]);
 
 export function briefRoutes(app: FastifyInstance, svc: BriefService, userSvc: UserService) {

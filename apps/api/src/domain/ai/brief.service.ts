@@ -6,8 +6,7 @@ export type BriefSection =
   | 'goals'
   | 'hooks'
   | 'titles'
-  | 'outline'
-  | 'format';
+  | 'outline';
 
 export interface BriefContext {
   contentTitle: string;
@@ -101,20 +100,6 @@ Respond in ${lang} with a valid JSON array only, no markdown, no explanation. In
 ]
 Use empty string "" for timeMark if not applicable (articles, blog posts).`,
 
-  format: (ctx, lang) => `You are a content production expert. Suggest the optimal format configuration.
-
-Content title: "${ctx.contentTitle}"
-Content type: ${ctx.contentType}
-${ctx.audience ? `Target audience: ${ctx.audience}` : ''}
-${ctx.additionalRequirements ? `Additional context: ${ctx.additionalRequirements}` : ''}
-
-Respond in ${lang} with a valid JSON object only, no markdown, no explanation.
-For video content include duration (seconds) and aspectRatio. For others, include relevant fields only:
-{
-  "duration": 180,
-  "aspectRatio": "9:16",
-  "note": "Brief explanation of these format choices"
-}`,
 };
 
 const LOCALE_LANGUAGE: Record<string, string> = {
