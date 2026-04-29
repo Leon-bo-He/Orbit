@@ -231,20 +231,23 @@ ${numbered}`;
 
 ${sections.join('\n\n')}
 
-Respond in ${language} with the following sections:
+Respond in ${language} with the following sections. Use EXACTLY this paragraph format for every item — a bold title followed immediately by the description on the same line, no numbered lists, no bullet points:
 
 ## 🔥 Trending Topics
-List 5–10 of the most discussed or significant topics. For each, write 1–2 sentences explaining why it matters, and cite relevant articles as markdown links.
+Write 5–10 paragraphs. Each paragraph MUST start with **Bold Topic Title** followed by 2–3 sentences of description and inline source citations as ([Article Title](url)).
+
+Example format:
+**GPT-5 Launch** OpenAI released GPT-5 this week with major improvements in reasoning. Analysts believe this will accelerate enterprise adoption. ([Introducing GPT-5](https://openai.com/gpt-5))
 
 ## 🌱 Emerging Themes
-Identify 2–3 patterns or themes developing across multiple sources. Cite supporting articles.
+Write 2–3 paragraphs in the same format: **Bold Theme Title** followed by description and citations.
 
 ## 💎 Hidden Gems
-2–3 underreported but interesting stories worth following, with source links.
+Write 2–3 paragraphs in the same format: **Bold Story Title** followed by description and citations.
 
 ${additionalRequirements ? `\nAdditional requirements from the user:\n${additionalRequirements}` : ''}
 
-Be specific, insightful, and cite sources inline as [Title](url).`;
+IMPORTANT: Every item must be a single paragraph starting with **bold title**. No numbered lists. No bullet points. No sub-headers within sections.`;
 
     return this.callAiApi(config, prompt);
   }

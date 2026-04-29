@@ -42,8 +42,25 @@ function nodeToLinks(node: any): { text: string; href: string }[] {
 
 function buildNote(text: string, links: { text: string; href: string }[]): string {
   if (links.length === 0) return text;
-  const linkLines = links.map((l) => `- ${l.text}: ${l.href}`).join('\n');
-  return `${text}\n\nSources:\n${linkLines}`;
+  const inlineLinks = links.map((l) => `[${l.text}](${l.href})`).join('  ');
+  return text ? `${text}\n\n${inlineLinks}` : inlineLinks;
+}
+
+/** Extract the first strong/bold node text from an mdast node tree. */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function nodeToFirstStrongText(node: any): string {
+  if (!node) return '';
+  if (node.type === 'strong') {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return (node.children ?? []).map((c: any) => c.value ?? '').join('');
+  }
+  if (Array.isArray(node.children)) {
+    for (const child of node.children) {
+      const found = nodeToFirstStrongText(child);
+      if (found) return found;
+    }
+  }
+  return '';
 }
 
 function makeMdComponents(
@@ -59,7 +76,10 @@ function makeMdComponents(
       if (text.length < 20) return <p className="text-sm text-gray-700 leading-relaxed mb-2 last:mb-0">{children}</p>;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const links = nodeToLinks(node as any);
-      const title = lastLiTitle || text.split(/[。！？.!?]/)[0].trim().slice(0, 120);
+      // Prefer bold title at start of paragraph (new format), then lastLiTitle, then first sentence
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const boldTitle = nodeToFirstStrongText(node as any);
+      const title = boldTitle || lastLiTitle || text.split(/[。！？.!?]/)[0].trim().slice(0, 120);
       const note = buildNote(text, links);
       return (
         <div className="flex items-start gap-2 mb-2 last:mb-0">
@@ -79,29 +99,11 @@ function makeMdComponents(
     },
     ul: ({ children }) => <ul className="text-sm text-gray-700 list-disc pl-5 mb-2 space-y-1">{children}</ul>,
     li: ({ children, node }) => {
+      // Track title for following paragraphs; no button here (button is on the paragraph)
       const text = childrenToText(children).trim();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const links = nodeToLinks(node as any);
-      const title = text.replace(/^\*+|\*+$/g, '').split('\n')[0].trim().slice(0, 150);
-      const note = buildNote('', links);
-      lastLiTitle = title;
-      return (
-        <li className="leading-snug">
-          <div className="flex items-start gap-2">
-            <div className="flex-1 min-w-0">{children}</div>
-            <button
-              onClick={() => onAddIdea(title, note)}
-              title="Add to Ideas"
-              className="flex-shrink-0 mt-0.5 inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded border border-indigo-200 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors"
-            >
-              <svg className="w-2.5 h-2.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                <path d="M8 3v10M3 8h10"/>
-              </svg>
-              Idea
-            </button>
-          </div>
-        </li>
-      );
+      lastLiTitle = nodeToFirstStrongText(node as any) || text.split('\n')[0].trim().slice(0, 150);
+      return <li className="leading-snug">{children}</li>;
     },
     strong: ({ children }) => <strong className="font-semibold text-gray-900">{children}</strong>,
     hr: () => <hr className="border-gray-200 my-3"/>,
