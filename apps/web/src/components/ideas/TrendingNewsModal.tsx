@@ -275,6 +275,11 @@ function AllReportsModal({
                         li: ({ children }) => <li className="leading-snug">{children}</li>,
                         strong: ({ children }) => <strong className="font-semibold text-gray-900">{children}</strong>,
                         hr: () => <hr className="border-gray-200 my-3"/>,
+                        a: ({ href, children }) => (
+                          <a href={href} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:text-indigo-800 hover:underline transition-colors">
+                            {children}
+                          </a>
+                        ),
                       }}
                     >
                       {rep.content}

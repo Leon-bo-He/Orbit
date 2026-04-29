@@ -210,23 +210,36 @@ ${numbered}`;
 
     const articleList = articles
       .slice(0, 80)
-      .map((a) => `• ${a.title}${a.pubDate ? ` (${a.pubDate})` : ''}`)
+      .map((a, i) => `${i + 1}. ${a.title}${a.pubDate ? ` (${a.pubDate})` : ''}${a.link ? ` — ${a.link}` : ''}`)
       .join('\n');
 
     const language = LOCALE_LANGUAGE[locale] ?? 'English';
-    const prompt = `You are a news analyst. Summarize the key highlights from the "${feedName}" RSS feed for the past ${periodLabel}.
+    const prompt = `You are a professional news analyst. Write a detailed, structured report based on the articles from the "${feedName}" RSS feed covering the past ${periodLabel}.
 
-Articles collected:
+Source articles (title, date, URL):
 ${articleList}
 
-Write a concise report with:
-**Key Highlights** — 3-5 most important points as bullet points
-**Main Topics** — primary themes covered
-**Brief Summary** — 2-3 sentences
+Produce the report in ${language} with the following sections:
 
-Be concise and factual. Write the entire report in ${language}.`;
+## Overview
+2–3 paragraphs summarising the overall themes and significance of this period's news.
 
-    const content = await this.callAiApi(config, prompt, 1024);
+## Key Developments
+For each major story or development, write a short paragraph (3–5 sentences) explaining what happened, why it matters, and who is involved. After each paragraph, list the relevant sources as markdown links, e.g. ([Article Title](url)).
+
+## Trends & Analysis
+Identify 2–3 broader trends visible across the articles. For each trend, cite at least one supporting article as a markdown link.
+
+## Summary
+One concise paragraph wrapping up the most important takeaways.
+
+Rules:
+- Cite sources inline using markdown links: [title](url)
+- Only cite URLs that appear in the source list above
+- Do not invent or guess URLs
+- Be thorough and detailed`;
+
+    const content = await this.callAiApi(config, prompt, 2048);
     await this.reportsRepo.insert(userId, feedUrl, reportType, content);
     return { content, cached: false };
   }

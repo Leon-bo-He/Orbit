@@ -100,6 +100,11 @@ export function RssReportModal({ source, reportType, onClose }: Props) {
                 hr: () => <hr className="border-gray-200 my-3"/>,
                 blockquote: ({ children }) => <blockquote className="border-l-2 border-indigo-300 pl-3 italic text-gray-600 my-2">{children}</blockquote>,
                 code: ({ children }) => <code className="bg-gray-100 rounded px-1 py-0.5 text-xs font-mono text-gray-800">{children}</code>,
+                a: ({ href, children }) => (
+                  <a href={href} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:text-indigo-800 hover:underline transition-colors">
+                    {children}
+                  </a>
+                ),
               }}
             >
               {content}
