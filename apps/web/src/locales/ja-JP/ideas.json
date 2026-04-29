@@ -71,6 +71,10 @@
     "no_articles": "記事が見つかりません",
     "page_prev": "前へ",
     "page_next": "次へ",
+    "translate": "翻訳",
+    "translating": "翻訳中…",
+    "show_original": "原文表示",
+    "translate_error": "翻訳に失敗しました",
     "report_daily": "日次",
     "report_weekly": "週次",
     "report_biweekly": "隔週"

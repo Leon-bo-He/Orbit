@@ -41,6 +41,13 @@ export function useTestAiConnection() {
   });
 }
 
+export function useTranslateTitles() {
+  return useMutation<{ translations: string[] }, Error, { titles: string[]; targetLanguage: string }>({
+    mutationFn: (body) =>
+      apiFetch<{ translations: string[] }>('/api/ai-translate', { method: 'POST', body: JSON.stringify(body) }),
+  });
+}
+
 export function useGenerateReport() {
   return useMutation<RssReport, Error, {
     feedUrl: string;

@@ -71,6 +71,10 @@
     "no_articles": "No articles found",
     "page_prev": "Prev",
     "page_next": "Next",
+    "translate": "Translate",
+    "translating": "Translating…",
+    "show_original": "Original",
+    "translate_error": "Translation failed",
     "report_daily": "Daily",
     "report_weekly": "Weekly",
     "report_biweekly": "Biweekly"

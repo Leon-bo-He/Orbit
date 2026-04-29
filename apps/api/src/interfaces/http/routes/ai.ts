@@ -40,6 +40,16 @@ export function aiRoutes(app: FastifyInstance, svc: AiService) {
     }));
   });
 
+  app.post('/api/ai-translate', { onRequest: [app.authenticate] }, async (req, reply) => {
+    const { sub } = req.user as { sub: string };
+    const { titles, targetLanguage } = req.body as { titles?: string[]; targetLanguage?: string };
+    if (!Array.isArray(titles) || titles.length === 0) {
+      return reply.code(400).send({ error: 'titles must be a non-empty array' });
+    }
+    const translations = await svc.translateTitles(sub, titles, targetLanguage ?? 'English');
+    return reply.send({ translations });
+  });
+
   app.post('/api/rss-reports', { onRequest: [app.authenticate] }, async (req, reply) => {
     const { sub } = req.user as { sub: string };
     const { feedUrl, feedName, reportType, force } = req.body as {
