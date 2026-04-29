@@ -31,7 +31,7 @@ export class RssCacheRepository {
   findArticles(feedUrl: string, offset: number, limit: number): Promise<RssArticleRow[]> {
     return db.select().from(rssArticles)
       .where(eq(rssArticles.feedUrl, feedUrl))
-      .orderBy(sql`${rssArticles.pubDateTs} DESC NULLS LAST, ${rssArticles.firstSeenAt} DESC, ${rssArticles.id} ASC`)
+      .orderBy(sql`COALESCE(${rssArticles.pubDateTs}, ${rssArticles.firstSeenAt}) DESC, ${rssArticles.id} ASC`)
       .offset(offset)
       .limit(limit);
   }
@@ -56,10 +56,10 @@ export class RssCacheRepository {
         eq(rssArticles.feedUrl, feedUrl),
         or(
           gte(rssArticles.pubDateTs, since),
-          and(isNull(rssArticles.pubDateTs), gte(rssArticles.firstSeenAt, since)),
+          gte(rssArticles.firstSeenAt, since), // articles fetched recently (pub_date_ts may be older or null)
         ),
       ))
-      .orderBy(sql`${rssArticles.pubDateTs} DESC NULLS LAST, ${rssArticles.firstSeenAt} DESC`)
+      .orderBy(sql`COALESCE(${rssArticles.pubDateTs}, ${rssArticles.firstSeenAt}) DESC`)
       .limit(100);
   }
 

@@ -106,7 +106,8 @@ export class RssService {
       const fresh = parseRss(xml).filter((a) => {
         if (!a.pubDate) return true;
         const d = new Date(a.pubDate);
-        return !isNaN(d.getTime()) && d >= cutoff;
+        if (isNaN(d.getTime())) return true; // unparseable date → include, store with null pub_date_ts
+        return d >= cutoff;
       });
       await this.repo.insertArticles(url, fresh);
       await this.repo.deleteExpiredArticles(url, cutoff);
