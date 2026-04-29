@@ -2,6 +2,7 @@ import { and, eq, gte, isNull, lt, or, sql } from 'drizzle-orm';
 import { db } from '../../../db/client.js';
 import { rssFeeds } from '../../../db/schema/rss-feeds.js';
 import { rssArticles } from '../../../db/schema/rss-articles.js';
+import { rssReports } from '../../../db/schema/rss-reports.js';
 import type { RssFeedRow } from '../../../db/schema/rss-feeds.js';
 import type { RssArticleRow } from '../../../db/schema/rss-articles.js';
 
@@ -45,6 +46,7 @@ export class RssCacheRepository {
 
   async deleteFeed(url: string): Promise<void> {
     await db.delete(rssArticles).where(eq(rssArticles.feedUrl, url));
+    await db.delete(rssReports).where(eq(rssReports.feedUrl, url));
     await db.delete(rssFeeds).where(eq(rssFeeds.url, url));
   }
 
