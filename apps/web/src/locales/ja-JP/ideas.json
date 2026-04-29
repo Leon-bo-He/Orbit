@@ -71,6 +71,7 @@
     "no_articles": "記事が見つかりません",
     "page_prev": "前へ",
     "page_next": "次へ",
+    "all_sources_report": "全ソースのレポートを生成：",
     "translate": "翻訳",
     "translating": "翻訳中…",
     "show_original": "原文表示",

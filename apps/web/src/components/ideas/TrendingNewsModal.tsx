@@ -399,15 +399,31 @@ export function TrendingNewsModal({ onClose }: { onClose: () => void }) {
           )}
 
           {sources.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {sources.map((source) => (
-                <SourceCard
-                  key={source.id}
-                  source={source}
-                  translations={translations}
-                  showTranslations={showTranslations}
-                />
-              ))}
+            <div className="flex flex-col gap-4">
+              {/* Generate report for all sources */}
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs text-gray-500 flex-shrink-0">{t('trending_news.all_sources_report')}</span>
+                {(['daily', 'weekly', 'biweekly'] as const).map((type) => (
+                  <button
+                    key={type}
+                    onClick={() => setAllReportType(type)}
+                    className="text-xs px-2.5 py-1 rounded-md border border-indigo-200 text-indigo-600 hover:bg-indigo-50 transition-colors"
+                  >
+                    {t(`trending_news.report_${type}`)}
+                  </button>
+                ))}
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {sources.map((source) => (
+                  <SourceCard
+                    key={source.id}
+                    source={source}
+                    translations={translations}
+                    showTranslations={showTranslations}
+                  />
+                ))}
+              </div>
             </div>
           )}
         </div>
@@ -440,23 +456,12 @@ export function TrendingNewsModal({ onClose }: { onClose: () => void }) {
                 <span className="text-xs text-red-500 truncate max-w-[200px]">{translateError}</span>
               )}
             </div>
-            <div className="flex items-center gap-1.5">
-              {(['daily', 'weekly', 'biweekly'] as const).map((type) => (
-                <button
-                  key={type}
-                  onClick={() => setAllReportType(type)}
-                  className="text-xs px-2.5 py-1.5 rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors"
-                >
-                  {t(`trending_news.report_${type}`)}
-                </button>
-              ))}
-              <button
-                onClick={handleOpenSettings}
-                className="text-xs text-gray-400 hover:text-indigo-500 transition-colors ml-1"
-              >
-                {t('trending_news.manage_sources')}
-              </button>
-            </div>
+            <button
+              onClick={handleOpenSettings}
+              className="text-xs text-gray-400 hover:text-indigo-500 transition-colors"
+            >
+              {t('trending_news.manage_sources')}
+            </button>
           </div>
         )}
 
