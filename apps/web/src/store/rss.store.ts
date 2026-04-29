@@ -18,7 +18,7 @@ export const useRssStore = create<RssState>()(
     (set) => ({
       sources: [],
       addSource: (source) => {
-        const newSource: RssSource = { id: `rss_${Date.now()}`, ...source };
+        const newSource: RssSource = { id: crypto.randomUUID(), ...source };
         set((s) => ({ sources: [...s.sources, newSource] }));
       },
       removeSource: (id) =>
