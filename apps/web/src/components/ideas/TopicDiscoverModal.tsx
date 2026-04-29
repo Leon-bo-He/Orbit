@@ -25,19 +25,19 @@ function childrenToText(children: React.ReactNode): string {
 function makeMdComponents(
   onAddIdea: (title: string, note: string) => void,
 ): React.ComponentProps<typeof ReactMarkdown>['components'] {
+  // Track the most recent list-item title so paragraphs can reuse it
+  let lastLiTitle = '';
   return {
-    h2: ({ children }) => <h2 className="text-sm font-semibold text-gray-900 mt-4 mb-1 first:mt-0">{children}</h2>,
-    h3: ({ children }) => <h3 className="text-sm font-semibold text-gray-800 mt-3 mb-0.5">{children}</h3>,
+    h2: ({ children }) => { lastLiTitle = ''; return <h2 className="text-sm font-semibold text-gray-900 mt-4 mb-1 first:mt-0">{children}</h2>; },
+    h3: ({ children }) => { lastLiTitle = ''; return <h3 className="text-sm font-semibold text-gray-800 mt-3 mb-0.5">{children}</h3>; },
     p: ({ children }) => {
       const text = childrenToText(children).trim();
       if (text.length < 20) return <p className="text-sm text-gray-700 leading-relaxed mb-2 last:mb-0">{children}</p>;
-      const dashIdx = text.indexOf(' — ');
-      const colonIdx = text.indexOf(': ');
-      const splitAt = dashIdx !== -1 ? dashIdx : colonIdx !== -1 ? colonIdx : -1;
-      const title = splitAt !== -1 ? text.slice(0, splitAt).replace(/^\*+|\*+$/g, '').trim() : text.slice(0, 120);
-      const note = splitAt !== -1 ? text.slice(splitAt + (dashIdx !== -1 ? 3 : 2)).trim() : text;
+      // Use the preceding li title as the idea title; fall back to first sentence of this paragraph
+      const title = lastLiTitle || text.split(/[。！？.!?]/)[0].trim().slice(0, 120);
+      const note = text;
       return (
-        <div className="flex items-start gap-2 mb-2 last:mb-0 group">
+        <div className="flex items-start gap-2 mb-2 last:mb-0">
           <p className="flex-1 min-w-0 text-sm text-gray-700 leading-relaxed">{children}</p>
           <button
             onClick={() => onAddIdea(title, note)}
@@ -55,17 +55,15 @@ function makeMdComponents(
     ul: ({ children }) => <ul className="text-sm text-gray-700 list-disc pl-5 mb-2 space-y-1">{children}</ul>,
     li: ({ children }) => {
       const text = childrenToText(children).trim();
-      const dashIdx = text.indexOf(' — ');
-      const colonIdx = text.indexOf(': ');
-      const splitAt = dashIdx !== -1 ? dashIdx : colonIdx !== -1 ? colonIdx : -1;
-      const title = splitAt !== -1 ? text.slice(0, splitAt).replace(/^\*+|\*+$/g, '').trim() : text.slice(0, 120);
-      const note = splitAt !== -1 ? text.slice(splitAt + (dashIdx !== -1 ? 3 : 2)).trim() : '';
+      // Strip markdown bold markers and use the full text as the topic title
+      const title = text.replace(/^\*+|\*+$/g, '').split('\n')[0].trim().slice(0, 150);
+      lastLiTitle = title;
       return (
         <li className="leading-snug">
           <div className="flex items-start gap-2">
             <div className="flex-1 min-w-0">{children}</div>
             <button
-              onClick={() => onAddIdea(title, note)}
+              onClick={() => onAddIdea(title, '')}
               title="Add to Ideas"
               className="flex-shrink-0 mt-0.5 inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded border border-indigo-200 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors"
             >
