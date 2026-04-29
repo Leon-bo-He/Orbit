@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from '@tanstack/react-query';
 import { useLogin } from '../../api/auth.js';
@@ -19,6 +19,11 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const redirectTo = new URLSearchParams(location.search).get('redirect') ?? '/';
+  const isAuthenticated = useAuthStore((s) => !!s.accessToken);
+
+  if (isAuthenticated) {
+    return <Navigate to="/" replace />;
+  }
   const setAuth = useAuthStore((s) => s.setAuth);
   const queryClient = useQueryClient();
 
