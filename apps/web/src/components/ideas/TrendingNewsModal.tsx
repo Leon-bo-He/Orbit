@@ -412,6 +412,22 @@ export function TrendingNewsModal({ onClose }: { onClose: () => void }) {
           )}
         </div>
 
+        {/* All-sources report strip — above the divider */}
+        {sources.length > 0 && (
+          <div className="px-5 py-2 flex items-center justify-end gap-2 flex-shrink-0">
+            <span className="text-xs text-gray-400">{t('trending_news.all_sources_report')}</span>
+            {(['daily', 'weekly', 'biweekly'] as const).map((type) => (
+              <button
+                key={type}
+                onClick={() => setAllReportType(type)}
+                className="text-xs px-2.5 py-1 rounded-md border border-indigo-200 text-indigo-600 hover:bg-indigo-50 transition-colors"
+              >
+                {t(`trending_news.report_${type}`)}
+              </button>
+            ))}
+          </div>
+        )}
+
         {/* Footer */}
         {sources.length > 0 && (
           <div className="border-t border-gray-100 px-5 py-3 flex items-center justify-between flex-shrink-0">
@@ -440,25 +456,12 @@ export function TrendingNewsModal({ onClose }: { onClose: () => void }) {
                 <span className="text-xs text-red-500 truncate max-w-[200px]">{translateError}</span>
               )}
             </div>
-            <div className="flex items-center gap-1.5">
-              <span className="text-xs text-gray-400 mr-1">{t('trending_news.all_sources_report')}</span>
-              {(['daily', 'weekly', 'biweekly'] as const).map((type) => (
-                <button
-                  key={type}
-                  onClick={() => setAllReportType(type)}
-                  className="text-xs px-2.5 py-1 rounded-md border border-indigo-200 text-indigo-600 hover:bg-indigo-50 transition-colors"
-                >
-                  {t(`trending_news.report_${type}`)}
-                </button>
-              ))}
-              <span className="text-gray-200 mx-1">|</span>
-              <button
-                onClick={handleOpenSettings}
-                className="text-xs text-gray-400 hover:text-indigo-500 transition-colors"
-              >
-                {t('trending_news.manage_sources')}
-              </button>
-            </div>
+            <button
+              onClick={handleOpenSettings}
+              className="text-xs text-gray-400 hover:text-indigo-500 transition-colors"
+            >
+              {t('trending_news.manage_sources')}
+            </button>
           </div>
         )}
 
