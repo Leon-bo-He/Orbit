@@ -138,10 +138,11 @@ Be concise and factual.`;
       const json = await res.json() as any;
       const choice = json?.choices?.[0];
       content = (
-        choice?.message?.content          // standard chat completion
-        ?? choice?.message?.reasoning_content // some reasoning models
-        ?? choice?.text                    // legacy completion format
-        ?? json?.content?.[0]?.text        // Anthropic-style proxy
+        choice?.message?.content                    // standard OpenAI chat completion
+        ?? choice?.message?.reasoning_content        // DeepSeek-R1 / reasoning models
+        ?? choice?.text                              // legacy completion format
+        ?? json?.output?.[0]?.content?.[0]?.text     // OpenAI Responses API (gpt-5.x)
+        ?? json?.content?.[0]?.text                  // Anthropic-style proxy
         ?? ''
       );
       if (typeof content !== 'string') content = String(content ?? '');
