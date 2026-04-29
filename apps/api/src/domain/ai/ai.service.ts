@@ -153,6 +153,20 @@ export class AiService {
     }
   }
 
+  async translateText(userId: string, text: string, targetLanguage: string): Promise<string> {
+    if (!text.trim()) return text;
+    const config = await this.aiConfigRepo.findByUser(userId);
+    if (!config) throw new ValidationError('AI not configured. Please add your AI settings first.');
+
+    const prompt = `Translate the following text to ${targetLanguage}.
+Preserve all markdown formatting exactly (headings, bold, bullet lists, links, etc.).
+Return ONLY the translated text with no explanation or extra commentary.
+
+${text}`;
+
+    return this.callAiApi(config, prompt, 4096);
+  }
+
   async translateTitles(userId: string, titles: string[], targetLanguage: string): Promise<string[]> {
     if (titles.length === 0) return [];
     const config = await this.aiConfigRepo.findByUser(userId);

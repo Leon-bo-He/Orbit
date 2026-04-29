@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
 import i18n from '../../i18n/index.js';
-import { useGenerateReport, useTranslateTitles } from '../../api/ai.js';
+import { useGenerateReport, useTranslateText } from '../../api/ai.js';
 import type { RssSource } from '../../store/rss.store.js';
 
 type ReportType = 'daily' | 'weekly' | 'biweekly';
@@ -49,7 +49,7 @@ export function RssReportModal({ source, reportType, onClose }: Props) {
   const [translatedContent, setTranslatedContent] = useState<string | null>(null);
   const [showTranslation, setShowTranslation] = useState(false);
   const generate = useGenerateReport();
-  const translateMutation = useTranslateTitles();
+  const translateMutation = useTranslateText();
 
   async function load(force = false) {
     setError(null);
@@ -71,8 +71,8 @@ export function RssReportModal({ source, reportType, onClose }: Props) {
     if (!content) return;
     const targetLanguage = LOCALE_LANGUAGE[i18n.language] ?? i18n.language;
     try {
-      const result = await translateMutation.mutateAsync({ titles: [content], targetLanguage });
-      setTranslatedContent(result.translations[0] ?? content);
+      const result = await translateMutation.mutateAsync({ text: content, targetLanguage });
+      setTranslatedContent(result.translated);
       setShowTranslation(true);
     } catch { /* show original on failure */ }
   }

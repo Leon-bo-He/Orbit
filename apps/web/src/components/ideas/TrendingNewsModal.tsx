@@ -6,7 +6,7 @@ import { useRssStore, type RssSource } from '../../store/rss.store.js';
 import { useUiStore } from '../../store/ui.store.js';
 import { useRssFeed, type RssFeedPage } from '../../api/rss.js';
 import ReactMarkdown from 'react-markdown';
-import { useTranslateTitles } from '../../api/ai.js';
+import { useTranslateTitles, useTranslateText } from '../../api/ai.js';
 import { apiFetch } from '../../api/client.js';
 import type { RssReport } from '../../api/ai.js';
 import { RssReportModal } from './RssReportModal.js';
@@ -203,7 +203,8 @@ function AllReportsModal({
     () => Object.fromEntries(sources.map((s) => [s.id, { loading: true, content: null, translatedContent: null, error: null, generatedAt: null }])),
   );
   const [showTranslations, setShowTranslations] = useState(false);
-  const translateMutation = useTranslateTitles();
+  const translateMutation = useTranslateText();
+  const [isTranslating, setIsTranslating] = useState(false);
 
   function loadAll(force: boolean) {
     setReports(Object.fromEntries(sources.map((s) => [s.id, { loading: true, content: null, translatedContent: null, error: null, generatedAt: null }])));
@@ -230,20 +231,29 @@ function AllReportsModal({
 
     const targetLanguage = LOCALE_LANGUAGE[i18n.language] ?? i18n.language;
     const sourceList = sources.filter((s) => reports[s.id]?.content);
-    const contents = sourceList.map((s) => reports[s.id]!.content!);
-    if (contents.length === 0) return;
+    if (sourceList.length === 0) return;
 
+    setIsTranslating(true);
     try {
-      const result = await translateMutation.mutateAsync({ titles: contents, targetLanguage });
+      // Translate each report in parallel using the full-text endpoint
+      const results = await Promise.all(
+        sourceList.map((s) =>
+          translateMutation.mutateAsync({ text: reports[s.id]!.content!, targetLanguage })
+            .then((r) => ({ id: s.id, translated: r.translated }))
+            .catch(() => ({ id: s.id, translated: reports[s.id]!.content! })),
+        ),
+      );
       setReports((prev) => {
         const next = { ...prev };
-        sourceList.forEach((s, i) => {
-          next[s.id] = { ...next[s.id]!, translatedContent: result.translations[i] ?? next[s.id]!.content };
+        results.forEach(({ id, translated }) => {
+          next[id] = { ...next[id]!, translatedContent: translated };
         });
         return next;
       });
       setShowTranslations(true);
-    } catch { /* show original on failure */ }
+    } finally {
+      setIsTranslating(false);
+    }
   }
 
   useLayoutEffect(() => { loadAll(false); }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -262,7 +272,7 @@ function AllReportsModal({
           <div className="flex items-center gap-2">
             <button
               onClick={() => void handleTranslateAll()}
-              disabled={isLoading || translateMutation.isPending}
+              disabled={isLoading || isTranslating}
               className={`inline-flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-md border transition-colors disabled:opacity-50 ${
                 showTranslations
                   ? 'border-indigo-300 bg-indigo-50 text-indigo-700 hover:bg-indigo-100'
@@ -274,7 +284,7 @@ function AllReportsModal({
                 <path d="M11 14l2-5 2 5M12 12.5h2"/>
                 <path d="M17 5l-4 4"/>
               </svg>
-              {translateMutation.isPending
+              {isTranslating
                 ? t('trending_news.translating')
                 : showTranslations
                 ? t('trending_news.show_original')

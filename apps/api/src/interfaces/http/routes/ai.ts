@@ -41,6 +41,14 @@ export function aiRoutes(app: FastifyInstance, svc: AiService, userSvc: UserServ
     }));
   });
 
+  app.post('/api/ai-translate-text', { onRequest: [app.authenticate] }, async (req, reply) => {
+    const { sub } = req.user as { sub: string };
+    const { text, targetLanguage } = req.body as { text?: string; targetLanguage?: string };
+    if (!text?.trim()) return reply.code(400).send({ error: 'text is required' });
+    const translated = await svc.translateText(sub, text, targetLanguage ?? 'English');
+    return reply.send({ translated });
+  });
+
   app.post('/api/ai-translate', { onRequest: [app.authenticate] }, async (req, reply) => {
     const { sub } = req.user as { sub: string };
     const { titles, targetLanguage } = req.body as { titles?: string[]; targetLanguage?: string };
