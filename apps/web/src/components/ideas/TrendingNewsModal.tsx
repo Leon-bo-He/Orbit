@@ -582,12 +582,11 @@ export function TrendingNewsModal({ onClose }: { onClose: () => void }) {
                 </div>
                 <button
                   onClick={() => setShowTopicDiscover(true)}
-                  className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-md border border-amber-200 text-amber-700 bg-amber-50 hover:bg-amber-100 transition-colors flex-shrink-0"
+                  className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-md border border-indigo-200 text-indigo-600 hover:bg-indigo-50 transition-colors flex-shrink-0"
                 >
-                  <svg className="w-3 h-3" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
-                    <circle cx="10" cy="10" r="7"/>
-                    <path d="M10 6v4l2.5 2.5"/>
-                    <path d="M7 3.5L10 2l3 1.5"/>
+                  <svg className="w-3 h-3" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M10 2l1.5 3.5L15 7l-3.5 1.5L10 12l-1.5-3.5L5 7l3.5-1.5L10 2z"/>
+                    <path d="M16 12l.8 1.8 1.7.7-1.7.8L16 17l-.8-1.7-1.7-.8 1.7-.7L16 12z"/>
                   </svg>
                   {t('trending_news.topic_discover')}
                 </button>
