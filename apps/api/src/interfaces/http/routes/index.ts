@@ -15,6 +15,7 @@ import { customPlatformsRoutes } from './custom-platforms.js';
 import { uploadRoutes } from './upload.js';
 import { notificationsRoutes } from './notifications.js';
 import { rssRoutes } from './rss.js';
+import { aiRoutes } from './ai.js';
 
 export function registerRoutes(app: FastifyInstance, svc: Services) {
   healthRoutes(app);
@@ -32,4 +33,5 @@ export function registerRoutes(app: FastifyInstance, svc: Services) {
   uploadRoutes(app);
   notificationsRoutes(app, svc.user, svc.notificationChannel);
   rssRoutes(app, svc.rss);
+  aiRoutes(app, svc.ai);
 }

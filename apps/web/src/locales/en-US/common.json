@@ -79,7 +79,8 @@
       "workspaces": "Workspaces",
       "platforms": "Platforms",
       "notifications": "Notifications",
-      "data": "Data"
+      "data": "Data",
+      "ai": "AI"
     },
     "platforms": {
       "builtin_title": "Built-in Platforms",
@@ -152,6 +153,19 @@
       "rss_remove_confirm_title": "Remove RSS source?",
       "rss_remove_confirm_desc": "This will permanently delete all cached articles for \"{{name}}\".",
       "rss_removing": "Removing…"
+    },
+    "ai": {
+      "section_title": "AI Configuration",
+      "base_url": "Base URL",
+      "base_url_placeholder": "https://api.openai.com/v1",
+      "api_key": "API Key",
+      "api_key_placeholder": "sk-…",
+      "api_key_set": "••••••••  (set)",
+      "model": "Model",
+      "model_placeholder": "gpt-4o-mini",
+      "desc": "Used to generate RSS report highlights.",
+      "save": "Save",
+      "saved": "Saved ✓"
     },
     "notifications": {
       "section_timing": "Timing",

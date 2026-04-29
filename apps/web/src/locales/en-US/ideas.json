@@ -70,6 +70,20 @@
     "fetch_error": "Failed to load feed",
     "no_articles": "No articles found",
     "page_prev": "Prev",
-    "page_next": "Next"
+    "page_next": "Next",
+    "report_daily": "Daily",
+    "report_weekly": "Weekly",
+    "report_biweekly": "Biweekly"
+  },
+  "report": {
+    "title_suffix": "Report",
+    "type_daily": "Daily",
+    "type_weekly": "Weekly",
+    "type_biweekly": "Biweekly",
+    "generating": "Generating report…",
+    "error": "Failed to generate report",
+    "refresh": "Refresh",
+    "cached": "Cached",
+    "fresh": "Just generated"
   }
 }

@@ -79,7 +79,8 @@
       "workspaces": "워크스페이스",
       "platforms": "플랫폼",
       "notifications": "알림",
-      "data": "데이터"
+      "data": "데이터",
+      "ai": "AI"
     },
     "platforms": {
       "builtin_title": "기본 플랫폼",
@@ -152,6 +153,19 @@
       "rss_remove_confirm_title": "RSS 소스를 제거하시겠습니까?",
       "rss_remove_confirm_desc": "\"{{name}}\"의 캐시된 모든 기사가 영구적으로 삭제됩니다.",
       "rss_removing": "제거 중…"
+    },
+    "ai": {
+      "section_title": "AI 설정",
+      "base_url": "기본 URL",
+      "base_url_placeholder": "https://api.openai.com/v1",
+      "api_key": "API 키",
+      "api_key_placeholder": "sk-…",
+      "api_key_set": "••••••••（설정됨）",
+      "model": "모델",
+      "model_placeholder": "gpt-4o-mini",
+      "desc": "RSS 피드 하이라이트 리포트 생성에 사용됩니다.",
+      "save": "저장",
+      "saved": "저장됨 ✓"
     },
     "notifications": {
       "section_timing": "타이밍",

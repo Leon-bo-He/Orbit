@@ -70,6 +70,20 @@
     "fetch_error": "載入訂閱失敗",
     "no_articles": "暫無文章",
     "page_prev": "上一頁",
-    "page_next": "下一頁"
+    "page_next": "下一頁",
+    "report_daily": "日報",
+    "report_weekly": "週報",
+    "report_biweekly": "雙週報"
+  },
+  "report": {
+    "title_suffix": "報告",
+    "type_daily": "日報",
+    "type_weekly": "週報",
+    "type_biweekly": "雙週報",
+    "generating": "正在生成報告…",
+    "error": "生成報告失敗",
+    "refresh": "重新整理",
+    "cached": "快取",
+    "fresh": "剛生成"
   }
 }

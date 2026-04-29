@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useRssStore, type RssSource } from '../../store/rss.store.js';
 import { useUiStore } from '../../store/ui.store.js';
 import { useRssFeed } from '../../api/rss.js';
+import { RssReportModal } from './RssReportModal.js';
 
 function formatDate(raw: string): string {
   if (!raw) return '';
@@ -24,6 +25,7 @@ const RENDER_CAP = 20;
 
 function SourceCard({ source }: { source: RssSource }) {
   const { t } = useTranslation('ideas');
+  const [reportType, setReportType] = useState<'daily' | 'weekly' | 'biweekly' | null>(null);
   const [startIndex, setStartIndex] = useState(0);
   const [prevIndices, setPrevIndices] = useState<number[]>([]);
   const [fittingCount, setFittingCount] = useState(RENDER_CAP);
@@ -92,6 +94,19 @@ function SourceCard({ source }: { source: RssSource }) {
         {isFetching && <div className="w-3 h-3 border-2 border-indigo-200 border-t-indigo-500 rounded-full animate-spin ml-auto flex-shrink-0"/>}
       </div>
 
+      {/* Report buttons */}
+      <div className="flex gap-1 flex-shrink-0">
+        {(['daily', 'weekly', 'biweekly'] as const).map((type) => (
+          <button
+            key={type}
+            onClick={() => setReportType(type)}
+            className="flex-1 text-[10px] font-medium px-1.5 py-1 rounded border border-indigo-200 text-indigo-600 hover:bg-indigo-50 transition-colors leading-none"
+          >
+            {t(`trending_news.report_${type}`)}
+          </button>
+        ))}
+      </div>
+
       {/* Article area — overflow-hidden clips articles beyond the visible height */}
       <div ref={articleAreaRef} className="flex-1 min-h-0 overflow-hidden">
         {isLoading && (
@@ -146,6 +161,14 @@ function SourceCard({ source }: { source: RssSource }) {
           {t('trending_news.page_next')} ›
         </button>
       </div>
+
+      {reportType && (
+        <RssReportModal
+          source={source}
+          reportType={reportType}
+          onClose={() => setReportType(null)}
+        />
+      )}
     </div>
   );
 }

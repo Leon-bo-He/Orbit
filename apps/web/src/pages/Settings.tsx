@@ -20,8 +20,9 @@ import i18n, { SUPPORTED_LOCALES, type SupportedLocale } from '../i18n/index.js'
 import { toast } from '../store/toast.store.js';
 import { useRssStore } from '../store/rss.store.js';
 import { useDeleteRssFeed } from '../api/rss.js';
+import { useAiConfig, useSaveAiConfig } from '../api/ai.js';
 
-type Section = 'account' | 'appearance' | 'workspaces' | 'platforms' | 'notifications' | 'data';
+type Section = 'account' | 'appearance' | 'workspaces' | 'platforms' | 'notifications' | 'data' | 'ai';
 
 
 const LOCALE_META: Record<SupportedLocale, { label: string }> = {
@@ -1870,6 +1871,83 @@ function PlatformsPanel() {
   );
 }
 
+// ─── AI Panel ────────────────────────────────────────────────────────────────
+
+function AiPanel() {
+  const { t } = useTranslation('common');
+  const { data: config } = useAiConfig();
+  const saveConfig = useSaveAiConfig();
+
+  const [baseUrl, setBaseUrl] = useState('');
+  const [apiKey, setApiKey] = useState('');
+  const [model, setModel] = useState('gpt-4o-mini');
+  const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    if (config) {
+      setBaseUrl(config.baseUrl);
+      setModel(config.model);
+    }
+  }, [config]);
+
+  async function handleSave(e: React.FormEvent) {
+    e.preventDefault();
+    if (!baseUrl.trim() || !apiKey.trim()) return;
+    await saveConfig.mutateAsync({ baseUrl: baseUrl.trim(), apiKey: apiKey.trim(), model: model.trim() || 'gpt-4o-mini' });
+    setApiKey('');
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+  }
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">{t('settings.ai.section_title')}</p>
+        <form onSubmit={(e) => void handleSave(e)} className="rounded-xl border border-gray-100 overflow-hidden divide-y divide-gray-100">
+          <div className={ROW + ' px-4'}>
+            <span className={LABEL}>{t('settings.ai.base_url')}</span>
+            <input
+              value={baseUrl}
+              onChange={(e) => setBaseUrl(e.target.value)}
+              placeholder={t('settings.ai.base_url_placeholder')}
+              className="text-sm px-2.5 py-1 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-300 w-52 text-right"
+            />
+          </div>
+          <div className={ROW + ' px-4'}>
+            <span className={LABEL}>{t('settings.ai.api_key')}</span>
+            <input
+              type="password"
+              value={apiKey}
+              onChange={(e) => setApiKey(e.target.value)}
+              placeholder={config?.apiKeySet ? t('settings.ai.api_key_set') : t('settings.ai.api_key_placeholder')}
+              className="text-sm px-2.5 py-1 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-300 w-52 text-right"
+            />
+          </div>
+          <div className={ROW + ' px-4'}>
+            <span className={LABEL}>{t('settings.ai.model')}</span>
+            <input
+              value={model}
+              onChange={(e) => setModel(e.target.value)}
+              placeholder={t('settings.ai.model_placeholder')}
+              className="text-sm px-2.5 py-1 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-300 w-52 text-right"
+            />
+          </div>
+          <div className={`${ROW} px-4 border-b-0`}>
+            <p className="text-xs text-gray-400">{t('settings.ai.desc')}</p>
+            <button
+              type="submit"
+              disabled={saveConfig.isPending || !baseUrl.trim() || !apiKey.trim()}
+              className="text-sm px-3 py-1.5 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-40 transition-colors flex-shrink-0"
+            >
+              {saved ? t('settings.ai.saved') : saveConfig.isPending ? '…' : t('settings.ai.save')}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
 // ─── Settings Modal ───────────────────────────────────────────────────────────
 
 const NAV_ICONS: Record<Section, React.ReactNode> = {
@@ -1917,6 +1995,12 @@ const NAV_ICONS: Record<Section, React.ReactNode> = {
       <path d="M3 9v4c0 1.38 3.13 2.5 7 2.5s7-1.12 7-2.5V9" strokeLinecap="round"/>
     </svg>
   ),
+  ai: (
+    <svg className="w-[15px] h-[15px]" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6">
+      <path d="M10 3l1.5 3.5L15 8l-3.5 1.5L10 13l-1.5-3.5L5 8l3.5-1.5L10 3z" strokeLinejoin="round"/>
+      <path d="M4 14l.8 1.8L6.5 16l-1.7.8L4 18.5l-.8-1.7L1.5 16l1.7-.8L4 14z" strokeLinejoin="round"/>
+    </svg>
+  ),
 };
 
 export function SettingsModal({ onClose, initialSection }: { onClose: () => void; initialSection?: string }) {
@@ -1930,6 +2014,7 @@ export function SettingsModal({ onClose, initialSection }: { onClose: () => void
     { id: 'platforms',     label: t('settings.sections.platforms')     },
     { id: 'notifications', label: t('settings.sections.notifications') },
     { id: 'data',          label: t('settings.sections.data')          },
+    { id: 'ai',            label: t('settings.sections.ai')            },
   ];
 
   useEffect(() => {
@@ -2022,6 +2107,7 @@ export function SettingsModal({ onClose, initialSection }: { onClose: () => void
             {section === 'platforms'     && <PlatformsPanel />}
             {section === 'notifications' && <NotificationsPanel />}
             {section === 'data'          && <DataPanel />}
+            {section === 'ai'            && <AiPanel />}
           </div>
         </div>
       </div>

@@ -70,6 +70,20 @@
     "fetch_error": "피드 로드 실패",
     "no_articles": "기사를 찾을 수 없습니다",
     "page_prev": "이전",
-    "page_next": "다음"
+    "page_next": "다음",
+    "report_daily": "일간",
+    "report_weekly": "주간",
+    "report_biweekly": "격주"
+  },
+  "report": {
+    "title_suffix": "리포트",
+    "type_daily": "일간",
+    "type_weekly": "주간",
+    "type_biweekly": "격주",
+    "generating": "리포트 생성 중…",
+    "error": "리포트 생성 실패",
+    "refresh": "새로고침",
+    "cached": "캐시됨",
+    "fresh": "방금 생성됨"
   }
 }

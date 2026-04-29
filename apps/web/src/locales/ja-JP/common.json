@@ -79,7 +79,8 @@
       "workspaces": "ワークスペース",
       "platforms": "プラットフォーム",
       "notifications": "通知",
-      "data": "データ"
+      "data": "データ",
+      "ai": "AI"
     },
     "platforms": {
       "builtin_title": "組み込みプラットフォーム",
@@ -152,6 +153,19 @@
       "rss_remove_confirm_title": "RSSソースを削除しますか？",
       "rss_remove_confirm_desc": "「{{name}}」のキャッシュ済み記事がすべて完全に削除されます。",
       "rss_removing": "削除中…"
+    },
+    "ai": {
+      "section_title": "AI設定",
+      "base_url": "ベースURL",
+      "base_url_placeholder": "https://api.openai.com/v1",
+      "api_key": "APIキー",
+      "api_key_placeholder": "sk-…",
+      "api_key_set": "••••••••（設定済み）",
+      "model": "モデル",
+      "model_placeholder": "gpt-4o-mini",
+      "desc": "RSSフィードのハイライトレポート生成に使用します。",
+      "save": "保存",
+      "saved": "保存済み ✓"
     },
     "notifications": {
       "section_timing": "タイミング",

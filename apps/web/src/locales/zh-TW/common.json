@@ -79,7 +79,8 @@
       "workspaces": "工作空間",
       "platforms": "平台管理",
       "notifications": "通知",
-      "data": "資料"
+      "data": "資料",
+      "ai": "AI"
     },
     "platforms": {
       "builtin_title": "內建平台",
@@ -152,6 +153,19 @@
       "rss_remove_confirm_title": "移除 RSS 來源？",
       "rss_remove_confirm_desc": "此操作將永久刪除「{{name}}」的所有快取文章。",
       "rss_removing": "移除中…"
+    },
+    "ai": {
+      "section_title": "AI 設定",
+      "base_url": "接口位址",
+      "base_url_placeholder": "https://api.openai.com/v1",
+      "api_key": "API 金鑰",
+      "api_key_placeholder": "sk-…",
+      "api_key_set": "••••••••（已設置）",
+      "model": "模型",
+      "model_placeholder": "gpt-4o-mini",
+      "desc": "用於生成 RSS 訂閱的亮點報告。",
+      "save": "儲存",
+      "saved": "已儲存 ✓"
     },
     "notifications": {
       "section_timing": "提醒設定",

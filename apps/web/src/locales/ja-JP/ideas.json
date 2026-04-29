@@ -70,6 +70,20 @@
     "fetch_error": "フィードの読み込みに失敗しました",
     "no_articles": "記事が見つかりません",
     "page_prev": "前へ",
-    "page_next": "次へ"
+    "page_next": "次へ",
+    "report_daily": "日次",
+    "report_weekly": "週次",
+    "report_biweekly": "隔週"
+  },
+  "report": {
+    "title_suffix": "レポート",
+    "type_daily": "日次",
+    "type_weekly": "週次",
+    "type_biweekly": "隔週",
+    "generating": "レポートを生成中…",
+    "error": "レポートの生成に失敗しました",
+    "refresh": "更新",
+    "cached": "キャッシュ",
+    "fresh": "生成済み"
   }
 }
