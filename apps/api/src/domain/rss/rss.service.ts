@@ -15,7 +15,7 @@ export interface RssFeedPage {
 }
 
 const REFETCH_INTERVAL_MS = 30 * 60 * 1000;
-const MAX_PAGE_SIZE = 50;
+const MAX_PAGE_SIZE = 100;
 
 function threeMonthsAgo(): Date {
   const d = new Date();
