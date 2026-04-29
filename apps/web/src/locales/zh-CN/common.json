@@ -170,7 +170,10 @@
       "model_placeholder": "gpt-4o-mini",
       "desc": "用于生成 RSS 订阅的亮点报告。",
       "save": "保存",
-      "saved": "已保存 ✓"
+      "saved": "已保存 ✓",
+      "test": "测试连接",
+      "test_ok": "✓ 连接成功",
+      "test_fail": "✗ 连接失败"
     },
     "notifications": {
       "section_timing": "提醒设置",

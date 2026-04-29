@@ -23,6 +23,18 @@ export function aiRoutes(app: FastifyInstance, svc: AiService) {
     return reply.code(204).send();
   });
 
+  app.post('/api/ai-config/test', { onRequest: [app.authenticate] }, async (req, reply) => {
+    const { sub } = req.user as { sub: string };
+    const { baseUrl, apiKey, model } = (req.body ?? {}) as {
+      baseUrl?: string; apiKey?: string; model?: string;
+    };
+    return reply.send(await svc.testConnection(sub, {
+      ...(baseUrl !== undefined && { baseUrl }),
+      ...(apiKey !== undefined && { apiKey }),
+      ...(model !== undefined && { model }),
+    }));
+  });
+
   app.post('/api/rss-reports', { onRequest: [app.authenticate] }, async (req, reply) => {
     const { sub } = req.user as { sub: string };
     const { feedUrl, feedName, reportType, force } = req.body as {

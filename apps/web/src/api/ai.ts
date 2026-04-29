@@ -29,6 +29,18 @@ export function useSaveAiConfig() {
   });
 }
 
+export interface TestConnectionResult {
+  ok: boolean;
+  error?: string;
+}
+
+export function useTestAiConnection() {
+  return useMutation<TestConnectionResult, Error, { baseUrl?: string; apiKey?: string; model?: string }>({
+    mutationFn: (body) =>
+      apiFetch<TestConnectionResult>('/api/ai-config/test', { method: 'POST', body: JSON.stringify(body) }),
+  });
+}
+
 export function useGenerateReport() {
   return useMutation<RssReport, Error, {
     feedUrl: string;

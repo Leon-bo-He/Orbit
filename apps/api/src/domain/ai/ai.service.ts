@@ -33,6 +33,41 @@ export class AiService {
     await this.aiConfigRepo.upsert(userId, data);
   }
 
+  async testConnection(
+    userId: string,
+    overrides: { baseUrl?: string; apiKey?: string; model?: string },
+  ): Promise<{ ok: boolean; error?: string }> {
+    const stored = await this.aiConfigRepo.findByUser(userId);
+
+    const baseUrl = (overrides.baseUrl?.trim() || (stored?.baseUrl ?? '')).replace(/\/$/, '');
+    const apiKey  = overrides.apiKey?.trim() || (stored?.apiKey ?? '');
+    const model   = overrides.model?.trim() || stored?.model || 'gpt-4o-mini';
+
+    if (!baseUrl || !apiKey) {
+      return { ok: false, error: 'Base URL and API key are required.' };
+    }
+
+    try {
+      const res = await fetch(`${baseUrl}/chat/completions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+        body: JSON.stringify({
+          model,
+          messages: [{ role: 'user', content: 'Say "ok".' }],
+          max_tokens: 5,
+        }),
+        signal: AbortSignal.timeout(15_000),
+      });
+      if (!res.ok) {
+        const text = await res.text().catch(() => '');
+        return { ok: false, error: `HTTP ${res.status}${text ? ': ' + text.slice(0, 120) : ''}` };
+      }
+      return { ok: true };
+    } catch (err) {
+      return { ok: false, error: err instanceof Error ? err.message : 'Connection failed' };
+    }
+  }
+
   async getReport(
     userId: string,
     feedUrl: string,

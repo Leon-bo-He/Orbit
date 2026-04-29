@@ -20,7 +20,7 @@ import i18n, { SUPPORTED_LOCALES, type SupportedLocale } from '../i18n/index.js'
 import { toast } from '../store/toast.store.js';
 import { useRssStore } from '../store/rss.store.js';
 import { useDeleteRssFeed } from '../api/rss.js';
-import { useAiConfig, useSaveAiConfig } from '../api/ai.js';
+import { useAiConfig, useSaveAiConfig, useTestAiConnection } from '../api/ai.js';
 
 type Section = 'account' | 'appearance' | 'workspaces' | 'platforms' | 'notifications' | 'data' | 'ai';
 
@@ -1962,11 +1962,13 @@ function AiPanel() {
   const { t } = useTranslation('common');
   const { data: config } = useAiConfig();
   const saveConfig = useSaveAiConfig();
+  const testConnection = useTestAiConnection();
 
   const [baseUrl, setBaseUrl] = useState('');
   const [apiKey, setApiKey] = useState('');
   const [model, setModel] = useState('gpt-4o-mini');
   const [saved, setSaved] = useState(false);
+  const [testResult, setTestResult] = useState<{ ok: boolean; error?: string } | null>(null);
 
   useEffect(() => {
     if (config) {
@@ -1981,7 +1983,18 @@ function AiPanel() {
     await saveConfig.mutateAsync({ baseUrl: baseUrl.trim(), apiKey: apiKey.trim(), model: model.trim() || 'gpt-4o-mini' });
     setApiKey('');
     setSaved(true);
+    setTestResult(null);
     setTimeout(() => setSaved(false), 2000);
+  }
+
+  async function handleTest() {
+    setTestResult(null);
+    const result = await testConnection.mutateAsync({
+      baseUrl: baseUrl.trim() || undefined,
+      apiKey: apiKey.trim() || undefined,
+      model: model.trim() || undefined,
+    });
+    setTestResult(result);
   }
 
   return (
@@ -2017,15 +2030,29 @@ function AiPanel() {
               className="text-sm px-2.5 py-1 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-300 w-52 text-right"
             />
           </div>
-          <div className={`${ROW} px-4 border-b-0`}>
-            <p className="text-xs text-gray-400">{t('settings.ai.desc')}</p>
-            <button
-              type="submit"
-              disabled={saveConfig.isPending || !baseUrl.trim() || !apiKey.trim()}
-              className="text-sm px-3 py-1.5 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-40 transition-colors flex-shrink-0"
-            >
-              {saved ? t('settings.ai.saved') : saveConfig.isPending ? '…' : t('settings.ai.save')}
-            </button>
+          <div className="px-4 py-3 flex flex-col gap-2">
+            {testResult && (
+              <p className={`text-xs px-3 py-2 rounded-md ${testResult.ok ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-600'}`}>
+                {testResult.ok ? t('settings.ai.test_ok') : `${t('settings.ai.test_fail')}: ${testResult.error ?? ''}`}
+              </p>
+            )}
+            <div className="flex gap-2 justify-end">
+              <button
+                type="button"
+                onClick={() => void handleTest()}
+                disabled={testConnection.isPending || saveConfig.isPending}
+                className="text-sm px-3 py-1.5 rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 transition-colors"
+              >
+                {testConnection.isPending ? '…' : t('settings.ai.test')}
+              </button>
+              <button
+                type="submit"
+                disabled={saveConfig.isPending || !baseUrl.trim() || !apiKey.trim()}
+                className="text-sm px-3 py-1.5 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-40 transition-colors"
+              >
+                {saved ? t('settings.ai.saved') : saveConfig.isPending ? '…' : t('settings.ai.save')}
+              </button>
+            </div>
           </div>
         </form>
       </div>
