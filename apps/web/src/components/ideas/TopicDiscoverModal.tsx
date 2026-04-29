@@ -22,16 +22,15 @@ function childrenToText(children: React.ReactNode): string {
   return '';
 }
 
-/** Extract { text, href } link pairs from an mdast node tree (react-markdown v10 `node` prop). */
+/** Extract { text, href } link pairs from a hast node tree (react-markdown v10 passes hast). */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function nodeToLinks(node: any): { text: string; href: string }[] {
   if (!node) return [];
-  if (node.type === 'link' && node.url) {
-    const text = (node.children ?? [])
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .map((c: any) => c.value ?? nodeToLinks(c).map((l) => l.text).join(''))
-      .join('');
-    return [{ text, href: node.url }];
+  // hast: links are element nodes with tagName 'a'
+  if (node.type === 'element' && node.tagName === 'a' && node.properties?.href) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const text = (node.children ?? []).map((c: any) => c.value ?? '').join('');
+    return [{ text, href: String(node.properties.href) }];
   }
   if (Array.isArray(node.children)) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -46,11 +45,12 @@ function buildNote(text: string, links: { text: string; href: string }[]): strin
   return text ? `${text}\n\n${inlineLinks}` : inlineLinks;
 }
 
-/** Extract the first strong/bold node text from an mdast node tree. */
+/** Extract the first strong/bold node text from a hast node tree. */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function nodeToFirstStrongText(node: any): string {
   if (!node) return '';
-  if (node.type === 'strong') {
+  // hast: strong is an element node with tagName 'strong'
+  if (node.type === 'element' && node.tagName === 'strong') {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return (node.children ?? []).map((c: any) => c.value ?? '').join('');
   }
