@@ -5,7 +5,10 @@ import i18n from '../../i18n/index.js';
 import { useRssStore, type RssSource } from '../../store/rss.store.js';
 import { useUiStore } from '../../store/ui.store.js';
 import { useRssFeed, type RssFeedPage } from '../../api/rss.js';
+import ReactMarkdown from 'react-markdown';
 import { useTranslateTitles } from '../../api/ai.js';
+import { apiFetch } from '../../api/client.js';
+import type { RssReport } from '../../api/ai.js';
 import { RssReportModal } from './RssReportModal.js';
 
 const LOCALE_LANGUAGE: Record<string, string> = {
@@ -174,6 +177,123 @@ function SourceCard({ source, translations, showTranslations }: SourceCardProps)
   );
 }
 
+// ─── All-Sources Report Modal ─────────────────────────────────────────────────
+
+type ReportType = 'daily' | 'weekly' | 'biweekly';
+
+interface SourceReport {
+  loading: boolean;
+  content: string | null;
+  error: string | null;
+}
+
+function AllReportsModal({
+  sources,
+  reportType,
+  onClose,
+}: {
+  sources: RssSource[];
+  reportType: ReportType;
+  onClose: () => void;
+}) {
+  const { t } = useTranslation('ideas');
+  const [reports, setReports] = useState<Record<string, SourceReport>>(
+    () => Object.fromEntries(sources.map((s) => [s.id, { loading: true, content: null, error: null }])),
+  );
+
+  useLayoutEffect(() => {
+    sources.forEach((source) => {
+      apiFetch<RssReport>('/api/rss-reports', {
+        method: 'POST',
+        body: JSON.stringify({ feedUrl: source.url, feedName: source.name, reportType }),
+      })
+        .then((r) =>
+          setReports((prev) => ({ ...prev, [source.id]: { loading: false, content: r.content, error: null } })),
+        )
+        .catch((err) =>
+          setReports((prev) => ({
+            ...prev,
+            [source.id]: { loading: false, content: null, error: err instanceof Error ? err.message : t('report.error') },
+          })),
+        );
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const typeLabel = t(`report.type_${reportType}`);
+
+  return (
+    <div className="fixed inset-0 z-[70] bg-black/50 flex items-center justify-center p-4" onClick={onClose}>
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden" onClick={(e) => e.stopPropagation()}>
+        {/* Header */}
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 flex-shrink-0">
+          <h2 className="text-sm font-semibold text-gray-900">
+            {typeLabel} {t('report.title_suffix')} — {t('report.all_sources')}
+          </h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
+            <svg className="w-4 h-4" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <path d="M2 2l10 10M12 2L2 12"/>
+            </svg>
+          </button>
+        </div>
+
+        {/* Body */}
+        <div className="flex-1 min-h-0 overflow-y-auto px-5 py-4 space-y-6">
+          {sources.map((source) => {
+            const rep = reports[source.id];
+            return (
+              <div key={source.id}>
+                <div className="flex items-center gap-1.5 mb-2">
+                  <svg className="w-3.5 h-3.5 text-orange-500 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M3.75 3a.75.75 0 00-.75.75v.5c0 .414.336.75.75.75H4c6.075 0 11 4.925 11 11v.25c0 .414.336.75.75.75h.5a.75.75 0 00.75-.75V16C17 8.82 11.18 3 4 3h-.25z"/>
+                    <path d="M3 8.75A.75.75 0 013.75 8H4a8 8 0 018 8v.25a.75.75 0 01-.75.75h-.5a.75.75 0 01-.75-.75V16a6 6 0 00-6-6h-.25A.75.75 0 013 9.25v-.5zM7 15a2 2 0 11-4 0 2 2 0 014 0z"/>
+                  </svg>
+                  <span className="text-sm font-semibold text-gray-800">{source.name}</span>
+                </div>
+
+                {rep?.loading && (
+                  <div className="flex items-center gap-2 py-4 text-gray-400">
+                    <div className="w-4 h-4 border-2 border-indigo-200 border-t-indigo-500 rounded-full animate-spin flex-shrink-0"/>
+                    <span className="text-xs">{t('report.generating')}</span>
+                  </div>
+                )}
+                {rep?.error && (
+                  <div className="rounded-lg bg-red-50 border border-red-100 px-3 py-2">
+                    <p className="text-xs text-red-600">{rep.error}</p>
+                  </div>
+                )}
+                {rep?.content && (
+                  <div className="border border-gray-100 rounded-lg px-4 py-3 bg-gray-50">
+                    <ReactMarkdown
+                      components={{
+                        h1: ({ children }) => <h1 className="text-base font-semibold text-gray-900 mt-3 mb-1 first:mt-0">{children}</h1>,
+                        h2: ({ children }) => <h2 className="text-sm font-semibold text-gray-900 mt-3 mb-1 first:mt-0">{children}</h2>,
+                        h3: ({ children }) => <h3 className="text-sm font-semibold text-gray-800 mt-2 mb-0.5">{children}</h3>,
+                        p:  ({ children }) => <p  className="text-sm text-gray-700 leading-relaxed mb-2 last:mb-0">{children}</p>,
+                        ul: ({ children }) => <ul className="text-sm text-gray-700 list-disc pl-5 mb-2 space-y-0.5">{children}</ul>,
+                        ol: ({ children }) => <ol className="text-sm text-gray-700 list-decimal pl-5 mb-2 space-y-0.5">{children}</ol>,
+                        li: ({ children }) => <li className="leading-snug">{children}</li>,
+                        strong: ({ children }) => <strong className="font-semibold text-gray-900">{children}</strong>,
+                        hr: () => <hr className="border-gray-200 my-3"/>,
+                      }}
+                    >
+                      {rep.content}
+                    </ReactMarkdown>
+                  </div>
+                )}
+
+                {sources.indexOf(source) < sources.length - 1 && (
+                  <div className="border-b border-gray-100 mt-4"/>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Trending News Modal ──────────────────────────────────────────────────────
 
 export function TrendingNewsModal({ onClose }: { onClose: () => void }) {
@@ -186,6 +306,7 @@ export function TrendingNewsModal({ onClose }: { onClose: () => void }) {
   const [translations, setTranslations] = useState<Record<string, string>>({});
   const [showTranslations, setShowTranslations] = useState(false);
   const [translateError, setTranslateError] = useState<string | null>(null);
+  const [allReportType, setAllReportType] = useState<ReportType | null>(null);
 
   function handleOpenSettings() {
     onClose();
@@ -314,13 +435,32 @@ export function TrendingNewsModal({ onClose }: { onClose: () => void }) {
                 <span className="text-xs text-red-500 truncate max-w-[200px]">{translateError}</span>
               )}
             </div>
-            <button
-              onClick={handleOpenSettings}
-              className="text-xs text-gray-400 hover:text-indigo-500 transition-colors"
-            >
-              {t('trending_news.manage_sources')}
-            </button>
+            <div className="flex items-center gap-1.5">
+              {(['daily', 'weekly', 'biweekly'] as const).map((type) => (
+                <button
+                  key={type}
+                  onClick={() => setAllReportType(type)}
+                  className="text-xs px-2.5 py-1.5 rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors"
+                >
+                  {t(`trending_news.report_${type}`)}
+                </button>
+              ))}
+              <button
+                onClick={handleOpenSettings}
+                className="text-xs text-gray-400 hover:text-indigo-500 transition-colors ml-1"
+              >
+                {t('trending_news.manage_sources')}
+              </button>
+            </div>
           </div>
+        )}
+
+        {allReportType && (
+          <AllReportsModal
+            sources={sources}
+            reportType={allReportType}
+            onClose={() => setAllReportType(null)}
+          />
         )}
       </div>
     </div>

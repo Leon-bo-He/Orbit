@@ -88,6 +88,7 @@
     "error": "리포트 생성 실패",
     "refresh": "새로고침",
     "cached": "캐시됨",
-    "fresh": "방금 생성됨"
+    "fresh": "방금 생성됨",
+    "all_sources": "모든 소스"
   }
 }

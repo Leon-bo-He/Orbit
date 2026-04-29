@@ -88,6 +88,7 @@
     "error": "生成報告失敗",
     "refresh": "重新整理",
     "cached": "快取",
-    "fresh": "剛生成"
+    "fresh": "剛生成",
+    "all_sources": "所有來源"
   }
 }

@@ -88,6 +88,7 @@
     "error": "Failed to generate report",
     "refresh": "Refresh",
     "cached": "Cached",
-    "fresh": "Just generated"
+    "fresh": "Just generated",
+    "all_sources": "All Sources"
   }
 }

@@ -88,6 +88,7 @@
     "error": "レポートの生成に失敗しました",
     "refresh": "更新",
     "cached": "キャッシュ",
-    "fresh": "生成済み"
+    "fresh": "生成済み",
+    "all_sources": "全ソース"
   }
 }
