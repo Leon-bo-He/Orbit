@@ -255,7 +255,7 @@ Rules:
 - Do not invent or guess URLs
 - Be thorough and detailed`;
 
-    const content = await this.callAiApi(config, prompt, 2048);
+    const content = await this.callAiApi(config, prompt, 8192);
     const inserted = await this.reportsRepo.insert(userId, feedUrl, reportType, content);
     return { content, cached: false, createdAt: inserted.createdAt.toISOString() };
   }
