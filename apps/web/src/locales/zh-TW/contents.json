@@ -109,7 +109,10 @@
     "ai": {
       "generate": "AI 生成",
       "generating": "生成中…",
-      "error": "AI 生成失敗"
+      "error": "AI 生成失敗",
+      "titles_dialog_title": "AI 生成了以下標題，如何套用？",
+      "titles_add": "加入現有",
+      "titles_replace": "替換全部"
     }
   },
   "column": {

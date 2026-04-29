@@ -164,6 +164,29 @@ export default function ContentBrief() {
     deleteTemplate.mutate(templateId);
   }
 
+  // Pending AI-generated titles — shown in a confirm dialog before applying
+  const [pendingTitles, setPendingTitles] = useState<ContentPlan['titleCandidates'] | null>(null);
+
+  function handleTitlesGenerated(result: unknown) {
+    setPendingTitles(result as ContentPlan['titleCandidates']);
+  }
+
+  function applyTitles(mode: 'replace' | 'add') {
+    if (!pendingTitles) return;
+    const existing = (localPlan.titleCandidates ?? []) as ContentPlan['titleCandidates'];
+    if (mode === 'replace') {
+      handleChange({ titleCandidates: pendingTitles });
+    } else {
+      // Merge — mark existing primaries unchanged, new ones as non-primary
+      const merged = [
+        ...existing,
+        ...pendingTitles.map((t) => ({ ...t, isPrimary: false })),
+      ];
+      handleChange({ titleCandidates: merged });
+    }
+    setPendingTitles(null);
+  }
+
   // Build AI context from current plan + content
   const briefContext: BriefContext = {
     contentTitle: content?.title ?? '',
@@ -292,12 +315,48 @@ export default function ContentBrief() {
             <AiGenerateButton
               section="titles"
               context={briefContext}
-              onResult={(r) => handleChange({ titleCandidates: r as ContentPlan['titleCandidates'] })}
+              onResult={handleTitlesGenerated}
             />
           }
         >
           <TitlesSection plan={localPlan} onChange={handleChange} />
         </Accordion>
+
+        {/* AI Titles confirm dialog */}
+        {pendingTitles && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+            <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6 space-y-4">
+              <h3 className="text-sm font-semibold text-gray-900">{t('brief.ai.titles_dialog_title')}</h3>
+              <ul className="space-y-1.5 max-h-48 overflow-y-auto">
+                {pendingTitles.map((title, i) => (
+                  <li key={i} className="text-sm text-gray-700 px-3 py-1.5 bg-gray-50 rounded-md">
+                    {title.text}
+                  </li>
+                ))}
+              </ul>
+              <div className="flex justify-end gap-2 pt-2">
+                <button
+                  onClick={() => setPendingTitles(null)}
+                  className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50"
+                >
+                  {t('action.cancel', { ns: 'common' })}
+                </button>
+                <button
+                  onClick={() => applyTitles('add')}
+                  className="text-sm px-3 py-1.5 rounded-lg border border-indigo-200 text-indigo-600 hover:bg-indigo-50"
+                >
+                  {t('brief.ai.titles_add')}
+                </button>
+                <button
+                  onClick={() => applyTitles('replace')}
+                  className="text-sm px-3 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700"
+                >
+                  {t('brief.ai.titles_replace')}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* ⑥ Content Outline */}
         <Accordion

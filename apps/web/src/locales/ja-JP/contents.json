@@ -109,7 +109,10 @@
     "ai": {
       "generate": "AI生成",
       "generating": "生成中…",
-      "error": "AI生成に失敗しました"
+      "error": "AI生成に失敗しました",
+      "titles_dialog_title": "AIが以下のタイトルを生成しました。どう適用しますか？",
+      "titles_add": "既存に追加",
+      "titles_replace": "すべて置き換え"
     }
   },
   "column": {
