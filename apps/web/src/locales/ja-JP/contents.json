@@ -105,6 +105,11 @@
       "aspect_ratio_placeholder": "アスペクト比を選択",
       "notes_label": "形式メモ",
       "notes_placeholder": "フォーマット、スタイル、制作要件に関するメモ…"
+    },
+    "ai": {
+      "generate": "AI生成",
+      "generating": "生成中…",
+      "error": "AI生成に失敗しました"
     }
   },
   "column": {

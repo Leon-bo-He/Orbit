@@ -105,6 +105,11 @@
       "aspect_ratio_placeholder": "选择画面比例",
       "notes_label": "格式备注",
       "notes_placeholder": "关于格式、风格或制作要求的任何说明…"
+    },
+    "ai": {
+      "generate": "AI 生成",
+      "generating": "生成中…",
+      "error": "AI 生成失败"
     }
   },
   "column": {

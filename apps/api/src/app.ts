@@ -25,6 +25,7 @@ import { UserService } from './domain/user/user.service.js';
 import { NotificationChannelService } from './domain/notification-channel/notification-channel.service.js';
 import { RssService } from './domain/rss/rss.service.js';
 import { AiService } from './domain/ai/ai.service.js';
+import { BriefService } from './domain/ai/brief.service.js';
 
 // Infrastructure repositories
 import { WorkspaceRepository } from './infrastructure/db/repositories/workspace.repository.js';
@@ -50,6 +51,7 @@ export interface Services {
   notificationChannel: NotificationChannelService;
   rss: RssService;
   ai: AiService;
+  brief: BriefService;
 }
 
 function createServices(): Services {
@@ -65,6 +67,7 @@ function createServices(): Services {
     notificationChannel: new NotificationChannelService(new NotificationChannelRepository()),
     rss: new RssService(new RssCacheRepository()),
     ai: new AiService(new AiConfigRepository(), new RssReportsRepository(), new RssCacheRepository()),
+    get brief() { return new BriefService(new AiConfigRepository(), this.ai); },
   };
 }
 

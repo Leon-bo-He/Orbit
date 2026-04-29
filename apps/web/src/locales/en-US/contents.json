@@ -97,6 +97,11 @@
     },
     "saving": "Saving…",
     "saved": "Saved",
+    "ai": {
+      "generate": "AI Generate",
+      "generating": "Generating…",
+      "error": "AI generation failed"
+    },
     "not_found": "Content not found",
     "format": {
       "duration_label": "Duration",

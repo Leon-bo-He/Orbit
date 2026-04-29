@@ -105,6 +105,11 @@
       "aspect_ratio_placeholder": "화면 비율 선택",
       "notes_label": "형식 메모",
       "notes_placeholder": "형식, 스타일, 제작 요건에 관한 메모…"
+    },
+    "ai": {
+      "generate": "AI 생성",
+      "generating": "생성 중…",
+      "error": "AI 생성 실패"
     }
   },
   "column": {
