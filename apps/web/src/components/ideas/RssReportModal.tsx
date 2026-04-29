@@ -84,7 +84,7 @@ export function RssReportModal({ source, reportType, onClose }: Props) {
 
   return (
     <div className="fixed inset-0 z-[70] bg-black/50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[85vh] flex flex-col overflow-hidden" onClick={(e) => e.stopPropagation()}>
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 flex-shrink-0">
           <div className="min-w-0">
@@ -98,11 +98,44 @@ export function RssReportModal({ source, reportType, onClose }: Props) {
               </p>
             )}
           </div>
-          <button onClick={onClose} className="ml-3 text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0">
-            <svg className="w-4 h-4" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-              <path d="M2 2l10 10M12 2L2 12"/>
-            </svg>
-          </button>
+          <div className="flex items-center gap-2 ml-3 flex-shrink-0">
+            <button
+              onClick={() => void handleTranslate()}
+              disabled={!content || translateMutation.isPending}
+              className={`inline-flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-md border transition-colors disabled:opacity-50 ${
+                showTranslation
+                  ? 'border-indigo-300 bg-indigo-50 text-indigo-700 hover:bg-indigo-100'
+                  : 'border-gray-200 text-gray-600 hover:bg-gray-50'
+              }`}
+            >
+              <svg className="w-3 h-3" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+                <path d="M3 5h8M7 3v2M5 9c0 2 1.5 3.5 3 4M8 9c0 2-1.5 3.5-3 4"/>
+                <path d="M11 14l2-5 2 5M12 12.5h2"/>
+                <path d="M17 5l-4 4"/>
+              </svg>
+              {translateMutation.isPending
+                ? t('trending_news.translating')
+                : showTranslation
+                ? t('trending_news.show_original')
+                : t('trending_news.translate')}
+            </button>
+            <button
+              onClick={() => void load(true)}
+              disabled={generate.isPending}
+              className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-50 transition-colors"
+            >
+              <svg className={`w-3 h-3 ${generate.isPending ? 'animate-spin' : ''}`} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <path d="M14 8A6 6 0 1 1 8 2"/>
+                <path d="M14 2v4h-4"/>
+              </svg>
+              {t('report.refresh')}
+            </button>
+            <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
+              <svg className="w-4 h-4" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <path d="M2 2l10 10M12 2L2 12"/>
+              </svg>
+            </button>
+          </div>
         </div>
 
         {/* Body */}
@@ -119,41 +152,6 @@ export function RssReportModal({ source, reportType, onClose }: Props) {
             </div>
           )}
           {displayContent && <ReactMarkdown components={MD_COMPONENTS}>{displayContent}</ReactMarkdown>}
-        </div>
-
-        {/* Footer */}
-        <div className="border-t border-gray-100 px-5 py-3 flex items-center justify-between flex-shrink-0">
-          <button
-            onClick={() => void handleTranslate()}
-            disabled={!content || translateMutation.isPending}
-            className={`inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md border transition-colors disabled:opacity-50 ${
-              showTranslation
-                ? 'border-indigo-300 bg-indigo-50 text-indigo-700 hover:bg-indigo-100'
-                : 'border-gray-200 text-gray-600 hover:bg-gray-50'
-            }`}
-          >
-            <svg className="w-3 h-3" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
-              <path d="M3 5h8M7 3v2M5 9c0 2 1.5 3.5 3 4M8 9c0 2-1.5 3.5-3 4"/>
-              <path d="M11 14l2-5 2 5M12 12.5h2"/>
-              <path d="M17 5l-4 4"/>
-            </svg>
-            {translateMutation.isPending
-              ? t('trending_news.translating')
-              : showTranslation
-              ? t('trending_news.show_original')
-              : t('trending_news.translate')}
-          </button>
-          <button
-            onClick={() => void load(true)}
-            disabled={generate.isPending}
-            className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-50 transition-colors"
-          >
-            <svg className={`w-3 h-3 ${generate.isPending ? 'animate-spin' : ''}`} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-              <path d="M14 8A6 6 0 1 1 8 2"/>
-              <path d="M14 2v4h-4"/>
-            </svg>
-            {t('report.refresh')}
-          </button>
         </div>
       </div>
     </div>
