@@ -18,6 +18,8 @@ function formatDate(raw: string): string {
 // Always render up to this many articles; overflow-hidden clips what doesn't fit.
 // useLayoutEffect measures the actual visible count after each navigation so pages
 // with shorter titles show more articles and never leave blank space.
+// Render this many articles during the measurement phase so the effect can
+// discover the actual fitting count even when navigating to a page of shorter titles.
 const RENDER_CAP = 20;
 
 function SourceCard({ source }: { source: RssSource }) {
@@ -25,19 +27,21 @@ function SourceCard({ source }: { source: RssSource }) {
   const [startIndex, setStartIndex] = useState(0);
   const [prevIndices, setPrevIndices] = useState<number[]>([]);
   const [fittingCount, setFittingCount] = useState(RENDER_CAP);
+  // Two-phase rendering: false = measurement (render RENDER_CAP, overflow-hidden clips),
+  // true = display (render exactly fittingCount, no partial article visible).
+  const [measured, setMeasured] = useState(false);
   const articleAreaRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
 
-  // Fetch the full batch once; all paging is done on the frontend
   const { data, isLoading, isError, isFetching } = useRssFeed(source.url, 1, 100);
   const allArticles = data?.articles ?? [];
-  const pageArticles = allArticles.slice(startIndex, startIndex + RENDER_CAP);
+  const pageArticles = allArticles.slice(
+    startIndex,
+    startIndex + (measured ? fittingCount : RENDER_CAP),
+  );
 
-  // Before the browser paints: walk rendered items, count how many fit in the
-  // visible area, store as fittingCount. Runs on every navigation so a page
-  // full of short (1-line) titles automatically shows more articles than one
-  // full of long (2-line) titles.
   useLayoutEffect(() => {
+    if (measured) return;
     const area = articleAreaRef.current;
     const list = listRef.current;
     if (!area || !list || pageArticles.length === 0) return;
@@ -55,19 +59,21 @@ function SourceCard({ source }: { source: RssSource }) {
       count++;
     }
 
-    const measured = Math.max(1, count);
-    if (measured !== fittingCount) setFittingCount(measured);
-  }, [startIndex, data]); // intentionally excludes fittingCount to avoid loops
+    setFittingCount(Math.max(1, count));
+    setMeasured(true);
+  }, [startIndex, data, measured]);
 
   const hasNext = startIndex + fittingCount < allArticles.length;
   const hasPrev = prevIndices.length > 0;
 
   function goNext() {
+    setMeasured(false);
     setPrevIndices((p) => [...p, startIndex]);
     setStartIndex((s) => s + fittingCount);
   }
 
   function goPrev() {
+    setMeasured(false);
     setStartIndex(prevIndices[prevIndices.length - 1] ?? 0);
     setPrevIndices((p) => p.slice(0, -1));
   }
