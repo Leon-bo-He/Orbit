@@ -22,7 +22,7 @@ export function useAiConfig() {
 
 export function useSaveAiConfig() {
   const qc = useQueryClient();
-  return useMutation<void, Error, { baseUrl: string; apiKey: string; model: string }>({
+  return useMutation<void, Error, { baseUrl: string; apiKey?: string; model: string }>({
     mutationFn: (body) =>
       apiFetch<void>('/api/ai-config', { method: 'PUT', body: JSON.stringify(body) }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['ai-config'] }),

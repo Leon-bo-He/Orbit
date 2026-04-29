@@ -12,13 +12,18 @@ export function aiRoutes(app: FastifyInstance, svc: AiService) {
   app.put('/api/ai-config', { onRequest: [app.authenticate] }, async (req, reply) => {
     const { sub } = req.user as { sub: string };
     const { baseUrl, apiKey, model } = req.body as { baseUrl?: string; apiKey?: string; model?: string };
-    if (!baseUrl?.trim() || !apiKey?.trim()) {
-      return reply.code(400).send({ error: 'baseUrl and apiKey are required' });
+    if (!baseUrl?.trim()) {
+      return reply.code(400).send({ error: 'baseUrl is required' });
     }
+    const existing = await svc.getConfig(sub);
+    if (!apiKey?.trim() && !existing) {
+      return reply.code(400).send({ error: 'apiKey is required for initial setup' });
+    }
+    const trimmedKey = apiKey?.trim();
     await svc.saveConfig(sub, {
       baseUrl: baseUrl.trim(),
-      apiKey: apiKey.trim(),
-      model: (model?.trim() || 'gpt-5.4'),
+      ...(trimmedKey && { apiKey: trimmedKey }),
+      model: model?.trim() || 'gpt-5.4',
     });
     return reply.code(204).send();
   });

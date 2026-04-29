@@ -29,7 +29,7 @@ export class AiService {
     return { baseUrl: row.baseUrl, model: row.model, apiKeySet: true };
   }
 
-  async saveConfig(userId: string, data: { baseUrl: string; apiKey: string; model: string }) {
+  async saveConfig(userId: string, data: { baseUrl: string; apiKey?: string; model: string }) {
     await this.aiConfigRepo.upsert(userId, data);
   }
 

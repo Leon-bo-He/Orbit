@@ -9,12 +9,19 @@ export class AiConfigRepository {
     return row ?? null;
   }
 
-  async upsert(userId: string, data: { baseUrl: string; apiKey: string; model: string }): Promise<void> {
-    await db.insert(aiConfigs)
-      .values({ userId, ...data, updatedAt: new Date() })
-      .onConflictDoUpdate({
-        target: aiConfigs.userId,
-        set: { baseUrl: data.baseUrl, apiKey: data.apiKey, model: data.model, updatedAt: new Date() },
-      });
+  async upsert(userId: string, data: { baseUrl: string; apiKey?: string; model: string }): Promise<void> {
+    if (data.apiKey) {
+      await db.insert(aiConfigs)
+        .values({ userId, baseUrl: data.baseUrl, apiKey: data.apiKey, model: data.model, updatedAt: new Date() })
+        .onConflictDoUpdate({
+          target: aiConfigs.userId,
+          set: { baseUrl: data.baseUrl, apiKey: data.apiKey, model: data.model, updatedAt: new Date() },
+        });
+    } else {
+      // Update without touching the stored API key
+      await db.update(aiConfigs)
+        .set({ baseUrl: data.baseUrl, model: data.model, updatedAt: new Date() })
+        .where(eq(aiConfigs.userId, userId));
+    }
   }
 }

@@ -1980,7 +1980,7 @@ function AiPanel() {
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
     if (!baseUrl.trim() || (!apiKey.trim() && !config?.apiKeySet)) return;
-    await saveConfig.mutateAsync({ baseUrl: baseUrl.trim(), apiKey: apiKey.trim(), model: model.trim() || 'gpt-5.4' });
+    await saveConfig.mutateAsync({ baseUrl: baseUrl.trim(), apiKey: apiKey.trim() || undefined, model: model.trim() || 'gpt-5.4' });
     setApiKey('');
     setSaved(true);
     setTestResult({ ok: true, error: undefined });
