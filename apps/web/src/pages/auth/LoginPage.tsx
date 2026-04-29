@@ -22,7 +22,7 @@ export default function LoginPage() {
   const isAuthenticated = useAuthStore((s) => !!s.accessToken);
 
   if (isAuthenticated) {
-    return <Navigate to="/" replace />;
+    return <Navigate to={redirectTo} replace />;
   }
   const setAuth = useAuthStore((s) => s.setAuth);
   const queryClient = useQueryClient();
