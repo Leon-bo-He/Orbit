@@ -32,25 +32,26 @@ function makeMdComponents(
     ul: ({ children }) => <ul className="text-sm text-gray-700 list-disc pl-5 mb-2 space-y-1">{children}</ul>,
     li: ({ children }) => {
       const text = childrenToText(children).trim();
-      // Split on first " — " or ": " to separate title from description
       const dashIdx = text.indexOf(' — ');
       const colonIdx = text.indexOf(': ');
       const splitAt = dashIdx !== -1 ? dashIdx : colonIdx !== -1 ? colonIdx : -1;
-      const title = splitAt !== -1 ? text.slice(0, splitAt).replace(/^\*+|\*+$/g, '').trim() : text.slice(0, 100);
+      const title = splitAt !== -1 ? text.slice(0, splitAt).replace(/^\*+|\*+$/g, '').trim() : text.slice(0, 120);
       const note = splitAt !== -1 ? text.slice(splitAt + (dashIdx !== -1 ? 3 : 2)).trim() : '';
       return (
-        <li className="leading-snug flex items-start gap-1.5 group">
-          <span className="flex-1 min-w-0">{children}</span>
-          <button
-            onClick={() => onAddIdea(title, note)}
-            title="Add to Ideas"
-            className="opacity-0 group-hover:opacity-100 flex-shrink-0 mt-0.5 inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-700 hover:bg-indigo-200 transition-all"
-          >
-            <svg className="w-2.5 h-2.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-              <path d="M8 3v10M3 8h10"/>
-            </svg>
-            Idea
-          </button>
+        <li className="leading-snug">
+          <div className="flex items-start gap-2">
+            <div className="flex-1 min-w-0">{children}</div>
+            <button
+              onClick={() => onAddIdea(title, note)}
+              title="Add to Ideas"
+              className="flex-shrink-0 mt-0.5 inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded border border-indigo-200 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors"
+            >
+              <svg className="w-2.5 h-2.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <path d="M8 3v10M3 8h10"/>
+              </svg>
+              Idea
+            </button>
+          </div>
         </li>
       );
     },
