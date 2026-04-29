@@ -78,7 +78,8 @@
     "translate_error": "翻訳に失敗しました",
     "report_daily": "日次",
     "report_weekly": "週次",
-    "report_biweekly": "隔週"
+    "report_biweekly": "隔週",
+    "topic_discover": "AIトピック発見"
   },
   "report": {
     "title_suffix": "レポート",
@@ -91,5 +92,17 @@
     "cached": "キャッシュ",
     "fresh": "生成済み",
     "all_sources": "全ソース"
+  },
+  "topic_discover": {
+    "title": "AIトピック発見",
+    "sources": "RSSソース",
+    "select_all": "全選択",
+    "time_period": "期間",
+    "additional_req": "追加要件",
+    "additional_req_placeholder": "例：AI動向に注目…",
+    "sources_selected": "ソース選択済み",
+    "discover_btn": "トピックを発見",
+    "discovering": "トピックを探しています…",
+    "back": "戻る"
   }
 }

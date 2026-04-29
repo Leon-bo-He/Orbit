@@ -198,6 +198,57 @@ ${numbered}`;
     }
   }
 
+  async discoverTopics(
+    userId: string,
+    feeds: { url: string; name: string }[],
+    reportType: ReportType,
+    additionalRequirements: string,
+    locale = 'en-US',
+  ): Promise<string> {
+    if (feeds.length === 0) throw new ValidationError('Select at least one RSS source.');
+    const config = await this.aiConfigRepo.findByUser(userId);
+    if (!config) throw new ValidationError('AI not configured. Please add your AI settings first.');
+
+    const cutoff = timeCutoff(reportType);
+    const language = LOCALE_LANGUAGE[locale] ?? 'English';
+
+    // Gather articles from all selected feeds
+    const sections: string[] = [];
+    for (const feed of feeds) {
+      const articles = await this.rssRepo.findArticlesByDateRange(feed.url, cutoff);
+      if (articles.length === 0) continue;
+      const lines = articles
+        .slice(0, 40)
+        .map((a, i) => `${i + 1}. ${a.title}${a.pubDate ? ` (${a.pubDate})` : ''}${a.link ? ` — ${a.link}` : ''}`);
+      sections.push(`**${feed.name}**\n${lines.join('\n')}`);
+    }
+
+    if (sections.length === 0) {
+      throw new ValidationError(`No articles found across the selected sources in the past ${PERIOD_LABELS[reportType]}.`);
+    }
+
+    const prompt = `You are a content strategist and trend analyst. Based on the following RSS articles from the past ${PERIOD_LABELS[reportType]}, identify the most interesting and noteworthy topics.
+
+${sections.join('\n\n')}
+
+Respond in ${language} with the following sections:
+
+## 🔥 Trending Topics
+List 5–10 of the most discussed or significant topics. For each, write 1–2 sentences explaining why it matters, and cite relevant articles as markdown links.
+
+## 🌱 Emerging Themes
+Identify 2–3 patterns or themes developing across multiple sources. Cite supporting articles.
+
+## 💎 Hidden Gems
+2–3 underreported but interesting stories worth following, with source links.
+
+${additionalRequirements ? `\nAdditional requirements from the user:\n${additionalRequirements}` : ''}
+
+Be specific, insightful, and cite sources inline as [Title](url).`;
+
+    return this.callAiApi(config, prompt);
+  }
+
   async getReport(
     userId: string,
     feedUrl: string,

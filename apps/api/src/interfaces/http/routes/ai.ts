@@ -59,6 +59,30 @@ export function aiRoutes(app: FastifyInstance, svc: AiService, userSvc: UserServ
     return reply.send({ translations });
   });
 
+  app.post('/api/ai-topic-discover', { onRequest: [app.authenticate] }, async (req, reply) => {
+    const { sub } = req.user as { sub: string };
+    const { feeds, reportType, additionalRequirements } = req.body as {
+      feeds?: { url: string; name: string }[];
+      reportType?: string;
+      additionalRequirements?: string;
+    };
+    if (!Array.isArray(feeds) || feeds.length === 0) {
+      return reply.code(400).send({ error: 'feeds must be a non-empty array' });
+    }
+    if (!VALID_TYPES.has(reportType as ReportType)) {
+      return reply.code(400).send({ error: 'reportType must be daily, weekly, or biweekly' });
+    }
+    const user = await userSvc.findById(sub);
+    const content = await svc.discoverTopics(
+      sub,
+      feeds,
+      reportType as ReportType,
+      additionalRequirements?.trim() ?? '',
+      user?.locale,
+    );
+    return reply.send({ content });
+  });
+
   app.post('/api/rss-reports', { onRequest: [app.authenticate] }, async (req, reply) => {
     const { sub } = req.user as { sub: string };
     const { feedUrl, feedName, reportType, force } = req.body as {

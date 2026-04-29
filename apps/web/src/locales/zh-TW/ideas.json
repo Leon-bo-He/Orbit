@@ -78,7 +78,8 @@
     "translate_error": "翻譯失敗",
     "report_daily": "日報",
     "report_weekly": "週報",
-    "report_biweekly": "雙週報"
+    "report_biweekly": "雙週報",
+    "topic_discover": "AI 話題探索"
   },
   "report": {
     "title_suffix": "報告",
@@ -91,5 +92,17 @@
     "cached": "快取",
     "fresh": "剛生成",
     "all_sources": "所有來源"
+  },
+  "topic_discover": {
+    "title": "AI 話題探索",
+    "sources": "RSS 來源",
+    "select_all": "全選",
+    "time_period": "時間範圍",
+    "additional_req": "額外需求",
+    "additional_req_placeholder": "例如：關注AI動態、突出新創消息…",
+    "sources_selected": "個來源已選",
+    "discover_btn": "開始探索",
+    "discovering": "正在探索有趣話題…",
+    "back": "返回"
   }
 }

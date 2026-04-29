@@ -78,7 +78,8 @@
     "translate_error": "번역 실패",
     "report_daily": "일간",
     "report_weekly": "주간",
-    "report_biweekly": "격주"
+    "report_biweekly": "격주",
+    "topic_discover": "AI 토픽 발견"
   },
   "report": {
     "title_suffix": "리포트",
@@ -91,5 +92,17 @@
     "cached": "캐시됨",
     "fresh": "방금 생성됨",
     "all_sources": "모든 소스"
+  },
+  "topic_discover": {
+    "title": "AI 토픽 발견",
+    "sources": "RSS 소스",
+    "select_all": "전체 선택",
+    "time_period": "기간",
+    "additional_req": "추가 요건",
+    "additional_req_placeholder": "예: AI 동향 집중…",
+    "sources_selected": "개 소스 선택됨",
+    "discover_btn": "토픽 발견",
+    "discovering": "토픽을 찾는 중…",
+    "back": "돌아가기"
   }
 }

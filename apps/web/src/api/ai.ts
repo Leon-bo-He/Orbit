@@ -102,6 +102,17 @@ export function useGetReport(feedUrl: string, feedName: string, reportType: 'dai
   return { query, forceRefresh, isRefreshing: polling || forceRefresh.isPending };
 }
 
+export function useDiscoverTopics() {
+  return useMutation<{ content: string }, Error, {
+    feeds: { url: string; name: string }[];
+    reportType: 'daily' | 'weekly' | 'biweekly';
+    additionalRequirements?: string;
+  }>({
+    mutationFn: (body) =>
+      apiFetch<{ content: string }>('/api/ai-topic-discover', { method: 'POST', body: JSON.stringify(body) }),
+  });
+}
+
 export function useGenerateReport() {
   return useMutation<RssReport, Error, {
     feedUrl: string;

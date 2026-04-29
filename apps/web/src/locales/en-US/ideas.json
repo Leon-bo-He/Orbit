@@ -78,7 +78,20 @@
     "translate_error": "Translation failed",
     "report_daily": "Daily",
     "report_weekly": "Weekly",
-    "report_biweekly": "Biweekly"
+    "report_biweekly": "Biweekly",
+    "topic_discover": "AI Topic Discover"
+  },
+  "topic_discover": {
+    "title": "AI Topic Discovery",
+    "sources": "RSS Sources",
+    "select_all": "Select All",
+    "time_period": "Time Period",
+    "additional_req": "Additional Requirements",
+    "additional_req_placeholder": "e.g. Focus on AI developments, highlight startup news, ignore politics…",
+    "sources_selected": "source(s) selected",
+    "discover_btn": "Discover Topics",
+    "discovering": "Discovering interesting topics…",
+    "back": "Back to settings"
   },
   "report": {
     "title_suffix": "Report",

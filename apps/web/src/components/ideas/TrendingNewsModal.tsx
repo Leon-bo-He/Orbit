@@ -10,6 +10,7 @@ import { useTranslateTitles, useTranslateText } from '../../api/ai.js';
 import { apiFetch } from '../../api/client.js';
 import type { RssReport } from '../../api/ai.js';
 import { RssReportModal } from './RssReportModal.js';
+import { TopicDiscoverModal } from './TopicDiscoverModal.js';
 
 const LOCALE_LANGUAGE: Record<string, string> = {
   'zh-CN': 'Simplified Chinese',
@@ -397,6 +398,7 @@ export function TrendingNewsModal({ onClose }: { onClose: () => void }) {
   const [showTranslations, setShowTranslations] = useState(false);
   const [translateError, setTranslateError] = useState<string | null>(null);
   const [allReportType, setAllReportType] = useState<ReportType | null>(null);
+  const [showTopicDiscover, setShowTopicDiscover] = useState(false);
 
   // Pre-warm the report cache for every source × report type so clicking a
   // button shows data instantly with no loading flash.
@@ -534,17 +536,30 @@ export function TrendingNewsModal({ onClose }: { onClose: () => void }) {
           {sources.length > 0 && (
             <div className="flex flex-col gap-4">
               {/* All-sources report strip */}
-              <div className="flex items-center justify-start gap-2">
-                <span className="text-xs text-gray-400">{t('trending_news.all_sources_report')}</span>
-                {(['daily', 'weekly', 'biweekly'] as const).map((type) => (
-                  <button
-                    key={type}
-                    onClick={() => setAllReportType(type)}
-                    className="text-xs px-2.5 py-1 rounded-md border border-indigo-200 text-indigo-600 hover:bg-indigo-50 transition-colors"
-                  >
-                    {t(`trending_news.report_${type}`)}
-                  </button>
-                ))}
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-gray-400">{t('trending_news.all_sources_report')}</span>
+                  {(['daily', 'weekly', 'biweekly'] as const).map((type) => (
+                    <button
+                      key={type}
+                      onClick={() => setAllReportType(type)}
+                      className="text-xs px-2.5 py-1 rounded-md border border-indigo-200 text-indigo-600 hover:bg-indigo-50 transition-colors"
+                    >
+                      {t(`trending_news.report_${type}`)}
+                    </button>
+                  ))}
+                </div>
+                <button
+                  onClick={() => setShowTopicDiscover(true)}
+                  className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-md border border-amber-200 text-amber-700 bg-amber-50 hover:bg-amber-100 transition-colors flex-shrink-0"
+                >
+                  <svg className="w-3 h-3" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+                    <circle cx="10" cy="10" r="7"/>
+                    <path d="M10 6v4l2.5 2.5"/>
+                    <path d="M7 3.5L10 2l3 1.5"/>
+                  </svg>
+                  {t('trending_news.topic_discover')}
+                </button>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -578,6 +593,13 @@ export function TrendingNewsModal({ onClose }: { onClose: () => void }) {
             sources={sources}
             reportType={allReportType}
             onClose={() => setAllReportType(null)}
+          />
+        )}
+
+        {showTopicDiscover && (
+          <TopicDiscoverModal
+            sources={sources}
+            onClose={() => setShowTopicDiscover(false)}
           />
         )}
       </div>

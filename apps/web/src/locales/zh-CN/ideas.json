@@ -78,7 +78,8 @@
     "translate_error": "翻译失败",
     "report_daily": "日报",
     "report_weekly": "周报",
-    "report_biweekly": "双周报"
+    "report_biweekly": "双周报",
+    "topic_discover": "AI 话题发现"
   },
   "report": {
     "title_suffix": "报告",
@@ -91,5 +92,17 @@
     "cached": "缓存",
     "fresh": "刚刚生成",
     "all_sources": "所有来源"
+  },
+  "topic_discover": {
+    "title": "AI 话题发现",
+    "sources": "RSS 来源",
+    "select_all": "全选",
+    "time_period": "时间范围",
+    "additional_req": "额外要求",
+    "additional_req_placeholder": "例如：关注AI动态、突出创业新闻…",
+    "sources_selected": "个来源已选",
+    "discover_btn": "开始发现",
+    "discovering": "正在发现有趣话题…",
+    "back": "返回"
   }
 }
