@@ -22,16 +22,20 @@ function childrenToText(children: React.ReactNode): string {
   return '';
 }
 
-/** Extract { text, href } link pairs from React children. */
-function childrenToLinks(children: React.ReactNode): { text: string; href: string }[] {
-  if (!children) return [];
-  if (Array.isArray(children)) return children.flatMap(childrenToLinks);
-  if (typeof children === 'object' && 'props' in (children as React.ReactElement)) {
-    const el = children as React.ReactElement<{ href?: string; children?: React.ReactNode }>;
-    if (el.type === 'a' && el.props.href) {
-      return [{ text: childrenToText(el.props.children), href: el.props.href }];
-    }
-    return childrenToLinks(el.props.children);
+/** Extract { text, href } link pairs from an mdast node tree (react-markdown v10 `node` prop). */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function nodeToLinks(node: any): { text: string; href: string }[] {
+  if (!node) return [];
+  if (node.type === 'link' && node.url) {
+    const text = (node.children ?? [])
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .map((c: any) => c.value ?? nodeToLinks(c).map((l) => l.text).join(''))
+      .join('');
+    return [{ text, href: node.url }];
+  }
+  if (Array.isArray(node.children)) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return node.children.flatMap((c: any) => nodeToLinks(c));
   }
   return [];
 }
@@ -50,10 +54,11 @@ function makeMdComponents(
   return {
     h2: ({ children }) => { lastLiTitle = ''; return <h2 className="text-sm font-semibold text-gray-900 mt-4 mb-1 first:mt-0">{children}</h2>; },
     h3: ({ children }) => { lastLiTitle = ''; return <h3 className="text-sm font-semibold text-gray-800 mt-3 mb-0.5">{children}</h3>; },
-    p: ({ children }) => {
+    p: ({ children, node }) => {
       const text = childrenToText(children).trim();
       if (text.length < 20) return <p className="text-sm text-gray-700 leading-relaxed mb-2 last:mb-0">{children}</p>;
-      const links = childrenToLinks(children);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const links = nodeToLinks(node as any);
       const title = lastLiTitle || text.split(/[。！？.!?]/)[0].trim().slice(0, 120);
       const note = buildNote(text, links);
       return (
@@ -73,9 +78,10 @@ function makeMdComponents(
       );
     },
     ul: ({ children }) => <ul className="text-sm text-gray-700 list-disc pl-5 mb-2 space-y-1">{children}</ul>,
-    li: ({ children }) => {
+    li: ({ children, node }) => {
       const text = childrenToText(children).trim();
-      const links = childrenToLinks(children);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const links = nodeToLinks(node as any);
       const title = text.replace(/^\*+|\*+$/g, '').split('\n')[0].trim().slice(0, 150);
       const note = buildNote('', links);
       lastLiTitle = title;
