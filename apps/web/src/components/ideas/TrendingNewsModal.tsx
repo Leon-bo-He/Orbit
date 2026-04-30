@@ -72,6 +72,9 @@ function SourceCard({ source }: SourceCardProps) {
     startIndex + (measured ? fittingCount : RENDER_CAP),
   );
 
+  // Reset measurement whenever data changes so date-line heights are included
+  useLayoutEffect(() => { setMeasured(false); }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
+
   useLayoutEffect(() => {
     if (measured) return;
     const area = articleAreaRef.current;
