@@ -100,6 +100,7 @@
     "type_biweekly": "Biweekly",
     "generating": "Generating report…",
     "generate_btn": "Generate {{type}} Report",
+    "no_report_hint": "No report found. Use ↻ Refresh (top right) to generate all, or click the source's report button to generate just this one.",
     "generate_prompt": "No {{type}} report yet for {{source}}. Click below to generate one.",
     "all_generate_prompt": "Generate {{type}} reports for all {{count}} sources.",
     "error": "Failed to generate report",

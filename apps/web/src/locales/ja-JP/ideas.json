@@ -88,6 +88,7 @@
     "type_biweekly": "隔週",
     "generating": "レポートを生成中…",
     "generate_btn": "{{type}}レポートを生成",
+    "no_report_hint": "レポートが見つかりません。右上の ↻ 更新 で全件生成するか、ソースのレポートボタンで個別に生成してください。",
     "generate_prompt": "{{source}}の{{type}}レポートはまだありません。下のボタンで生成してください。",
     "all_generate_prompt": "全{{count}}ソースの{{type}}レポートを生成します。",
     "error": "レポートの生成に失敗しました",

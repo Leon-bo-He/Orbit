@@ -229,6 +229,7 @@ type ReportType = 'daily' | 'weekly' | 'biweekly';
 
 interface SourceReport {
   loading: boolean;
+  checked: boolean;  // cache lookup completed (report may or may not exist)
   content: string | null;
   translatedContent: string | null;
   error: string | null;
@@ -247,25 +248,26 @@ function AllReportsModal({
   const { t } = useTranslation('ideas');
   const qc = useQueryClient();
   const showRssTranslate = useUiStore((s) => s.showRssTranslate);
-  const [started, setStarted] = useState(false);
+  const [started] = useState(true); // always show body immediately
   const [reports, setReports] = useState<Record<string, SourceReport>>(
-    () => Object.fromEntries(sources.map((s) => [s.id, { loading: false, content: null, translatedContent: null, error: null, generatedAt: null }])),
+    () => Object.fromEntries(sources.map((s) => [s.id, { loading: false, checked: false, content: null, translatedContent: null, error: null, generatedAt: null }])),
   );
 
-  // Silently pre-populate cached reports on open so generate button is hidden if reports exist
+  // Silently check for cached reports on open; mark checked regardless of result
   useLayoutEffect(() => {
-    const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
     sources.forEach((source) => {
       apiFetch<RssReport>(
         `/api/rss-reports?feedUrl=${encodeURIComponent(source.url)}&reportType=${reportType}`
       ).then((r) => {
-        setStarted(true);
         setReports((prev) => ({
           ...prev,
-          [source.id]: { loading: false, content: r.content, translatedContent: r.translatedContent ?? null, error: null, generatedAt: new Date(r.createdAt) },
+          [source.id]: { loading: false, checked: true, content: r.content, translatedContent: r.translatedContent ?? null, error: null, generatedAt: new Date(r.createdAt) },
         }));
         qc.setQueryData(['rss-report', source.url, reportType], r);
-      }).catch(() => { /* no cached report — keep idle */ });
+      }).catch(() => {
+        // No cached report — mark as checked so we can show the "no report" message
+        setReports((prev) => ({ ...prev, [source.id]: { ...prev[source.id]!, checked: true } }));
+      });
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -298,9 +300,8 @@ function AllReportsModal({
   }
 
   function loadAll(force: boolean) {
-    setStarted(true);
     setIsForcing(force);
-    setReports(Object.fromEntries(sources.map((s) => [s.id, { loading: true, content: null, translatedContent: null, error: null, generatedAt: null }])));
+    setReports(Object.fromEntries(sources.map((s) => [s.id, { loading: true, checked: false, content: null, translatedContent: null, error: null, generatedAt: null }])));
     setShowTranslations(false);
     sources.forEach((source) => {
       apiFetch<RssReport>('/api/rss-reports', {
@@ -309,14 +310,13 @@ function AllReportsModal({
       })
         .then((r) => {
           const storedTranslation = r.translatedContent && r.translationLocale === i18n.language ? r.translatedContent : null;
-          setReports((prev) => ({ ...prev, [source.id]: { loading: false, content: r.content, translatedContent: storedTranslation, error: null, generatedAt: new Date(r.createdAt) } }));
-          // Populate the single-source report cache so opening the individual modal is instant
+          setReports((prev) => ({ ...prev, [source.id]: { loading: false, checked: true, content: r.content, translatedContent: storedTranslation, error: null, generatedAt: new Date(r.createdAt) } }));
           qc.setQueryData(['rss-report', source.url, reportType], r);
         })
         .catch((err) =>
           setReports((prev) => ({
             ...prev,
-            [source.id]: { loading: false, content: null, translatedContent: null, error: err instanceof Error ? err.message : t('report.error'), generatedAt: null },
+            [source.id]: { loading: false, checked: true, content: null, translatedContent: null, error: err instanceof Error ? err.message : t('report.error'), generatedAt: null },
           })),
         );
     });
@@ -386,24 +386,7 @@ function AllReportsModal({
 
         {/* Body */}
         <div ref={bodyRef} className="flex-1 min-h-0 overflow-y-auto px-5 py-4 space-y-6">
-          {/* Idle state — not yet generated */}
-          {!started && (
-            <div className="flex flex-col items-center justify-center py-16 gap-4">
-              <p className="text-sm text-gray-500 text-center max-w-xs">
-                {t('report.all_generate_prompt', { type: typeLabel, count: sources.length })}
-              </p>
-              <button
-                onClick={() => loadAll(false)}
-                className="inline-flex items-center gap-2 text-sm px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors"
-              >
-                <svg className="w-4 h-4" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M10 2l1.5 3.5L15 7l-3.5 1.5L10 12l-1.5-3.5L5 7l3.5-1.5L10 2z"/>
-                  <path d="M16 12l.8 1.8 1.7.7-1.7.8L16 17l-.8-1.7-1.7-.8 1.7-.7L16 12z"/>
-                </svg>
-                {t('report.generate_btn', { type: typeLabel })}
-              </button>
-            </div>
-          )}
+
 
           {started && sources.map((source) => {
             const rep = reports[source.id];
@@ -447,6 +430,12 @@ function AllReportsModal({
                   <div className="flex items-center gap-2 py-4 text-gray-400">
                     <div className="w-4 h-4 border-2 border-indigo-200 border-t-indigo-500 rounded-full animate-spin flex-shrink-0"/>
                     {isForcing && <span className="text-xs">{t('report.generating')}</span>}
+                  </div>
+                )}
+                {/* No report found after cache check */}
+                {rep?.checked && !rep.loading && !rep.content && !rep.error && (
+                  <div className="rounded-lg bg-gray-50 border border-gray-200 px-4 py-3 text-xs text-gray-500 leading-relaxed">
+                    {t('report.no_report_hint')}
                   </div>
                 )}
                 {rep?.error && (
