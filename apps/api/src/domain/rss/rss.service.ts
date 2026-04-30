@@ -121,11 +121,13 @@ export class RssService {
     ]);
 
     return {
-      articles: rows.map((r) => ({
-        title: r.title,
-        link: r.link,
-        pubDate: r.pubDate || (r.pubDateTs?.toISOString() ?? ''),
-      })),
+      articles: rows.map((r) => {
+        // Normalise to ISO 8601 so all browsers can parse it.
+        // pub_date_ts is already a timestamp; fall back to parsing pub_date in Node.js.
+        const ts = r.pubDateTs
+          ?? (r.pubDate ? (() => { const d = new Date(r.pubDate); return isNaN(d.getTime()) ? null : d; })() : null);
+        return { title: r.title, link: r.link, pubDate: ts?.toISOString() ?? '' };
+      }),
       total,
       page: safePage,
       pages: Math.max(1, Math.ceil(total / safePageSize)),
