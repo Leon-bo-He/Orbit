@@ -6,7 +6,7 @@ import { useGenerateReport, useTranslateReport, useCheckCachedReport, type RssRe
 import { useUiStore } from '../../store/ui.store.js';
 import { useQueryClient } from '@tanstack/react-query';
 import type { RssSource } from '../../store/rss.store.js';
-import type { RssReport } from '../../api/ai.js';
+
 
 type ReportType = 'daily' | 'weekly' | 'biweekly';
 
