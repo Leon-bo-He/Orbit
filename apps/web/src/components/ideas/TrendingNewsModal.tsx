@@ -251,6 +251,24 @@ function AllReportsModal({
   const [reports, setReports] = useState<Record<string, SourceReport>>(
     () => Object.fromEntries(sources.map((s) => [s.id, { loading: false, content: null, translatedContent: null, error: null, generatedAt: null }])),
   );
+
+  // Silently pre-populate cached reports on open so generate button is hidden if reports exist
+  useLayoutEffect(() => {
+    const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    sources.forEach((source) => {
+      apiFetch<RssReport>(
+        `/api/rss-reports?feedUrl=${encodeURIComponent(source.url)}&reportType=${reportType}`
+      ).then((r) => {
+        setStarted(true);
+        setReports((prev) => ({
+          ...prev,
+          [source.id]: { loading: false, content: r.content, translatedContent: r.translatedContent ?? null, error: null, generatedAt: new Date(r.createdAt) },
+        }));
+        qc.setQueryData(['rss-report', source.url, reportType], r);
+      }).catch(() => { /* no cached report — keep idle */ });
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const [showTranslations, setShowTranslations] = useState(false);
   const translateMutation = useTranslateReport();
   const [isForcing, setIsForcing] = useState(false);

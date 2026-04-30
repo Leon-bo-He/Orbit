@@ -203,6 +203,22 @@ ${numbered}`;
     }
   }
 
+  async findCachedReport(
+    userId: string,
+    feedUrl: string,
+    reportType: ReportType,
+    since: Date,
+  ): Promise<{ content: string; cached: true; createdAt: string; translatedContent?: string; translationLocale?: string; reportId?: string } | null> {
+    const existing = await this.reportsRepo.findRecent(userId, feedUrl, reportType, since);
+    if (!existing) return null;
+    return {
+      content: existing.content, cached: true, createdAt: existing.createdAt.toISOString(),
+      translatedContent: existing.translatedContent ?? undefined,
+      translationLocale: existing.translationLocale ?? undefined,
+      reportId: existing.id,
+    };
+  }
+
   async getOrGenerateTranslation(
     userId: string,
     feedUrl: string,

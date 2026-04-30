@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
 import i18n from '../../i18n/index.js';
-import { useGenerateReport, useTranslateReport } from '../../api/ai.js';
+import { useGenerateReport, useTranslateReport, useCheckCachedReport } from '../../api/ai.js';
 import { useUiStore } from '../../store/ui.store.js';
 import type { RssSource } from '../../store/rss.store.js';
 import type { RssReport } from '../../api/ai.js';
@@ -47,18 +47,23 @@ export function RssReportModal({ source, reportType, onClose }: Props) {
   const showRssTranslate = useUiStore((s) => s.showRssTranslate);
   const generate = useGenerateReport();
   const translateMutation = useTranslateReport();
+  const cachedQuery = useCheckCachedReport(source.url, reportType);
 
   const [report, setReport] = useState<RssReport | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [translatedContent, setTranslatedContent] = useState<string | null>(null);
   const [showTranslation, setShowTranslation] = useState(false);
 
+  // Use cached report from backend if available
+  const activeReport = report ?? cachedQuery.data ?? null;
+
   // Pre-populate stored translation when report loads
   useEffect(() => {
-    if (report?.translatedContent && report.translationLocale === i18n.language) {
-      setTranslatedContent(report.translatedContent);
+    const r = activeReport;
+    if (r?.translatedContent && r.translationLocale === i18n.language) {
+      setTranslatedContent(r.translatedContent);
     }
-  }, [report?.translatedContent, report?.translationLocale]);
+  }, [activeReport?.translatedContent, activeReport?.translationLocale]);
 
   async function handleGenerate(force = false) {
     setError(null);
@@ -86,9 +91,10 @@ export function RssReportModal({ source, reportType, onClose }: Props) {
   }
 
   const typeLabel = t(`report.type_${reportType}`);
-  const displayContent = showTranslation ? translatedContent : report?.content;
-  const generatedAt = report ? new Date(report.createdAt) : null;
+  const displayContent = showTranslation ? translatedContent : activeReport?.content;
+  const generatedAt = activeReport ? new Date(activeReport.createdAt) : null;
   const isGenerating = generate.isPending;
+  const isCheckingCache = cachedQuery.isLoading;
 
   return (
     <div className="fixed inset-0 z-[70] bg-black/50 flex items-center justify-center p-4" onClick={onClose}>
@@ -101,13 +107,13 @@ export function RssReportModal({ source, reportType, onClose }: Props) {
             </h2>
             {generatedAt && (
               <p className="text-xs text-gray-400 mt-0.5">
-                {report?.cached ? t('report.cached') : t('report.fresh')} ·{' '}
+                {activeReport?.cached ? t('report.cached') : t('report.fresh')} ·{' '}
                 {generatedAt.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
               </p>
             )}
           </div>
           <div className="flex items-center gap-2 ml-3 flex-shrink-0">
-            {showRssTranslate && report && (
+            {showRssTranslate && activeReport && (
               <button
                 onClick={() => void handleTranslate()}
                 disabled={translateMutation.isPending}
@@ -125,7 +131,7 @@ export function RssReportModal({ source, reportType, onClose }: Props) {
                 {translateMutation.isPending ? t('trending_news.translating') : showTranslation ? t('trending_news.show_original') : t('trending_news.translate')}
               </button>
             )}
-            {report && (
+            {activeReport && (
               <button
                 onClick={() => void handleGenerate(true)}
                 disabled={isGenerating}
@@ -147,8 +153,14 @@ export function RssReportModal({ source, reportType, onClose }: Props) {
 
         {/* Body */}
         <div className="flex-1 min-h-0 overflow-y-auto px-5 py-4">
-          {/* Initial state — no report yet */}
-          {!report && !isGenerating && !error && (
+          {/* Cache check spinner */}
+          {isCheckingCache && (
+            <div className="h-full flex items-center justify-center py-12">
+              <div className="w-5 h-5 border-2 border-indigo-200 border-t-indigo-500 rounded-full animate-spin"/>
+            </div>
+          )}
+          {/* Initial state — no cached report found */}
+          {!activeReport && !isGenerating && !error && !isCheckingCache && (
             <div className="h-full flex flex-col items-center justify-center gap-4 py-12">
               <p className="text-sm text-gray-500 text-center max-w-xs">
                 {t('report.generate_prompt', { type: typeLabel, source: source.name })}

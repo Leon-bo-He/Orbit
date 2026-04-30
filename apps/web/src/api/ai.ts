@@ -112,6 +112,23 @@ export function useGetReport(feedUrl: string, feedName: string, reportType: 'dai
   return { query, forceRefresh, isRefreshing: polling || forceRefresh.isPending };
 }
 
+export function useCheckCachedReport(feedUrl: string, reportType: string) {
+  return useQuery<RssReport | null>({
+    queryKey: ['rss-report-check', feedUrl, reportType],
+    queryFn: async () => {
+      try {
+        return await apiFetch<RssReport>(
+          `/api/rss-reports?feedUrl=${encodeURIComponent(feedUrl)}&reportType=${reportType}`
+        );
+      } catch {
+        return null; // 404 = no cached report
+      }
+    },
+    staleTime: 23 * 60 * 60 * 1000,
+    retry: false,
+  });
+}
+
 export function useDiscoverTopics() {
   return useMutation<{ content: string }, Error, {
     feeds: { url: string; name: string }[];

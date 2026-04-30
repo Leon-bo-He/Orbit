@@ -83,6 +83,19 @@ export function aiRoutes(app: FastifyInstance, svc: AiService, userSvc: UserServ
     return reply.send({ content });
   });
 
+  // Read cached report without generating — returns 404 if none exists within 24h
+  app.get('/api/rss-reports', { onRequest: [app.authenticate] }, async (req, reply) => {
+    const { sub } = req.user as { sub: string };
+    const { feedUrl, reportType } = req.query as { feedUrl?: string; reportType?: string };
+    if (!feedUrl || !reportType || !VALID_TYPES.has(reportType as ReportType)) {
+      return reply.code(400).send({ error: 'feedUrl and valid reportType are required' });
+    }
+    const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const existing = await svc.findCachedReport(sub, feedUrl, reportType as ReportType, since);
+    if (!existing) return reply.code(404).send({ error: 'No cached report found' });
+    return reply.send(existing);
+  });
+
   app.post('/api/rss-reports/translate', { onRequest: [app.authenticate] }, async (req, reply) => {
     const { sub } = req.user as { sub: string };
     const { feedUrl, reportType, targetLocale } = req.body as {
