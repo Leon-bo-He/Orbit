@@ -247,8 +247,9 @@ function AllReportsModal({
   const { t } = useTranslation('ideas');
   const qc = useQueryClient();
   const showRssTranslate = useUiStore((s) => s.showRssTranslate);
+  const [started, setStarted] = useState(false);
   const [reports, setReports] = useState<Record<string, SourceReport>>(
-    () => Object.fromEntries(sources.map((s) => [s.id, { loading: true, content: null, translatedContent: null, error: null, generatedAt: null }])),
+    () => Object.fromEntries(sources.map((s) => [s.id, { loading: false, content: null, translatedContent: null, error: null, generatedAt: null }])),
   );
   const [showTranslations, setShowTranslations] = useState(false);
   const translateMutation = useTranslateReport();
@@ -279,6 +280,7 @@ function AllReportsModal({
   }
 
   function loadAll(force: boolean) {
+    setStarted(true);
     setIsForcing(force);
     setReports(Object.fromEntries(sources.map((s) => [s.id, { loading: true, content: null, translatedContent: null, error: null, generatedAt: null }])));
     setShowTranslations(false);
@@ -302,9 +304,7 @@ function AllReportsModal({
     });
   }
 
-  useLayoutEffect(() => { loadAll(false); }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const isLoading = Object.values(reports).some((r) => r.loading);
+  const isLoading = started && Object.values(reports).some((r) => r.loading);
   const typeLabel = t(`report.type_${reportType}`);
   const bodyRef = useRef<HTMLDivElement>(null);
 
@@ -368,7 +368,26 @@ function AllReportsModal({
 
         {/* Body */}
         <div ref={bodyRef} className="flex-1 min-h-0 overflow-y-auto px-5 py-4 space-y-6">
-          {sources.map((source) => {
+          {/* Idle state — not yet generated */}
+          {!started && (
+            <div className="flex flex-col items-center justify-center py-16 gap-4">
+              <p className="text-sm text-gray-500 text-center max-w-xs">
+                {t('report.all_generate_prompt', { type: typeLabel, count: sources.length })}
+              </p>
+              <button
+                onClick={() => loadAll(false)}
+                className="inline-flex items-center gap-2 text-sm px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors"
+              >
+                <svg className="w-4 h-4" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M10 2l1.5 3.5L15 7l-3.5 1.5L10 12l-1.5-3.5L5 7l3.5-1.5L10 2z"/>
+                  <path d="M16 12l.8 1.8 1.7.7-1.7.8L16 17l-.8-1.7-1.7-.8 1.7-.7L16 12z"/>
+                </svg>
+                {t('report.generate_btn', { type: typeLabel })}
+              </button>
+            </div>
+          )}
+
+          {started && sources.map((source) => {
             const rep = reports[source.id];
             return (
               <div key={source.id} id={`allreport-${source.id}`}>
