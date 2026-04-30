@@ -108,7 +108,8 @@
     "discover_btn": "开始发现",
     "discovering": "正在发现有趣话题…",
     "back": "返回",
-    "include_reports": "包含 AI 报告",
-    "include_reports_desc": "将已生成的报告作为额外上下文加入。"
+    "report_checking": "检查中…",
+    "report_unavailable": "暂无报告",
+    "report_use": "将此报告作为上下文"
   }
 }

@@ -108,7 +108,8 @@
     "discover_btn": "トピックを発見",
     "discovering": "トピックを探しています…",
     "back": "戻る",
-    "include_reports": "AIレポートを含める",
-    "include_reports_desc": "生成済みレポートを追加コンテキストとして使用します。"
+    "report_checking": "確認中…",
+    "report_unavailable": "レポートなし",
+    "report_use": "このレポートをコンテキストに使用"
   }
 }

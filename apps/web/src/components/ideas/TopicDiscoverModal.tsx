@@ -122,13 +122,36 @@ export function TopicDiscoverModal({ sources, onClose }: Props) {
   // Source selection
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set(sources.map((s) => s.id)));
   const [reportType, setReportType] = useState<ReportType>('weekly');
-  const [includeReports, setIncludeReports] = useState(false);
   const [additionalReqs, setAdditionalReqs] = useState('');
+  // availability: 'checking' | 'available' | 'none' per source per type
+  const [reportAvail, setReportAvail] = useState<Record<string, Record<string, 'checking'|'available'|'none'>>>({});
+  // user's selected report per source (at most one type per source)
+  const [selectedReports, setSelectedReports] = useState<Record<string, string | null>>({});
   const [result, setResult] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [ideaPrefill, setIdeaPrefill] = useState<{ title: string; note: string } | null>(null);
 
   const mdComponents = makeMdComponents((title, note) => setIdeaPrefill({ title, note }));
+
+  // Check report availability for all sources × types on open
+  useEffect(() => {
+    const TYPES: ReportType[] = ['daily', 'weekly', 'biweekly'];
+    const init: Record<string, Record<string, 'checking'>> = {};
+    sources.forEach((s) => { init[s.id] = { daily: 'checking', weekly: 'checking', biweekly: 'checking' }; });
+    setReportAvail(init);
+    sources.forEach((source) => {
+      TYPES.forEach((type) => {
+        apiFetch<import('../../api/ai.js').RssReport>(
+          `/api/rss-reports?feedUrl=${encodeURIComponent(source.url)}&reportType=${type}`
+        ).then(() => {
+          setReportAvail((prev) => ({ ...prev, [source.id]: { ...prev[source.id], [type]: 'available' } }));
+        }).catch(() => {
+          setReportAvail((prev) => ({ ...prev, [source.id]: { ...prev[source.id], [type]: 'none' } }));
+        });
+      });
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Group sources by folder
   const folders = [...new Set(sources.map((s) => s.folder ?? ''))].sort((a, b) =>
@@ -167,7 +190,14 @@ export function TopicDiscoverModal({ sources, onClose }: Props) {
       .filter((s) => selectedIds.has(s.id))
       .map((s) => ({ url: s.url, name: s.name }));
     try {
-      const res = await discover.mutateAsync({ feeds, reportType, additionalRequirements: additionalReqs.trim() || undefined, includeReports });
+      const selReports = Object.entries(selectedReports)
+        .filter(([, type]) => type)
+        .map(([id, type]) => {
+          const src = sources.find((s) => s.id === id);
+          return src ? { feedUrl: src.url, reportType: type! } : null;
+        })
+        .filter(Boolean) as { feedUrl: string; reportType: string }[];
+      const res = await discover.mutateAsync({ feeds, reportType, additionalRequirements: additionalReqs.trim() || undefined, selectedReports: selReports });
       setResult(res.content);
     } catch (err) {
       setError(err instanceof Error ? err.message : t('report.error'));
@@ -229,20 +259,54 @@ export function TopicDiscoverModal({ sources, onClose }: Props) {
                             <span className="text-xs text-gray-500">📁 {folder}</span>
                           </label>
                         )}
-                        {inFolder.map((source) => (
-                          <label key={source.id} className={`flex items-center gap-2.5 px-3 py-1.5 cursor-pointer hover:bg-gray-50 transition-colors ${folder ? 'pl-8' : ''}`}>
-                            <input
-                              type="checkbox"
-                              checked={selectedIds.has(source.id)}
-                              onChange={() => toggleSource(source.id)}
-                              className="rounded text-indigo-600"
-                            />
-                            <span className="text-xs text-gray-700 truncate">{source.name}</span>
-                            {!folder && source.folder && (
-                              <span className="text-xs text-gray-400 bg-gray-100 px-1 rounded ml-auto flex-shrink-0">{source.folder}</span>
-                            )}
-                          </label>
-                        ))}
+                        {inFolder.map((source) => {
+                          const avail = reportAvail[source.id] ?? {};
+                          return (
+                            <div key={source.id} className={`flex items-center gap-2.5 px-3 py-1.5 hover:bg-gray-50 transition-colors ${folder ? 'pl-8' : ''}`}>
+                              <label className="flex items-center gap-2 min-w-0 flex-1 cursor-pointer">
+                                <input
+                                  type="checkbox"
+                                  checked={selectedIds.has(source.id)}
+                                  onChange={() => toggleSource(source.id)}
+                                  className="rounded text-indigo-600 flex-shrink-0"
+                                />
+                                <span className="text-xs text-gray-700 truncate">{source.name}</span>
+                                {!folder && source.folder && (
+                                  <span className="text-xs text-gray-400 bg-gray-100 px-1 rounded ml-1 flex-shrink-0">{source.folder}</span>
+                                )}
+                              </label>
+                              {/* Per-source report type buttons */}
+                              <div className="flex gap-1 flex-shrink-0">
+                                {(['daily', 'weekly', 'biweekly'] as const).map((type) => {
+                                  const state = avail[type] ?? 'checking';
+                                  const isSelected = selectedReports[source.id] === type;
+                                  const isAvailable = state === 'available';
+                                  const isChecking = state === 'checking';
+                                  return (
+                                    <button
+                                      key={type}
+                                      type="button"
+                                      disabled={!isAvailable}
+                                      title={isChecking ? t('topic_discover.report_checking') : !isAvailable ? t('topic_discover.report_unavailable') : t('topic_discover.report_use')}
+                                      onClick={() => setSelectedReports((prev) => ({ ...prev, [source.id]: prev[source.id] === type ? null : type }))}
+                                      className={`text-[9px] px-1.5 py-0.5 rounded border transition-colors disabled:cursor-not-allowed ${
+                                        isSelected
+                                          ? 'border-indigo-400 bg-indigo-600 text-white'
+                                          : isAvailable
+                                          ? 'border-indigo-200 text-indigo-600 hover:bg-indigo-50'
+                                          : isChecking
+                                          ? 'border-gray-200 text-gray-300'
+                                          : 'border-gray-200 text-gray-300 line-through'
+                                      }`}
+                                    >
+                                      {isChecking ? '···' : t(`trending_news.report_${type}`).slice(0, 1).toUpperCase()}
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
                     );
                   })}
@@ -271,23 +335,6 @@ export function TopicDiscoverModal({ sources, onClose }: Props) {
 
               {/* Additional requirements */}
               <div>
-                {/* Include reports toggle */}
-                <div className="flex items-center justify-between py-1">
-                  <div>
-                    <p className="text-xs font-medium text-gray-700">{t('topic_discover.include_reports')}</p>
-                    <p className="text-xs text-gray-400 mt-0.5">{t('topic_discover.include_reports_desc')}</p>
-                  </div>
-                  <button
-                    type="button"
-                    role="switch"
-                    aria-checked={includeReports}
-                    onClick={() => setIncludeReports((v) => !v)}
-                    className={`relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors ${includeReports ? 'bg-indigo-600' : 'bg-gray-200'}`}
-                  >
-                    <span className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition-transform ${includeReports ? 'translate-x-4' : 'translate-x-0'}`}/>
-                  </button>
-                </div>
-
                 <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">{t('topic_discover.additional_req')}</p>
                 <textarea
                   value={additionalReqs}

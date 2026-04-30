@@ -61,11 +61,11 @@ export function aiRoutes(app: FastifyInstance, svc: AiService, userSvc: UserServ
 
   app.post('/api/ai-topic-discover', { onRequest: [app.authenticate] }, async (req, reply) => {
     const { sub } = req.user as { sub: string };
-    const { feeds, reportType, additionalRequirements, includeReports } = req.body as {
+    const { feeds, reportType, additionalRequirements, selectedReports } = req.body as {
       feeds?: { url: string; name: string }[];
       reportType?: string;
       additionalRequirements?: string;
-      includeReports?: boolean;
+      selectedReports?: { feedUrl: string; reportType: string }[];
     };
     if (!Array.isArray(feeds) || feeds.length === 0) {
       return reply.code(400).send({ error: 'feeds must be a non-empty array' });
@@ -80,7 +80,7 @@ export function aiRoutes(app: FastifyInstance, svc: AiService, userSvc: UserServ
       reportType as ReportType,
       additionalRequirements?.trim() ?? '',
       user?.locale,
-      includeReports ?? false,
+      selectedReports ?? [],
     );
     return reply.send({ content });
   });

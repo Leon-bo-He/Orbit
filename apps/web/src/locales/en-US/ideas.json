@@ -92,8 +92,9 @@
     "discover_btn": "Discover Topics",
     "discovering": "Discovering interesting topics…",
     "back": "Back to settings",
-    "include_reports": "Include AI Reports",
-    "include_reports_desc": "Add previously generated reports as additional context."
+    "report_checking": "Checking…",
+    "report_unavailable": "No report available",
+    "report_use": "Use this report as context"
   },
   "report": {
     "title_suffix": "Report",

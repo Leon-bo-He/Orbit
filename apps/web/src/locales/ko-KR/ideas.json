@@ -108,7 +108,8 @@
     "discover_btn": "토픽 발견",
     "discovering": "토픽을 찾는 중…",
     "back": "돌아가기",
-    "include_reports": "AI 리포트 포함",
-    "include_reports_desc": "생성된 리포트를 추가 컨텍스트로 포함합니다."
+    "report_checking": "확인 중…",
+    "report_unavailable": "리포트 없음",
+    "report_use": "이 리포트를 컨텍스트로 사용"
   }
 }
