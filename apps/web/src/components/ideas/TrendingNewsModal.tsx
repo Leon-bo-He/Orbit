@@ -35,12 +35,14 @@ const RENDER_CAP = 20;
 
 interface SourceCardProps {
   source: RssSource;
-  translations: Record<string, string>;
-  showTranslations: boolean;
 }
 
-function SourceCard({ source, translations, showTranslations }: SourceCardProps) {
+function SourceCard({ source }: SourceCardProps) {
   const { t } = useTranslation('ideas');
+  const showRssTranslate = useUiStore((s) => s.showRssTranslate);
+  const translateMutation = useTranslateTitles();
+  const [cardTranslations, setCardTranslations] = useState<Record<string, string>>({});
+  const [showTranslations, setShowTranslations] = useState(false);
   const [reportType, setReportType] = useState<'daily' | 'weekly' | 'biweekly' | null>(null);
   const [startIndex, setStartIndex] = useState(0);
   const [prevIndices, setPrevIndices] = useState<number[]>([]);
@@ -50,6 +52,20 @@ function SourceCard({ source, translations, showTranslations }: SourceCardProps)
   const listRef = useRef<HTMLUListElement>(null);
 
   const { data, isLoading, isError, isFetching } = useRssFeed(source.url, 1, 100);
+
+  async function handleTranslateCard() {
+    if (showTranslations) { setShowTranslations(false); return; }
+    const titles = data?.articles?.map((a) => a.title) ?? [];
+    if (titles.length === 0) return;
+    const targetLanguage = LOCALE_LANGUAGE[i18n.language] ?? i18n.language;
+    try {
+      const result = await translateMutation.mutateAsync({ titles, targetLanguage });
+      const map: Record<string, string> = {};
+      titles.forEach((title, i) => { map[title] = result.translations[i] ?? title; });
+      setCardTranslations(map);
+      setShowTranslations(true);
+    } catch { /* silently show original */ }
+  }
   const allArticles = data?.articles ?? [];
   const pageArticles = allArticles.slice(
     startIndex,
@@ -108,7 +124,27 @@ function SourceCard({ source, translations, showTranslations }: SourceCardProps)
         {source.folder && (
           <span className="text-xs text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded truncate max-w-[80px]">{source.folder}</span>
         )}
-        {isFetching && <div className="w-3 h-3 border-2 border-indigo-200 border-t-indigo-500 rounded-full animate-spin ml-auto flex-shrink-0"/>}
+        <div className="ml-auto flex items-center gap-1.5 flex-shrink-0">
+          {isFetching && <div className="w-3 h-3 border-2 border-indigo-200 border-t-indigo-500 rounded-full animate-spin"/>}
+          {showRssTranslate && (
+            <button
+              onClick={() => void handleTranslateCard()}
+              disabled={translateMutation.isPending}
+              title={showTranslations ? t('trending_news.show_original') : t('trending_news.translate')}
+              className={`inline-flex items-center text-[10px] px-1.5 py-0.5 rounded border transition-colors disabled:opacity-50 ${
+                showTranslations
+                  ? 'border-indigo-300 bg-indigo-50 text-indigo-600'
+                  : 'border-gray-200 text-gray-400 hover:text-indigo-500 hover:border-indigo-200'
+              }`}
+            >
+              <svg className="w-2.5 h-2.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+                <path d="M3 5h8M7 3v2M5 9c0 2 1.5 3.5 3 4M8 9c0 2-1.5 3.5-3 4"/>
+                <path d="M11 14l2-5 2 5M12 12.5h2"/>
+                <path d="M17 5l-4 4"/>
+              </svg>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Report buttons */}
@@ -140,7 +176,7 @@ function SourceCard({ source, translations, showTranslations }: SourceCardProps)
         {pageArticles.length > 0 && (
           <ul ref={listRef} className="space-y-2">
             {pageArticles.map((article, i) => {
-              const title = (showTranslations && translations[article.title]) || article.title;
+              const title = (showTranslations && cardTranslations[article.title]) || article.title;
               return (
                 <li key={startIndex + i}>
                   <a
@@ -212,6 +248,21 @@ function AllReportsModal({
   const translateMutation = useTranslateText();
   const [isTranslating, setIsTranslating] = useState(false);
   const [isForcing, setIsForcing] = useState(false);
+
+  async function handleTranslateSource(sourceId: string, content: string) {
+    const current = reports[sourceId];
+    // Toggle: if already translated, show original
+    if (current?.translatedContent) {
+      setShowTranslations((v) => !v);
+      return;
+    }
+    const targetLanguage = LOCALE_LANGUAGE[i18n.language] ?? i18n.language;
+    try {
+      const result = await translateMutation.mutateAsync({ text: content, targetLanguage });
+      setReports((prev) => ({ ...prev, [sourceId]: { ...prev[sourceId]!, translatedContent: result.translated } }));
+      setShowTranslations(true);
+    } catch { /* show original on failure */ }
+  }
 
   function loadAll(force: boolean) {
     setIsForcing(force);
@@ -286,26 +337,6 @@ function AllReportsModal({
             {typeLabel} {t('report.title_suffix')} — {t('report.all_sources')}
           </h2>
           <div className="flex items-center gap-2">
-            {showRssTranslate && <button
-              onClick={() => void handleTranslateAll()}
-              disabled={isLoading || isTranslating}
-              className={`inline-flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-md border transition-colors disabled:opacity-50 ${
-                showTranslations
-                  ? 'border-indigo-300 bg-indigo-50 text-indigo-700 hover:bg-indigo-100'
-                  : 'border-gray-200 text-gray-600 hover:bg-gray-50'
-              }`}
-            >
-              <svg className="w-3 h-3" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
-                <path d="M3 5h8M7 3v2M5 9c0 2 1.5 3.5 3 4M8 9c0 2-1.5 3.5-3 4"/>
-                <path d="M11 14l2-5 2 5M12 12.5h2"/>
-                <path d="M17 5l-4 4"/>
-              </svg>
-              {isTranslating
-                ? t('trending_news.translating')
-                : showTranslations
-                ? t('trending_news.show_original')
-                : t('trending_news.translate')}
-            </button>}
             <button
               onClick={() => loadAll(true)}
               disabled={isLoading}
@@ -367,6 +398,24 @@ function AllReportsModal({
                       · {rep.generatedAt.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                     </span>
                   )}
+                  {showRssTranslate && rep?.content && (
+                    <button
+                      onClick={() => void handleTranslateSource(source.id, rep.content!)}
+                      disabled={translateMutation.isPending}
+                      title={showTranslations && reports[source.id]?.translatedContent ? t('trending_news.show_original') : t('trending_news.translate')}
+                      className={`ml-auto inline-flex items-center text-[10px] px-1.5 py-0.5 rounded border transition-colors disabled:opacity-50 ${
+                        showTranslations && rep?.translatedContent
+                          ? 'border-indigo-300 bg-indigo-50 text-indigo-600'
+                          : 'border-gray-200 text-gray-400 hover:text-indigo-500 hover:border-indigo-200'
+                      }`}
+                    >
+                      <svg className="w-2.5 h-2.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+                        <path d="M3 5h8M7 3v2M5 9c0 2 1.5 3.5 3 4M8 9c0 2-1.5 3.5-3 4"/>
+                        <path d="M11 14l2-5 2 5M12 12.5h2"/>
+                        <path d="M17 5l-4 4"/>
+                      </svg>
+                    </button>
+                  )}
                 </div>
 
                 {rep?.loading && (
@@ -425,11 +474,6 @@ export function TrendingNewsModal({ onClose }: { onClose: () => void }) {
   const openSettings = useUiStore((s) => s.openSettings);
   const showRssTranslate = useUiStore((s) => s.showRssTranslate);
   const qc = useQueryClient();
-  const translateMutation = useTranslateTitles();
-
-  const [translations, setTranslations] = useState<Record<string, string>>({});
-  const [showTranslations, setShowTranslations] = useState(false);
-  const [translateError, setTranslateError] = useState<string | null>(null);
   const [allReportType, setAllReportType] = useState<ReportType | null>(null);
   const [showTopicDiscover, setShowTopicDiscover] = useState(false);
 
@@ -459,38 +503,6 @@ export function TrendingNewsModal({ onClose }: { onClose: () => void }) {
     openSettings('data');
   }
 
-  async function handleTranslate() {
-    if (showTranslations) {
-      setShowTranslations(false);
-      return;
-    }
-
-    setTranslateError(null);
-    const targetLanguage = LOCALE_LANGUAGE[i18n.language] ?? i18n.language;
-
-    // Collect all unique titles from the React Query cache for every source
-    const uniqueTitles = [
-      ...new Set(
-        sources.flatMap((source) => {
-          const cached = qc.getQueryData<RssFeedPage>(['rss', source.url, 1, 100]);
-          return cached?.articles?.map((a) => a.title) ?? [];
-        }),
-      ),
-    ];
-
-    if (uniqueTitles.length === 0) return;
-
-    try {
-      const result = await translateMutation.mutateAsync({ titles: uniqueTitles, targetLanguage });
-      const map: Record<string, string> = {};
-      uniqueTitles.forEach((title, i) => { map[title] = result.translations[i] ?? title; });
-      setTranslations(map);
-      setShowTranslations(true);
-    } catch (err) {
-      setTranslateError(err instanceof Error ? err.message : t('trending_news.translate_error'));
-    }
-  }
-
   return (
     <div
       className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4"
@@ -510,31 +522,6 @@ export function TrendingNewsModal({ onClose }: { onClose: () => void }) {
             <h2 className="text-sm font-semibold text-gray-900">{t('trending_news.title')}</h2>
           </div>
           <div className="flex items-center gap-2">
-            {sources.length > 0 && showRssTranslate && (
-              <button
-                onClick={() => void handleTranslate()}
-                disabled={translateMutation.isPending}
-                className={`inline-flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-md border transition-colors disabled:opacity-50 ${
-                  showTranslations
-                    ? 'border-indigo-300 bg-indigo-50 text-indigo-700 hover:bg-indigo-100'
-                    : 'border-gray-200 text-gray-600 hover:bg-gray-50'
-                }`}
-              >
-                <svg className="w-3 h-3" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
-                  <path d="M3 5h8M7 3v2M5 9c0 2 1.5 3.5 3 4M8 9c0 2-1.5 3.5-3 4"/>
-                  <path d="M11 14l2-5 2 5M12 12.5h2"/>
-                  <path d="M17 5l-4 4"/>
-                </svg>
-                {translateMutation.isPending
-                  ? t('trending_news.translating')
-                  : showTranslations
-                  ? t('trending_news.show_original')
-                  : t('trending_news.translate')}
-              </button>
-            )}
-            {translateError && (
-              <span className="text-xs text-red-500 truncate max-w-[160px]">{translateError}</span>
-            )}
             <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
               <svg className="w-4 h-4" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                 <path d="M2 2l10 10M12 2L2 12"/>
@@ -599,8 +586,6 @@ export function TrendingNewsModal({ onClose }: { onClose: () => void }) {
                   <SourceCard
                     key={source.id}
                     source={source}
-                    translations={translations}
-                    showTranslations={showTranslations}
                   />
                 ))}
               </div>
