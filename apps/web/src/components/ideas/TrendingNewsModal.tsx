@@ -189,10 +189,10 @@ function SourceCard({ source }: SourceCardProps) {
                     className="group flex items-start gap-1.5"
                   >
                     <span className="mt-[5px] w-1 h-1 rounded-full bg-gray-300 group-hover:bg-indigo-400 flex-shrink-0 transition-colors"/>
-                    <span className="text-xs text-gray-700 group-hover:text-indigo-600 transition-colors leading-snug line-clamp-2">
-                      {title}
+                    <span className="flex flex-col min-w-0">
+                      <span className="text-xs text-gray-700 group-hover:text-indigo-600 transition-colors leading-snug line-clamp-2">{title}</span>
                       {article.pubDate && (
-                        <span className="ml-1.5 text-gray-400 font-normal">{formatDate(article.pubDate)}</span>
+                        <span className="text-[10px] text-gray-400 mt-0.5">{formatDate(article.pubDate)}</span>
                       )}
                     </span>
                   </a>
