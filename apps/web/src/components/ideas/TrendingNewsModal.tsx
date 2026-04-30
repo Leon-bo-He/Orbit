@@ -130,18 +130,21 @@ function SourceCard({ source }: SourceCardProps) {
             <button
               onClick={() => void handleTranslateCard()}
               disabled={translateMutation.isPending}
-              title={showTranslations ? t('trending_news.show_original') : t('trending_news.translate')}
-              className={`inline-flex items-center text-[10px] px-1.5 py-0.5 rounded border transition-colors disabled:opacity-50 ${
+              className={`inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded border transition-colors disabled:opacity-50 ${
                 showTranslations
                   ? 'border-indigo-300 bg-indigo-50 text-indigo-600'
                   : 'border-gray-200 text-gray-400 hover:text-indigo-500 hover:border-indigo-200'
               }`}
             >
-              <svg className="w-2.5 h-2.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
-                <path d="M3 5h8M7 3v2M5 9c0 2 1.5 3.5 3 4M8 9c0 2-1.5 3.5-3 4"/>
-                <path d="M11 14l2-5 2 5M12 12.5h2"/>
-                <path d="M17 5l-4 4"/>
-              </svg>
+              {translateMutation.isPending
+                ? <><div className="w-2.5 h-2.5 border border-current border-t-transparent rounded-full animate-spin"/>{t('trending_news.translating')}</>
+                : <><svg className="w-2.5 h-2.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+                    <path d="M3 5h8M7 3v2M5 9c0 2 1.5 3.5 3 4M8 9c0 2-1.5 3.5-3 4"/>
+                    <path d="M11 14l2-5 2 5M12 12.5h2"/>
+                    <path d="M17 5l-4 4"/>
+                  </svg>
+                  {showTranslations ? t('trending_news.show_original') : t('trending_news.translate')}</>
+              }
             </button>
           )}
         </div>
@@ -248,6 +251,7 @@ function AllReportsModal({
   const translateMutation = useTranslateText();
   const [isTranslating, setIsTranslating] = useState(false);
   const [isForcing, setIsForcing] = useState(false);
+  const [translatingSourceId, setTranslatingSourceId] = useState<string | null>(null);
 
   async function handleTranslateSource(sourceId: string, content: string) {
     const current = reports[sourceId];
@@ -257,11 +261,14 @@ function AllReportsModal({
       return;
     }
     const targetLanguage = LOCALE_LANGUAGE[i18n.language] ?? i18n.language;
+    setTranslatingSourceId(sourceId);
     try {
       const result = await translateMutation.mutateAsync({ text: content, targetLanguage });
       setReports((prev) => ({ ...prev, [sourceId]: { ...prev[sourceId]!, translatedContent: result.translated } }));
       setShowTranslations(true);
-    } catch { /* show original on failure */ }
+    } catch { /* show original on failure */ } finally {
+      setTranslatingSourceId(null);
+    }
   }
 
   function loadAll(force: boolean) {
@@ -401,19 +408,22 @@ function AllReportsModal({
                   {showRssTranslate && rep?.content && (
                     <button
                       onClick={() => void handleTranslateSource(source.id, rep.content!)}
-                      disabled={translateMutation.isPending}
-                      title={showTranslations && reports[source.id]?.translatedContent ? t('trending_news.show_original') : t('trending_news.translate')}
-                      className={`ml-auto inline-flex items-center text-[10px] px-1.5 py-0.5 rounded border transition-colors disabled:opacity-50 ${
+                      disabled={translatingSourceId === source.id}
+                      className={`ml-auto inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded border transition-colors disabled:opacity-70 ${
                         showTranslations && rep?.translatedContent
                           ? 'border-indigo-300 bg-indigo-50 text-indigo-600'
                           : 'border-gray-200 text-gray-400 hover:text-indigo-500 hover:border-indigo-200'
                       }`}
                     >
-                      <svg className="w-2.5 h-2.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
-                        <path d="M3 5h8M7 3v2M5 9c0 2 1.5 3.5 3 4M8 9c0 2-1.5 3.5-3 4"/>
-                        <path d="M11 14l2-5 2 5M12 12.5h2"/>
-                        <path d="M17 5l-4 4"/>
-                      </svg>
+                      {translatingSourceId === source.id
+                        ? <><div className="w-2.5 h-2.5 border border-current border-t-transparent rounded-full animate-spin"/>{t('trending_news.translating')}</>
+                        : <><svg className="w-2.5 h-2.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+                            <path d="M3 5h8M7 3v2M5 9c0 2 1.5 3.5 3 4M8 9c0 2-1.5 3.5-3 4"/>
+                            <path d="M11 14l2-5 2 5M12 12.5h2"/>
+                            <path d="M17 5l-4 4"/>
+                          </svg>
+                          {showTranslations && rep?.translatedContent ? t('trending_news.show_original') : t('trending_news.translate')}</>
+                      }
                     </button>
                   )}
                 </div>
