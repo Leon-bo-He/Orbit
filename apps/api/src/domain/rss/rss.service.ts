@@ -84,8 +84,8 @@ function parseRss(xml: string): RssArticle[] {
 export class RssService {
   constructor(private repo: RssCacheRepository) {}
 
-  async deleteFeed(url: string): Promise<void> {
-    await this.repo.deleteFeed(url);
+  async deleteFeed(url: string, userId: string): Promise<void> {
+    await this.repo.deleteFeed(url, userId);
   }
 
   async getFeed(url: string, page = 1, pageSize = 10): Promise<RssFeedPage> {

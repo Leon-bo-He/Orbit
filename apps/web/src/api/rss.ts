@@ -21,6 +21,8 @@ export function useDeleteRssFeed() {
       apiFetch<void>(`/api/rss?url=${encodeURIComponent(url)}`, { method: 'DELETE' }),
     onSuccess: (_data, url) => {
       qc.removeQueries({ queryKey: ['rss', url] });
+      qc.removeQueries({ queryKey: ['rss-report', url] });
+      qc.removeQueries({ queryKey: ['rss-report-check', url] });
     },
   });
 }

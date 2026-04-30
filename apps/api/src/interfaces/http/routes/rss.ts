@@ -18,9 +18,10 @@ export function rssRoutes(app: FastifyInstance, svc: RssService) {
   });
 
   app.delete('/api/rss', { onRequest: [app.authenticate] }, async (req, reply) => {
+    const { sub } = req.user as { sub: string };
     const { url } = req.query as { url?: string };
     if (!url) return reply.code(400).send({ error: 'url query parameter is required' });
-    await svc.deleteFeed(url);
+    await svc.deleteFeed(url, sub);
     return reply.code(204).send();
   });
 }
