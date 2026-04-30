@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
 import i18n from '../../i18n/index.js';
-import { useGenerateReport, useTranslateReport, useCheckCachedReport } from '../../api/ai.js';
+import { useGenerateReport, useTranslateReport, useCheckCachedReport, type RssReport } from '../../api/ai.js';
 import { useUiStore } from '../../store/ui.store.js';
+import { useQueryClient } from '@tanstack/react-query';
 import type { RssSource } from '../../store/rss.store.js';
 import type { RssReport } from '../../api/ai.js';
 
@@ -47,15 +48,20 @@ export function RssReportModal({ source, reportType, onClose }: Props) {
   const showRssTranslate = useUiStore((s) => s.showRssTranslate);
   const generate = useGenerateReport();
   const translateMutation = useTranslateReport();
+  const qc = useQueryClient();
   const cachedQuery = useCheckCachedReport(source.url, reportType);
+
+  // Read the pre-warmed cache synchronously so the report is available on first render
+  const preWarmed = qc.getQueryData<RssReport>(['rss-report', source.url, reportType]) ?? null;
 
   const [report, setReport] = useState<RssReport | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [translatedContent, setTranslatedContent] = useState<string | null>(null);
   const [showTranslation, setShowTranslation] = useState(false);
 
-  // Use cached report from backend if available
-  const activeReport = report ?? cachedQuery.data ?? null;
+  // Pre-warmed cache (from TrendingNewsModal prefetch) is available synchronously on first render,
+  // eliminating the generate-button → report blink.
+  const activeReport = report ?? preWarmed ?? cachedQuery.data ?? null;
 
   // Pre-populate stored translation when report loads
   useEffect(() => {
