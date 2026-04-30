@@ -91,7 +91,9 @@
     "sources_selected": "source(s) selected",
     "discover_btn": "Discover Topics",
     "discovering": "Discovering interesting topics…",
-    "back": "Back to settings"
+    "back": "Back to settings",
+    "include_reports": "Include AI Reports",
+    "include_reports_desc": "Add previously generated reports as additional context."
   },
   "report": {
     "title_suffix": "Report",

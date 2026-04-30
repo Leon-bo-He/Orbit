@@ -134,6 +134,7 @@ export function useDiscoverTopics() {
     feeds: { url: string; name: string }[];
     reportType: 'daily' | 'weekly' | 'biweekly';
     additionalRequirements?: string;
+    includeReports?: boolean;
   }>({
     mutationFn: (body) =>
       apiFetch<{ content: string }>('/api/ai-topic-discover', { method: 'POST', body: JSON.stringify(body) }),

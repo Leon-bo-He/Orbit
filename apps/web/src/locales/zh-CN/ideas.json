@@ -107,6 +107,8 @@
     "sources_selected": "个来源已选",
     "discover_btn": "开始发现",
     "discovering": "正在发现有趣话题…",
-    "back": "返回"
+    "back": "返回",
+    "include_reports": "包含 AI 报告",
+    "include_reports_desc": "将已生成的报告作为额外上下文加入。"
   }
 }

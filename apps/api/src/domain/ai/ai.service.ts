@@ -250,6 +250,7 @@ ${numbered}`;
     reportType: ReportType,
     additionalRequirements: string,
     locale = 'en-US',
+    includeReports = false,
   ): Promise<string> {
     if (feeds.length === 0) throw new ValidationError('Select at least one RSS source.');
     const config = await this.aiConfigRepo.findByUser(userId);
@@ -273,9 +274,25 @@ ${numbered}`;
       throw new ValidationError(`No articles found across the selected sources in the past ${PERIOD_LABELS[reportType]}.`);
     }
 
+    // Optionally include cached AI reports as additional context
+    const reportSections: string[] = [];
+    if (includeReports) {
+      const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
+      for (const feed of feeds) {
+        const cached = await this.reportsRepo.findRecent(userId, feed.url, reportType, since);
+        if (cached?.content) {
+          reportSections.push(`**${feed.name} — AI Report Summary:**\n${cached.content.slice(0, 1500)}`);
+        }
+      }
+    }
+
+    const reportContext = reportSections.length > 0
+      ? `\n\nPreviously Generated AI Reports (use as additional context):\n\n${reportSections.join('\n\n---\n\n')}`
+      : '';
+
     const prompt = `You are a content strategist and trend analyst. Based on the following RSS articles from the past ${PERIOD_LABELS[reportType]}, identify the most interesting and noteworthy topics.
 
-${sections.join('\n\n')}
+${sections.join('\n\n')}${reportContext}
 
 Respond in ${language} with the following sections. Use EXACTLY this paragraph format for every item — a bold title followed immediately by the description on the same line, no numbered lists, no bullet points:
 

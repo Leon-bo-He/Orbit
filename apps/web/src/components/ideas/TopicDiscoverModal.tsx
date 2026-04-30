@@ -122,6 +122,7 @@ export function TopicDiscoverModal({ sources, onClose }: Props) {
   // Source selection
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set(sources.map((s) => s.id)));
   const [reportType, setReportType] = useState<ReportType>('weekly');
+  const [includeReports, setIncludeReports] = useState(false);
   const [additionalReqs, setAdditionalReqs] = useState('');
   const [result, setResult] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -166,7 +167,7 @@ export function TopicDiscoverModal({ sources, onClose }: Props) {
       .filter((s) => selectedIds.has(s.id))
       .map((s) => ({ url: s.url, name: s.name }));
     try {
-      const res = await discover.mutateAsync({ feeds, reportType, additionalRequirements: additionalReqs.trim() || undefined });
+      const res = await discover.mutateAsync({ feeds, reportType, additionalRequirements: additionalReqs.trim() || undefined, includeReports });
       setResult(res.content);
     } catch (err) {
       setError(err instanceof Error ? err.message : t('report.error'));
@@ -270,6 +271,23 @@ export function TopicDiscoverModal({ sources, onClose }: Props) {
 
               {/* Additional requirements */}
               <div>
+                {/* Include reports toggle */}
+                <div className="flex items-center justify-between py-1">
+                  <div>
+                    <p className="text-xs font-medium text-gray-700">{t('topic_discover.include_reports')}</p>
+                    <p className="text-xs text-gray-400 mt-0.5">{t('topic_discover.include_reports_desc')}</p>
+                  </div>
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={includeReports}
+                    onClick={() => setIncludeReports((v) => !v)}
+                    className={`relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors ${includeReports ? 'bg-indigo-600' : 'bg-gray-200'}`}
+                  >
+                    <span className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition-transform ${includeReports ? 'translate-x-4' : 'translate-x-0'}`}/>
+                  </button>
+                </div>
+
                 <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">{t('topic_discover.additional_req')}</p>
                 <textarea
                   value={additionalReqs}
