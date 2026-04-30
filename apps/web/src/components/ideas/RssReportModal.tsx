@@ -94,7 +94,6 @@ export function RssReportModal({ source, reportType, onClose }: Props) {
   const displayContent = showTranslation ? translatedContent : activeReport?.content;
   const generatedAt = activeReport ? new Date(activeReport.createdAt) : null;
   const isGenerating = generate.isPending;
-  const isCheckingCache = cachedQuery.isLoading;
 
   return (
     <div className="fixed inset-0 z-[70] bg-black/50 flex items-center justify-center p-4" onClick={onClose}>
@@ -153,14 +152,8 @@ export function RssReportModal({ source, reportType, onClose }: Props) {
 
         {/* Body */}
         <div className="flex-1 min-h-0 overflow-y-auto px-5 py-4">
-          {/* Cache check spinner */}
-          {isCheckingCache && (
-            <div className="h-full flex items-center justify-center py-12">
-              <div className="w-5 h-5 border-2 border-indigo-200 border-t-indigo-500 rounded-full animate-spin"/>
-            </div>
-          )}
-          {/* Initial state — no cached report found */}
-          {!activeReport && !isGenerating && !error && !isCheckingCache && (
+          {/* Initial state — no report yet (cache check is silent / background) */}
+          {!activeReport && !isGenerating && !error && (
             <div className="h-full flex flex-col items-center justify-center gap-4 py-12">
               <p className="text-sm text-gray-500 text-center max-w-xs">
                 {t('report.generate_prompt', { type: typeLabel, source: source.name })}
