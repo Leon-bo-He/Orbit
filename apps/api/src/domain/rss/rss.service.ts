@@ -121,7 +121,11 @@ export class RssService {
     ]);
 
     return {
-      articles: rows.map((r) => ({ title: r.title, link: r.link, pubDate: r.pubDate })),
+      articles: rows.map((r) => ({
+        title: r.title,
+        link: r.link,
+        pubDate: r.pubDate || (r.pubDateTs?.toISOString() ?? ''),
+      })),
       total,
       page: safePage,
       pages: Math.max(1, Math.ceil(total / safePageSize)),
