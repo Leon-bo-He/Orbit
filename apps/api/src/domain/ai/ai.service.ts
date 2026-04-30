@@ -391,6 +391,12 @@ Rules:
       await redis.del(lockKey);
     }
 
+    // Guard: don't save if the feed was deleted while the AI call was in flight
+    const feedStillExists = await this.rssRepo.findFeed(feedUrl);
+    if (!feedStillExists) {
+      throw new ValidationError('Feed was deleted — report not saved.');
+    }
+
     const inserted = await this.reportsRepo.insert(userId, feedUrl, reportType, content);
     return { content, cached: false, createdAt: inserted.createdAt.toISOString(), reportId: inserted.id };
   }

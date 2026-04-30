@@ -81,9 +81,12 @@ export class RssCacheRepository {
   }
 
   async deleteFeed(url: string, userId: string): Promise<void> {
-    await db.delete(rssArticles).where(eq(rssArticles.feedUrl, url));
-    await db.delete(rssReports).where(and(eq(rssReports.feedUrl, url), eq(rssReports.userId, userId)));
-    await db.delete(rssFeeds).where(eq(rssFeeds.url, url));
+    const [artResult, repResult, feedResult] = await Promise.all([
+      db.delete(rssArticles).where(eq(rssArticles.feedUrl, url)).returning({ id: rssArticles.id }),
+      db.delete(rssReports).where(and(eq(rssReports.feedUrl, url), eq(rssReports.userId, userId))).returning({ id: rssReports.id }),
+      db.delete(rssFeeds).where(eq(rssFeeds.url, url)).returning({ url: rssFeeds.url }),
+    ]);
+    console.log(`[RSS delete] url=${url} userId=${userId} articles=${artResult.length} reports=${repResult.length} feeds=${feedResult.length}`);
   }
 
   async findArticlesByDateRange(feedUrl: string, since: Date): Promise<RssArticleRow[]> {
