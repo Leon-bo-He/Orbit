@@ -303,15 +303,37 @@ function AllReportsModal({
     setIsForcing(force);
     setReports(Object.fromEntries(sources.map((s) => [s.id, { loading: true, checked: false, content: null, translatedContent: null, error: null, generatedAt: null }])));
     setShowTranslations(false);
+
+    function applyReport(sourceId: string, sourceUrl: string, r: RssReport) {
+      const storedTranslation = r.translatedContent && r.translationLocale === i18n.language ? r.translatedContent : null;
+      setReports((prev) => ({ ...prev, [sourceId]: { loading: false, checked: true, content: r.content, translatedContent: storedTranslation, error: null, generatedAt: new Date(r.createdAt) } }));
+      qc.setQueryData(['rss-report', sourceUrl, reportType], r);
+    }
+
+    function pollForReport(sourceId: string, source: RssSource, deadline: number) {
+      if (Date.now() > deadline) {
+        setReports((prev) => ({ ...prev, [sourceId]: { ...prev[sourceId]!, loading: false, checked: true, error: t('report.error') } }));
+        return;
+      }
+      setTimeout(() => {
+        apiFetch<RssReport>(`/api/rss-reports?feedUrl=${encodeURIComponent(source.url)}&reportType=${reportType}`)
+          .then((r) => applyReport(sourceId, source.url, r))
+          .catch(() => pollForReport(sourceId, source, deadline)); // not ready yet — keep polling
+      }, 3000);
+    }
+
     sources.forEach((source) => {
-      apiFetch<RssReport>('/api/rss-reports', {
+      apiFetch<RssReport | { generating: boolean }>('/api/rss-reports', {
         method: 'POST',
         body: JSON.stringify({ feedUrl: source.url, feedName: source.name, reportType, force }),
       })
         .then((r) => {
-          const storedTranslation = r.translatedContent && r.translationLocale === i18n.language ? r.translatedContent : null;
-          setReports((prev) => ({ ...prev, [source.id]: { loading: false, checked: true, content: r.content, translatedContent: storedTranslation, error: null, generatedAt: new Date(r.createdAt) } }));
-          qc.setQueryData(['rss-report', source.url, reportType], r);
+          if ('generating' in r && r.generating) {
+            // 202 background generation — poll until report appears (max 5 min)
+            pollForReport(source.id, source, Date.now() + 5 * 60 * 1000);
+          } else {
+            applyReport(source.id, source.url, r as RssReport);
+          }
         })
         .catch((err) =>
           setReports((prev) => ({
