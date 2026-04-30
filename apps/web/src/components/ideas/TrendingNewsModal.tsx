@@ -493,6 +493,7 @@ export function TrendingNewsModal({ onClose }: { onClose: () => void }) {
 
   // Pre-warm the report cache for every source × report type so clicking a
   // button shows data instantly with no loading flash.
+  // Use GET (check-only) — never POST here as that would auto-generate reports.
   useEffect(() => {
     if (sources.length === 0) return;
     const TYPES = ['daily', 'weekly', 'biweekly'] as const;
@@ -501,10 +502,9 @@ export function TrendingNewsModal({ onClose }: { onClose: () => void }) {
         void qc.prefetchQuery({
           queryKey: ['rss-report', source.url, type],
           queryFn: () =>
-            apiFetch<RssReport>('/api/rss-reports', {
-              method: 'POST',
-              body: JSON.stringify({ feedUrl: source.url, feedName: source.name, reportType: type, force: false }),
-            }),
+            apiFetch<RssReport>(
+              `/api/rss-reports?feedUrl=${encodeURIComponent(source.url)}&reportType=${type}`
+            ).catch(() => null),
           staleTime: 23 * 60 * 60 * 1000,
         });
       });
