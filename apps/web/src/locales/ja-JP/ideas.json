@@ -109,7 +109,8 @@
     "discovering": "トピックを探しています…",
     "back": "戻る",
     "report_checking": "確認中…",
-    "report_unavailable": "レポートなし",
-    "report_use": "このレポートをコンテキストに使用"
+    "report_unavailable_type": "{{type}}レポートなし",
+    "report_use_type": "{{type}}レポートをコンテキストに使用",
+    "report_deselect": "{{type}}レポートの選択を解除"
   }
 }

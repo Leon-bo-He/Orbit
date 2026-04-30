@@ -109,7 +109,8 @@
     "discovering": "토픽을 찾는 중…",
     "back": "돌아가기",
     "report_checking": "확인 중…",
-    "report_unavailable": "리포트 없음",
-    "report_use": "이 리포트를 컨텍스트로 사용"
+    "report_unavailable_type": "{{type}} 리포트 없음",
+    "report_use_type": "{{type}} 리포트를 컨텍스트로 사용",
+    "report_deselect": "{{type}} 리포트 선택 해제"
   }
 }

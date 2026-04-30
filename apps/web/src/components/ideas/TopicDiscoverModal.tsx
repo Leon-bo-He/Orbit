@@ -289,7 +289,15 @@ export function TopicDiscoverModal({ sources, onClose }: Props) {
                                       key={type}
                                       type="button"
                                       disabled={!isAvailable}
-                                      title={isChecking ? t('topic_discover.report_checking') : !isAvailable ? t('topic_discover.report_unavailable') : t('topic_discover.report_use')}
+                                      title={
+                                        isChecking
+                                          ? t('topic_discover.report_checking')
+                                          : !isAvailable
+                                          ? t('topic_discover.report_unavailable_type', { type: t(`trending_news.report_${type}`) })
+                                          : isSelected
+                                          ? t('topic_discover.report_deselect', { type: t(`trending_news.report_${type}`) })
+                                          : t('topic_discover.report_use_type', { type: t(`trending_news.report_${type}`) })
+                                      }
                                       onClick={() => setSelectedReports((prev) => ({ ...prev, [source.id]: prev[source.id] === type ? null : type }))}
                                       className={`text-[9px] px-1.5 py-0.5 rounded border transition-colors disabled:cursor-not-allowed ${
                                         isSelected

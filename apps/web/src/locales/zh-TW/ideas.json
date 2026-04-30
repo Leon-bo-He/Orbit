@@ -109,7 +109,8 @@
     "discovering": "正在探索有趣話題…",
     "back": "返回",
     "report_checking": "檢查中…",
-    "report_unavailable": "暫無報告",
-    "report_use": "將此報告作為上下文"
+    "report_unavailable_type": "暫無{{type}}報告",
+    "report_use_type": "將{{type}}報告作為上下文",
+    "report_deselect": "取消選擇{{type}}報告"
   }
 }

@@ -93,8 +93,9 @@
     "discovering": "Discovering interesting topics…",
     "back": "Back to settings",
     "report_checking": "Checking…",
-    "report_unavailable": "No report available",
-    "report_use": "Use this report as context"
+    "report_unavailable_type": "No {{type}} report available",
+    "report_use_type": "Use {{type}} report as context",
+    "report_deselect": "Deselect {{type}} report"
   },
   "report": {
     "title_suffix": "Report",
