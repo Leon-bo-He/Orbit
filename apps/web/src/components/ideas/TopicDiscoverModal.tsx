@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
 import { useDiscoverTopics } from '../../api/ai.js';
+import { apiFetch } from '../../api/client.js';
+import type { RssReport } from '../../api/ai.js';
 import { IdeaCaptureModal } from './IdeaCaptureModal.js';
 import type { RssSource } from '../../store/rss.store.js';
 
@@ -141,7 +143,7 @@ export function TopicDiscoverModal({ sources, onClose }: Props) {
     setReportAvail(init);
     sources.forEach((source) => {
       TYPES.forEach((type) => {
-        apiFetch<import('../../api/ai.js').RssReport>(
+        apiFetch<RssReport>(
           `/api/rss-reports?feedUrl=${encodeURIComponent(source.url)}&reportType=${type}`
         ).then(() => {
           setReportAvail((prev) => ({ ...prev, [source.id]: { ...prev[source.id], [type]: 'available' } }));
