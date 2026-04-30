@@ -6,7 +6,7 @@ import { useRssStore, type RssSource } from '../../store/rss.store.js';
 import { useUiStore } from '../../store/ui.store.js';
 import { useRssFeed, type RssFeedPage } from '../../api/rss.js';
 import ReactMarkdown from 'react-markdown';
-import { useTranslateTitles, useTranslateText } from '../../api/ai.js';
+import { useTranslateTitles, useTranslateReport } from '../../api/ai.js';
 import { apiFetch } from '../../api/client.js';
 import type { RssReport } from '../../api/ai.js';
 import { RssReportModal } from './RssReportModal.js';
@@ -248,22 +248,26 @@ function AllReportsModal({
     () => Object.fromEntries(sources.map((s) => [s.id, { loading: true, content: null, translatedContent: null, error: null, generatedAt: null }])),
   );
   const [showTranslations, setShowTranslations] = useState(false);
-  const translateMutation = useTranslateText();
-  const [isTranslating, setIsTranslating] = useState(false);
+  const translateMutation = useTranslateReport();
   const [isForcing, setIsForcing] = useState(false);
   const [translatingSourceId, setTranslatingSourceId] = useState<string | null>(null);
 
-  async function handleTranslateSource(sourceId: string, content: string) {
+  async function handleTranslateSource(sourceId: string) {
+    const source = sources.find((s) => s.id === sourceId);
+    if (!source) return;
     const current = reports[sourceId];
-    // Toggle: if already translated, show original
+    // Toggle: if already translated, show/hide
     if (current?.translatedContent) {
       setShowTranslations((v) => !v);
       return;
     }
-    const targetLanguage = LOCALE_LANGUAGE[i18n.language] ?? i18n.language;
     setTranslatingSourceId(sourceId);
     try {
-      const result = await translateMutation.mutateAsync({ text: content, targetLanguage });
+      const result = await translateMutation.mutateAsync({
+        feedUrl: source.url,
+        reportType,
+        targetLocale: i18n.language,
+      });
       setReports((prev) => ({ ...prev, [sourceId]: { ...prev[sourceId]!, translatedContent: result.translated } }));
       setShowTranslations(true);
     } catch { /* show original on failure */ } finally {
@@ -281,7 +285,8 @@ function AllReportsModal({
         body: JSON.stringify({ feedUrl: source.url, feedName: source.name, reportType, force }),
       })
         .then((r) => {
-          setReports((prev) => ({ ...prev, [source.id]: { loading: false, content: r.content, translatedContent: null, error: null, generatedAt: new Date(r.createdAt) } }));
+          const storedTranslation = r.translatedContent && r.translationLocale === i18n.language ? r.translatedContent : null;
+          setReports((prev) => ({ ...prev, [source.id]: { loading: false, content: r.content, translatedContent: storedTranslation, error: null, generatedAt: new Date(r.createdAt) } }));
           // Populate the single-source report cache so opening the individual modal is instant
           qc.setQueryData(['rss-report', source.url, reportType], r);
         })
@@ -292,36 +297,6 @@ function AllReportsModal({
           })),
         );
     });
-  }
-
-  async function handleTranslateAll() {
-    if (showTranslations) { setShowTranslations(false); return; }
-
-    const targetLanguage = LOCALE_LANGUAGE[i18n.language] ?? i18n.language;
-    const sourceList = sources.filter((s) => reports[s.id]?.content);
-    if (sourceList.length === 0) return;
-
-    setIsTranslating(true);
-    try {
-      // Translate each report in parallel using the full-text endpoint
-      const results = await Promise.all(
-        sourceList.map((s) =>
-          translateMutation.mutateAsync({ text: reports[s.id]!.content!, targetLanguage })
-            .then((r) => ({ id: s.id, translated: r.translated }))
-            .catch(() => ({ id: s.id, translated: reports[s.id]!.content! })),
-        ),
-      );
-      setReports((prev) => {
-        const next = { ...prev };
-        results.forEach(({ id, translated }) => {
-          next[id] = { ...next[id]!, translatedContent: translated };
-        });
-        return next;
-      });
-      setShowTranslations(true);
-    } finally {
-      setIsTranslating(false);
-    }
   }
 
   useLayoutEffect(() => { loadAll(false); }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -407,7 +382,7 @@ function AllReportsModal({
                   )}
                   {showRssTranslate && rep?.content && (
                     <button
-                      onClick={() => void handleTranslateSource(source.id, rep.content!)}
+                      onClick={() => void handleTranslateSource(source.id)}
                       disabled={translatingSourceId === source.id}
                       className={`ml-auto inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded border transition-colors disabled:opacity-70 ${
                         showTranslations && rep?.translatedContent

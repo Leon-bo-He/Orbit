@@ -83,6 +83,21 @@ export function aiRoutes(app: FastifyInstance, svc: AiService, userSvc: UserServ
     return reply.send({ content });
   });
 
+  app.post('/api/rss-reports/translate', { onRequest: [app.authenticate] }, async (req, reply) => {
+    const { sub } = req.user as { sub: string };
+    const { feedUrl, reportType, targetLocale } = req.body as {
+      feedUrl?: string; reportType?: string; targetLocale?: string;
+    };
+    if (!feedUrl || !reportType || !targetLocale) {
+      return reply.code(400).send({ error: 'feedUrl, reportType, and targetLocale are required' });
+    }
+    if (!VALID_TYPES.has(reportType as ReportType)) {
+      return reply.code(400).send({ error: 'Invalid reportType' });
+    }
+    const translated = await svc.getOrGenerateTranslation(sub, feedUrl, reportType as ReportType, targetLocale);
+    return reply.send({ translated });
+  });
+
   app.post('/api/rss-reports', { onRequest: [app.authenticate] }, async (req, reply) => {
     const { sub } = req.user as { sub: string };
     const { feedUrl, feedName, reportType, force } = req.body as {

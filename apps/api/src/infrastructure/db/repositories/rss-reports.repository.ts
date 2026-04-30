@@ -23,4 +23,10 @@ export class RssReportsRepository {
       .returning();
     return row!;
   }
+
+  async saveTranslation(id: string, translatedContent: string, translationLocale: string): Promise<void> {
+    await db.update(rssReports)
+      .set({ translatedContent, translationLocale })
+      .where(eq(rssReports.id, id));
+  }
 }

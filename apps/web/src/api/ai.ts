@@ -12,6 +12,16 @@ export interface RssReport {
   content: string;
   cached: boolean;
   createdAt: string;
+  translatedContent?: string;
+  translationLocale?: string;
+  reportId?: string;
+}
+
+export function useTranslateReport() {
+  return useMutation<{ translated: string }, Error, { feedUrl: string; reportType: string; targetLocale: string }>({
+    mutationFn: (body) =>
+      apiFetch<{ translated: string }>('/api/rss-reports/translate', { method: 'POST', body: JSON.stringify(body) }),
+  });
 }
 
 export function useAiConfig() {

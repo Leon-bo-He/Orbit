@@ -203,6 +203,31 @@ ${numbered}`;
     }
   }
 
+  async getOrGenerateTranslation(
+    userId: string,
+    feedUrl: string,
+    reportType: ReportType,
+    targetLocale: string,
+  ): Promise<string> {
+    // Check for a recent cached report with a matching translation
+    const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const existing = await this.reportsRepo.findRecent(userId, feedUrl, reportType, since);
+    if (!existing) throw new ValidationError('No report found. Generate a report first.');
+
+    // Return cached translation if locale matches
+    if (existing.translatedContent && existing.translationLocale === targetLocale) {
+      return existing.translatedContent;
+    }
+
+    // Generate translation
+    const config = await this.aiConfigRepo.findByUser(userId);
+    if (!config) throw new ValidationError('AI not configured. Please add your AI settings first.');
+
+    const translated = await this.translateText(userId, existing.content, LOCALE_LANGUAGE[targetLocale] ?? targetLocale);
+    await this.reportsRepo.saveTranslation(existing.id, translated, targetLocale);
+    return translated;
+  }
+
   async discoverTopics(
     userId: string,
     feeds: { url: string; name: string }[],
@@ -264,12 +289,17 @@ IMPORTANT: Every item must be a single paragraph starting with **bold title**. N
     reportType: ReportType,
     force: boolean,
     locale = 'en-US',
-  ): Promise<{ content: string; cached: boolean; createdAt: string }> {
+  ): Promise<{ content: string; cached: boolean; createdAt: string; translatedContent?: string; translationLocale?: string; reportId?: string }> {
     if (!force) {
       const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
       const existing = await this.reportsRepo.findRecent(userId, feedUrl, reportType, since);
       if (existing) {
-        return { content: existing.content, cached: true, createdAt: existing.createdAt.toISOString() };
+        return {
+          content: existing.content, cached: true, createdAt: existing.createdAt.toISOString(),
+          translatedContent: existing.translatedContent ?? undefined,
+          translationLocale: existing.translationLocale ?? undefined,
+          reportId: existing.id,
+        };
       }
     }
 
@@ -346,6 +376,6 @@ Rules:
     }
 
     const inserted = await this.reportsRepo.insert(userId, feedUrl, reportType, content);
-    return { content, cached: false, createdAt: inserted.createdAt.toISOString() };
+    return { content, cached: false, createdAt: inserted.createdAt.toISOString(), reportId: inserted.id };
   }
 }

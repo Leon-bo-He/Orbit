@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
 import i18n from '../../i18n/index.js';
-import { useGetReport, useTranslateText } from '../../api/ai.js';
+import { useGetReport, useTranslateReport } from '../../api/ai.js';
 import { useUiStore } from '../../store/ui.store.js';
 import type { RssSource } from '../../store/rss.store.js';
 
@@ -45,21 +45,29 @@ export function RssReportModal({ source, reportType, onClose }: Props) {
   const { t } = useTranslation('ideas');
   const [translatedContent, setTranslatedContent] = useState<string | null>(null);
   const [showTranslation, setShowTranslation] = useState(false);
-  const translateMutation = useTranslateText();
+  const translateMutation = useTranslateReport();
 
   const { query, forceRefresh, isRefreshing } = useGetReport(source.url, source.name, reportType);
   const showRssTranslate = useUiStore((s) => s.showRssTranslate);
   const report = query.data;
   const isPending = query.isLoading || query.isFetching;
 
+  // Pre-populate stored translation when report loads and locale matches
+  useEffect(() => {
+    if (report?.translatedContent && report.translationLocale === i18n.language) {
+      setTranslatedContent(report.translatedContent);
+    }
+  }, [report?.translatedContent, report?.translationLocale]);
+
   async function handleTranslate() {
     if (showTranslation) { setShowTranslation(false); return; }
     if (translatedContent) { setShowTranslation(true); return; }
-    const text = report?.content;
-    if (!text) return;
-    const targetLanguage = LOCALE_LANGUAGE[i18n.language] ?? i18n.language;
     try {
-      const result = await translateMutation.mutateAsync({ text, targetLanguage });
+      const result = await translateMutation.mutateAsync({
+        feedUrl: source.url,
+        reportType,
+        targetLocale: i18n.language,
+      });
       setTranslatedContent(result.translated);
       setShowTranslation(true);
     } catch { /* show original on failure */ }

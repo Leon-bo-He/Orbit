@@ -7,6 +7,8 @@ export const rssReports = pgTable('rss_reports', {
   feedUrl: text('feed_url').notNull(),
   reportType: text('report_type').notNull(), // 'daily' | 'weekly' | 'biweekly'
   content: text('content').notNull(),
+  translatedContent: text('translated_content'),
+  translationLocale: text('translation_locale'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 }, (t) => ({
   lookupIdx: index('rss_reports_lookup_idx').on(t.userId, t.feedUrl, t.reportType, t.createdAt),
