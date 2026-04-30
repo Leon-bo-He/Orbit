@@ -79,6 +79,9 @@ export function RssReportModal({ source, reportType, onClose }: Props) {
         feedUrl: source.url, feedName: source.name, reportType, force,
       });
       setReport(result);
+      // Populate both cache keys so reopening the modal shows the report instantly
+      qc.setQueryData(['rss-report', source.url, reportType], result);
+      qc.setQueryData(['rss-report-check', source.url, reportType], result);
     } catch (err) {
       setError(err instanceof Error ? err.message : t('report.error'));
     }
