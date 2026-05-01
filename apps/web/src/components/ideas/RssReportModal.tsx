@@ -79,7 +79,7 @@ export function RssReportModal({ source, reportType, onClose }: Props) {
     qc.setQueryData(['rss-report-check', source.url, reportType], r);
   }
 
-  async function pollForReport(deadline: number): Promise<void> {
+  async function pollForReport(refreshedAfter: number, deadline: number): Promise<void> {
     if (Date.now() > deadline) {
       setIsPolling(false);
       setError(t('report.error'));
@@ -90,10 +90,15 @@ export function RssReportModal({ source, reportType, onClose }: Props) {
       const cached = await apiFetch<RssReport>(
         `/api/rss-reports?feedUrl=${encodeURIComponent(source.url)}&reportType=${reportType}`
       );
-      setIsPolling(false);
-      applyReport(cached);
+      // Only accept a report that was created AFTER the refresh was triggered
+      if (new Date(cached.createdAt).getTime() > refreshedAfter) {
+        setIsPolling(false);
+        applyReport(cached);
+      } else {
+        return pollForReport(refreshedAfter, deadline); // old report — keep polling
+      }
     } catch {
-      return pollForReport(deadline); // not ready yet — keep polling
+      return pollForReport(refreshedAfter, deadline); // not ready yet — keep polling
     }
   }
 
@@ -101,13 +106,14 @@ export function RssReportModal({ source, reportType, onClose }: Props) {
     setError(null);
     if (force) { setTranslatedContent(null); setShowTranslation(false); }
     try {
+      const refreshedAt = Date.now();
       const result = await generate.mutateAsync({
         feedUrl: source.url, feedName: source.name, reportType, force,
       });
       // 202 background generation detected
       if ('generating' in result && (result as { generating: boolean }).generating) {
         setIsPolling(true);
-        void pollForReport(Date.now() + 5 * 60 * 1000);
+        void pollForReport(refreshedAt, refreshedAt + 5 * 60 * 1000);
       } else {
         applyReport(result as RssReport);
       }

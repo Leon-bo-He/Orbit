@@ -310,6 +310,8 @@ function AllReportsModal({
       qc.setQueryData(['rss-report', sourceUrl, reportType], r);
     }
 
+    const refreshedAt = Date.now();
+
     function pollForReport(sourceId: string, source: RssSource, deadline: number) {
       if (Date.now() > deadline) {
         setReports((prev) => ({ ...prev, [sourceId]: { ...prev[sourceId]!, loading: false, checked: true, error: t('report.error') } }));
@@ -317,7 +319,13 @@ function AllReportsModal({
       }
       setTimeout(() => {
         apiFetch<RssReport>(`/api/rss-reports?feedUrl=${encodeURIComponent(source.url)}&reportType=${reportType}`)
-          .then((r) => applyReport(sourceId, source.url, r))
+          .then((r) => {
+            if (new Date(r.createdAt).getTime() > refreshedAt) {
+              applyReport(sourceId, source.url, r);
+            } else {
+              pollForReport(sourceId, source, deadline); // old report — keep polling
+            }
+          })
           .catch(() => pollForReport(sourceId, source, deadline)); // not ready yet — keep polling
       }, 3000);
     }
@@ -329,8 +337,8 @@ function AllReportsModal({
       })
         .then((r) => {
           if ('generating' in r && r.generating) {
-            // 202 background generation — poll until report appears (max 5 min)
-            pollForReport(source.id, source, Date.now() + 5 * 60 * 1000);
+            // 202 background generation — poll until NEW report appears (max 5 min)
+            pollForReport(source.id, source, refreshedAt + 5 * 60 * 1000);
           } else {
             applyReport(source.id, source.url, r as RssReport);
           }
