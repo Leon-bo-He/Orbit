@@ -249,8 +249,17 @@ function AllReportsModal({
   const qc = useQueryClient();
   const showRssTranslate = useUiStore((s) => s.showRssTranslate);
   const [started] = useState(true); // always show body immediately
-  const [reports, setReports] = useState<Record<string, SourceReport>>(
-    () => Object.fromEntries(sources.map((s) => [s.id, { loading: false, checked: false, content: null, translatedContent: null, error: null, generatedAt: null }])),
+  const [reports, setReports] = useState<Record<string, SourceReport>>(() =>
+    Object.fromEntries(sources.map((s) => {
+      // Read pre-warmed RQ cache synchronously — eliminates blink on open
+      const cached = qc.getQueryData<RssReport>(['rss-report', s.url, reportType]);
+      if (cached) {
+        const storedTranslation = cached.translatedContent && cached.translationLocale === i18n.language
+          ? cached.translatedContent : null;
+        return [s.id, { loading: false, checked: true, content: cached.content, translatedContent: storedTranslation, error: null, generatedAt: new Date(cached.createdAt) }];
+      }
+      return [s.id, { loading: false, checked: false, content: null, translatedContent: null, error: null, generatedAt: null }];
+    })),
   );
 
   // Silently check for cached reports on open; mark checked regardless of result
