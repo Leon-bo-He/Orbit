@@ -225,7 +225,7 @@ export function RssReportModal({ source, reportType, onClose }: Props) {
               </button>
             </div>
           )}
-          {displayContent && <ReactMarkdown components={MD_COMPONENTS}>{displayContent}</ReactMarkdown>}
+          {!isGenerating && displayContent && <ReactMarkdown components={MD_COMPONENTS}>{displayContent}</ReactMarkdown>}
         </div>
       </div>
     </div>
