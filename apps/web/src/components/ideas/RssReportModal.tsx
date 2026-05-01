@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
 import i18n from '../../i18n/index.js';
 import { useGenerateReport, useTranslateReport, useCheckCachedReport, type RssReport } from '../../api/ai.js';
+import { apiFetch } from '../../api/client.js';
 import { useUiStore } from '../../store/ui.store.js';
 import { useQueryClient } from '@tanstack/react-query';
 import type { RssSource } from '../../store/rss.store.js';
@@ -58,6 +59,7 @@ export function RssReportModal({ source, reportType, onClose }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [translatedContent, setTranslatedContent] = useState<string | null>(null);
   const [showTranslation, setShowTranslation] = useState(false);
+  const [isPolling, setIsPolling] = useState(false);
 
   // Pre-warmed cache (from TrendingNewsModal prefetch) is available synchronously on first render,
   // eliminating the generate-button → report blink.
@@ -71,6 +73,30 @@ export function RssReportModal({ source, reportType, onClose }: Props) {
     }
   }, [activeReport?.translatedContent, activeReport?.translationLocale]);
 
+  function applyReport(r: RssReport) {
+    setReport(r);
+    qc.setQueryData(['rss-report', source.url, reportType], r);
+    qc.setQueryData(['rss-report-check', source.url, reportType], r);
+  }
+
+  async function pollForReport(deadline: number): Promise<void> {
+    if (Date.now() > deadline) {
+      setIsPolling(false);
+      setError(t('report.error'));
+      return;
+    }
+    await new Promise((res) => setTimeout(res, 3000));
+    try {
+      const cached = await apiFetch<RssReport>(
+        `/api/rss-reports?feedUrl=${encodeURIComponent(source.url)}&reportType=${reportType}`
+      );
+      setIsPolling(false);
+      applyReport(cached);
+    } catch {
+      return pollForReport(deadline); // not ready yet — keep polling
+    }
+  }
+
   async function handleGenerate(force = false) {
     setError(null);
     if (force) { setTranslatedContent(null); setShowTranslation(false); }
@@ -78,10 +104,13 @@ export function RssReportModal({ source, reportType, onClose }: Props) {
       const result = await generate.mutateAsync({
         feedUrl: source.url, feedName: source.name, reportType, force,
       });
-      setReport(result);
-      // Populate both cache keys so reopening the modal shows the report instantly
-      qc.setQueryData(['rss-report', source.url, reportType], result);
-      qc.setQueryData(['rss-report-check', source.url, reportType], result);
+      // 202 background generation detected
+      if ('generating' in result && (result as { generating: boolean }).generating) {
+        setIsPolling(true);
+        void pollForReport(Date.now() + 5 * 60 * 1000);
+      } else {
+        applyReport(result as RssReport);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : t('report.error'));
     }
@@ -102,7 +131,7 @@ export function RssReportModal({ source, reportType, onClose }: Props) {
   const typeLabel = t(`report.type_${reportType}`);
   const displayContent = showTranslation ? translatedContent : activeReport?.content;
   const generatedAt = activeReport ? new Date(activeReport.createdAt) : null;
-  const isGenerating = generate.isPending;
+  const isGenerating = generate.isPending || isPolling;
 
   return (
     <div className="fixed inset-0 z-[70] bg-black/50 flex items-center justify-center p-4" onClick={onClose}>
