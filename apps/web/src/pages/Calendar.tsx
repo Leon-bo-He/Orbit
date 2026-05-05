@@ -377,7 +377,7 @@ function ListView({ contentsByDate, workspaceColor, onContentClick, rangeStart, 
     const el = sentinelRef.current;
     if (!el) return;
     const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) onLoadMore(); },
+      ([entry]) => { if (entry?.isIntersecting) onLoadMore(); },
       { threshold: 0 },
     );
     observer.observe(el);

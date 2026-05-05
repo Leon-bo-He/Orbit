@@ -183,9 +183,9 @@ export function PlatformConfigForm({ publication, onClose }: PlatformConfigFormP
   function handleSaveTemplate(name: string) {
     savePublicationTemplate({
       name,
-      platformTitle: platformTitle || undefined,
-      platformCopy: platformCopy || undefined,
-      platformTags: tags.length ? tags : undefined,
+      ...(platformTitle && { platformTitle }),
+      ...(platformCopy && { platformCopy }),
+      ...(tags.length && { platformTags: tags }),
       visibility,
       allowComments,
     });

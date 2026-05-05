@@ -293,7 +293,7 @@ export default function Dashboard() {
         <StatCard
           label={t('dashboard.engagement_rate')}
           value={`${data.engagementRate.toFixed(1)}%`}
-          sub={totalComments > 0 ? `${totalComments.toLocaleString()} ${t('dashboard.comments')}` : undefined}
+          {...(totalComments > 0 && { sub: `${totalComments.toLocaleString()} ${t('dashboard.comments')}` })}
           accent="amber"
         />
       </div>

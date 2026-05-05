@@ -188,14 +188,16 @@ export default function ContentBrief() {
   }
 
   // Build AI context from current plan + content
+  const audienceText = localPlan.audience
+    ? `${(localPlan.audience as { ageRange?: string }).ageRange ?? ''} — ${(localPlan.audience as { painPoints?: string }).painPoints ?? ''}`
+    : undefined;
+  const hooksText = (localPlan.hooks as { coreHook?: string } | null | undefined)?.coreHook;
   const briefContext: BriefContext = {
     contentTitle: content?.title ?? '',
     contentType: content?.contentType ?? '',
-    audience: localPlan.audience
-      ? `${(localPlan.audience as { ageRange?: string }).ageRange ?? ''} — ${(localPlan.audience as { painPoints?: string }).painPoints ?? ''}`
-      : undefined,
+    ...(audienceText !== undefined && { audience: audienceText }),
     goals: (localPlan.goals as string[] | undefined) ?? [],
-    hooks: (localPlan.hooks as { coreHook?: string } | null | undefined)?.coreHook ?? undefined,
+    ...(hooksText !== undefined && { hooks: hooksText }),
   };
 
   if (!content) {
@@ -276,7 +278,11 @@ export default function ContentBrief() {
               context={briefContext}
               onResult={(r) => {
                 const g = r as { goals?: ContentPlan['goals']; goalDescription?: string; kpiTargets?: ContentPlan['kpiTargets'] };
-                handleChange({ goals: g.goals, goalDescription: g.goalDescription, kpiTargets: g.kpiTargets });
+                handleChange({
+                  ...(g.goals !== undefined && { goals: g.goals }),
+                  ...(g.goalDescription !== undefined && { goalDescription: g.goalDescription }),
+                  ...(g.kpiTargets !== undefined && { kpiTargets: g.kpiTargets }),
+                });
               }}
             />
           }

@@ -81,7 +81,7 @@ function makeMdComponents(
       // Prefer bold title at start of paragraph (new format), then lastLiTitle, then first sentence
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const boldTitle = nodeToFirstStrongText(node as any);
-      const title = boldTitle || lastLiTitle || text.split(/[。！？.!?]/)[0].trim().slice(0, 120);
+      const title = boldTitle || lastLiTitle || (text.split(/[。！？.!?]/)[0] ?? '').trim().slice(0, 120);
       const note = buildNote(text, links);
       return (
         <div className="flex items-start gap-2 mb-2 last:mb-0">
@@ -104,7 +104,7 @@ function makeMdComponents(
       // Track title for following paragraphs; no button here (button is on the paragraph)
       const text = childrenToText(children).trim();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      lastLiTitle = nodeToFirstStrongText(node as any) || text.split('\n')[0].trim().slice(0, 150);
+      lastLiTitle = nodeToFirstStrongText(node as any) || (text.split('\n')[0] ?? '').trim().slice(0, 150);
       return <li className="leading-snug">{children}</li>;
     },
     strong: ({ children }) => <strong className="font-semibold text-gray-900">{children}</strong>,
@@ -199,7 +199,8 @@ export function TopicDiscoverModal({ sources, onClose }: Props) {
           return src ? { feedUrl: src.url, reportType: type! } : null;
         })
         .filter(Boolean) as { feedUrl: string; reportType: string }[];
-      const res = await discover.mutateAsync({ feeds, reportType, additionalRequirements: additionalReqs.trim() || undefined, selectedReports: selReports });
+      const trimmedReqs = additionalReqs.trim();
+      const res = await discover.mutateAsync({ feeds, reportType, ...(trimmedReqs && { additionalRequirements: trimmedReqs }), selectedReports: selReports });
       setResult(res.content);
     } catch (err) {
       setError(err instanceof Error ? err.message : t('report.error'));
@@ -418,8 +419,8 @@ export function TopicDiscoverModal({ sources, onClose }: Props) {
     <IdeaCaptureModal
       open={!!ideaPrefill}
       onClose={() => setIdeaPrefill(null)}
-      initialTitle={ideaPrefill?.title}
-      initialNote={ideaPrefill?.note}
+      {...(ideaPrefill?.title !== undefined && { initialTitle: ideaPrefill.title })}
+      {...(ideaPrefill?.note !== undefined && { initialNote: ideaPrefill.note })}
       zIndex={80}
     />
     </>

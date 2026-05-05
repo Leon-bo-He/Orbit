@@ -436,7 +436,7 @@ function DataPanel() {
 
       const existing = new Set(rssSources.map((s) => s.url));
       const fresh = feeds.filter((f) => !existing.has(f.url));
-      fresh.forEach((f) => addRssSource({ name: f.name, url: f.url, folder: f.folder }));
+      fresh.forEach((f) => addRssSource({ name: f.name, url: f.url, ...(f.folder !== undefined && { folder: f.folder }) }));
 
       if (fresh.length === 0) {
         toast.error(t('settings.general.rss_opml_no_feeds'));
@@ -458,7 +458,8 @@ function DataPanel() {
   function handleRssAdd(e: React.FormEvent) {
     e.preventDefault();
     if (!rssNewName.trim() || !rssNewUrl.trim()) return;
-    addRssSource({ name: rssNewName.trim(), url: rssNewUrl.trim(), folder: rssNewFolder.trim() || undefined });
+    const trimmedFolder = rssNewFolder.trim();
+    addRssSource({ name: rssNewName.trim(), url: rssNewUrl.trim(), ...(trimmedFolder && { folder: trimmedFolder }) });
     setRssNewName('');
     setRssNewUrl('');
     setRssNewFolder('');
@@ -471,7 +472,8 @@ function DataPanel() {
   }
 
   function handleFolderSave(sourceId: string) {
-    updateRssSource(sourceId, { folder: editFolderValue.trim() || undefined });
+    const trimmed = editFolderValue.trim();
+    updateRssSource(sourceId, trimmed ? { folder: trimmed } : {});
     setEditFolderSourceId(null);
   }
 
@@ -1098,7 +1100,7 @@ function TelegramPanel() {
     e.preventDefault();
     setFormError('');
     try {
-      await updateConfig.mutateAsync({ botToken: botToken || undefined, chatId: chatId || null });
+      await updateConfig.mutateAsync({ ...(botToken && { botToken }), chatId: chatId || null });
       setEditing(false);
       setBotToken('');
       setTestStatus('idle');
@@ -1250,7 +1252,7 @@ function TelegramPanel() {
                   disabled={fetchChatId.isPending || (!botToken && !config?.tokenSet)}
                   onClick={async () => {
                     try {
-                      const res = await fetchChatId.mutateAsync({ botToken: botToken || undefined });
+                      const res = await fetchChatId.mutateAsync(botToken ? { botToken } : {});
                       setChatId(res.chatId);
                     } catch (err) {
                       setFormError(err instanceof Error ? err.message : t('status.error'));
@@ -2054,19 +2056,23 @@ function AiPanel() {
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
     if (!baseUrl.trim() || (!apiKey.trim() && !config?.apiKeySet)) return;
-    await saveConfig.mutateAsync({ baseUrl: baseUrl.trim(), apiKey: apiKey.trim() || undefined, model: model.trim() || 'gpt-5.4' });
+    const trimmedKey = apiKey.trim();
+    await saveConfig.mutateAsync({ baseUrl: baseUrl.trim(), ...(trimmedKey && { apiKey: trimmedKey }), model: model.trim() || 'gpt-5.4' });
     setApiKey('');
     setSaved(true);
-    setTestResult({ ok: true, error: undefined });
+    setTestResult({ ok: true });
     setTimeout(() => setSaved(false), 3000);
   }
 
   async function handleTest() {
     setTestResult(null);
+    const trimmedBase = baseUrl.trim();
+    const trimmedKey = apiKey.trim();
+    const trimmedModel = model.trim();
     const result = await testConnection.mutateAsync({
-      baseUrl: baseUrl.trim() || undefined,
-      apiKey: apiKey.trim() || undefined,
-      model: model.trim() || undefined,
+      ...(trimmedBase && { baseUrl: trimmedBase }),
+      ...(trimmedKey && { apiKey: trimmedKey }),
+      ...(trimmedModel && { model: trimmedModel }),
     });
     setTestResult(result);
   }

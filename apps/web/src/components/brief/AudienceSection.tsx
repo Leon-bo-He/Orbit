@@ -112,7 +112,7 @@ export function AudienceSection({ plan, templates, onChange, onSaveTemplate, onR
     onChange({
       audience: tpl.audience ?? emptyAudience(),
       goals: tpl.goals,
-      goalDescription: tpl.goalDescription ?? undefined,
+      ...(tpl.goalDescription != null && { goalDescription: tpl.goalDescription }),
       audienceTemplateId: tpl.id,
     });
     setShowTemplateDropdown(false);

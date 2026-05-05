@@ -89,9 +89,10 @@ export function IdeaEditModal({ idea, onClose }: IdeaEditModalProps) {
   async function handleConfirmConvert() {
     if (!convertWorkspaceId) return;
     try {
+      const trimmedTitle = convertTitle.trim();
       await convertIdea.mutateAsync({
         id: idea.id,
-        data: { workspaceId: convertWorkspaceId, title: convertTitle.trim() || undefined },
+        data: { workspaceId: convertWorkspaceId, ...(trimmedTitle && { title: trimmedTitle }) },
       });
       setShowConvertDialog(false);
       onClose();
