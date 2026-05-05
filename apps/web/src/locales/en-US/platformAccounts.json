@@ -1,0 +1,82 @@
+{
+  "panel": {
+    "subtitle": "Connect platform accounts so Orbit can publish on your behalf.",
+    "add": "Add account",
+    "add_first": "Add your first account",
+    "empty": "No accounts connected yet.",
+    "loading": "Loading…"
+  },
+  "add": {
+    "title": "Connect a platform account",
+    "platform": "Platform",
+    "account_name": "Account label",
+    "account_name_placeholder": "e.g. main_douyin",
+    "account_name_required": "Account label is required",
+    "display_name": "Display name (optional)",
+    "display_name_placeholder": "Friendly name",
+    "show_instructions": "How to copy cookies",
+    "cookies": "Cookies (paste exported JSON)",
+    "cookies_placeholder": "[{\"name\":\"sessionid\",\"value\":\"…\",\"domain\":\".douyin.com\",\"path\":\"/\",…}]",
+    "cookies_required": "Cookies are required",
+    "cookies_hint": "Either Cookie-Editor / EditThisCookie JSON array, or a Playwright storageState object. Multi-domain platforms: paste a single combined array.",
+    "created": "Account connected",
+    "warn_missing_domains": "Connected, but cookies for these domains are missing: {{domains}}"
+  },
+  "row": {
+    "recheck": "Recheck",
+    "rechecking": "Checking…",
+    "replace": "Re-paste",
+    "delete": "Remove",
+    "delete_confirm": "Remove account \"{{name}}\"? Orbit will lose access to it; the underlying social account is unaffected.",
+    "deleted": "Account removed",
+    "replaced": "Cookies updated",
+    "replaced_warn": "Updated, but cookies for these domains are missing: {{domains}}",
+    "recheck_valid": "Cookies are valid",
+    "recheck_invalid": "Cookies are not valid: {{reason}}"
+  },
+  "status": {
+    "valid": "Valid",
+    "invalid": "Invalid",
+    "unknown": "Unverified",
+    "checking": "Checking"
+  },
+  "platforms": {
+    "douyin": "Douyin",
+    "rednote": "Rednote (Xiaohongshu)",
+    "wechat_video": "WeChat Video",
+    "bilibili": "Bilibili",
+    "tiktok": "TikTok",
+    "youtube": "YouTube",
+    "instagram": "Instagram",
+    "facebook": "Facebook",
+    "x": "X (Twitter)"
+  },
+  "instructions": {
+    "step_install": "Install Cookie-Editor in your browser (Chrome / Edge / Firefox / Safari).",
+    "step_login": "Open the platform login URL and sign in normally — finish 2FA / phone / captcha.",
+    "step_export": "Click the Cookie-Editor icon → Export → JSON.",
+    "step_paste": "Paste the JSON into the Cookies field below.",
+    "col_platform": "Platform",
+    "col_login_url": "Login URL",
+    "col_domains": "Cookie domains to export",
+    "col_confirm": "Login confirm marker",
+    "copy": "Copy",
+    "multi_domain_note": "For platforms spanning multiple domains (YouTube, X, WeChat Video), export each domain in Cookie-Editor and concatenate the arrays into one before pasting.",
+    "confirm": {
+      "douyin": "Your nickname appears top-right of the creator dashboard.",
+      "rednote": "\"发布笔记\" button visible on the dashboard.",
+      "wechat_video": "Scan QR with WeChat mobile first, then visit the URL. Avatar visible top-right.",
+      "bilibili": "Login at passport.bilibili.com first, then open member URL. UID visible top-right.",
+      "tiktok": "Upload UI loads instead of redirecting to login.",
+      "youtube": "YouTube Studio dashboard loads. Export from all three domains.",
+      "instagram": "Profile feed visible. Must be a Business or Creator account for web publishing.",
+      "facebook": "News feed visible. Must be a Page admin to post to a Page.",
+      "x": "Home timeline loads. Export from both .x.com and .twitter.com."
+    }
+  },
+  "action": {
+    "save": "Save",
+    "saving": "Saving…",
+    "cancel": "Cancel"
+  }
+}

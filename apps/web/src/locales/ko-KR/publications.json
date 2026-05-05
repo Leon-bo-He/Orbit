@@ -37,7 +37,8 @@
     "view": "보기",
     "retry": "재시도",
     "restore": "복원",
-    "cancel": "취소"
+    "cancel": "취소",
+    "publish_now": "자동 게시"
   },
   "queue_page": {
     "title": "발행 큐",
@@ -132,5 +133,42 @@
     "save": "저장",
     "panel_hint": "Configure 양식에서 템플릿을 저장하세요",
     "apply_hint": "템플릿을 적용하려면 플랫폼의 Configure를 여세요"
+  },
+  "publish_now": {
+    "title": "플랫폼에 자동 게시",
+    "account": "계정",
+    "schedule_label": "나중에 게시(가능한 경우 플랫폼 자체 예약 사용)",
+    "submit": "게시",
+    "submitting": "대기열 등록 중…",
+    "cancel": "취소",
+    "queued": "게시 작업이 대기열에 등록되었습니다",
+    "no_accounts": "{{platform}} 연결된 계정이 없습니다. 설정 → 플랫폼 계정에서 추가하세요.",
+    "unsupported_platform": "플랫폼 \"{{platform}}\"의 자동 게시는 아직 지원되지 않습니다."
+  },
+  "job_badge": {
+    "queued": "대기 중",
+    "running": "게시 중…",
+    "succeeded": "게시됨",
+    "failed": "실패",
+    "canceled": "취소됨"
+  },
+  "job_drawer": {
+    "title": "게시 작업",
+    "status": "상태",
+    "step": "단계",
+    "url": "결과 URL",
+    "failure": "실패 원인",
+    "log": "로그 발췌(최근 4 KB)",
+    "cancel": "작업 취소",
+    "retry": "재시도",
+    "close": "닫기",
+    "canceled": "취소 요청됨",
+    "retried": "재시도가 대기열에 등록됨",
+    "stream_disconnected": "실시간 스트림이 끊겼습니다. 폴링으로 상태를 계속 업데이트합니다.",
+    "status_queued": "대기 중",
+    "status_running": "실행 중",
+    "status_succeeded": "성공",
+    "status_failed": "실패",
+    "status_canceled": "취소됨"
   }
 }

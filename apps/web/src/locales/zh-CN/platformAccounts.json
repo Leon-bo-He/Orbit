@@ -1,0 +1,82 @@
+{
+  "panel": {
+    "subtitle": "连接你的社交平台账号，让 Orbit 代你发布。",
+    "add": "新增账号",
+    "add_first": "新增第一个账号",
+    "empty": "尚未连接任何账号。",
+    "loading": "加载中…"
+  },
+  "add": {
+    "title": "连接平台账号",
+    "platform": "平台",
+    "account_name": "账号标识",
+    "account_name_placeholder": "如：main_douyin",
+    "account_name_required": "请填写账号标识",
+    "display_name": "显示名（可选）",
+    "display_name_placeholder": "易于辨识的名字",
+    "show_instructions": "如何复制 Cookie",
+    "cookies": "Cookie（粘贴导出的 JSON）",
+    "cookies_placeholder": "[{\"name\":\"sessionid\",\"value\":\"…\",\"domain\":\".douyin.com\",…}]",
+    "cookies_required": "请粘贴 Cookie",
+    "cookies_hint": "支持 Cookie-Editor / EditThisCookie 导出的 JSON 数组，或 Playwright storageState 对象。多域名平台请把各域名的数组合并后再粘贴。",
+    "created": "账号已连接",
+    "warn_missing_domains": "已连接，但缺少这些域名的 Cookie：{{domains}}"
+  },
+  "row": {
+    "recheck": "重新检测",
+    "rechecking": "检测中…",
+    "replace": "重新粘贴",
+    "delete": "移除",
+    "delete_confirm": "确认移除账号「{{name}}」？Orbit 将失去对它的访问，社交平台账号本身不受影响。",
+    "deleted": "账号已移除",
+    "replaced": "Cookie 已更新",
+    "replaced_warn": "已更新，但缺少这些域名的 Cookie：{{domains}}",
+    "recheck_valid": "Cookie 有效",
+    "recheck_invalid": "Cookie 无效：{{reason}}"
+  },
+  "status": {
+    "valid": "有效",
+    "invalid": "失效",
+    "unknown": "未验证",
+    "checking": "检测中"
+  },
+  "platforms": {
+    "douyin": "抖音",
+    "rednote": "小红书",
+    "wechat_video": "微信视频号",
+    "bilibili": "哔哩哔哩",
+    "tiktok": "TikTok",
+    "youtube": "YouTube",
+    "instagram": "Instagram",
+    "facebook": "Facebook",
+    "x": "X（推特）"
+  },
+  "instructions": {
+    "step_install": "在浏览器安装 Cookie-Editor 扩展（Chrome / Edge / Firefox / Safari）。",
+    "step_login": "打开下方平台的登录链接，正常登录，完成 2FA / 验证码 / 短信。",
+    "step_export": "点击 Cookie-Editor 图标 → 导出 → JSON。",
+    "step_paste": "把 JSON 粘贴到下方 Cookie 输入框。",
+    "col_platform": "平台",
+    "col_login_url": "登录链接",
+    "col_domains": "需要导出的 Cookie 域名",
+    "col_confirm": "登录成功的标志",
+    "copy": "复制",
+    "multi_domain_note": "对于跨多个域名的平台（YouTube、X、视频号），请把每个域名的数组分别导出，合并到一个数组后再粘贴。",
+    "confirm": {
+      "douyin": "右上角能看到自己的昵称（创作者中心）。",
+      "rednote": "看到「发布笔记」按钮。",
+      "wechat_video": "先在手机上扫码登录微信，再访问该地址；右上角显示头像。",
+      "bilibili": "先在 passport.bilibili.com 登录，再打开 member URL；右上角显示 UID。",
+      "tiktok": "上传页面正常加载，没有跳转到登录。",
+      "youtube": "YouTube Studio 控制台正常加载。三个域名都需要导出。",
+      "instagram": "看到个人主页信息流。仅商业 / 创作者账号支持网页发布。",
+      "facebook": "看到主页信息流。需为页面管理员。",
+      "x": "首页时间线正常加载。.x.com 与 .twitter.com 两个域名都要导出。"
+    }
+  },
+  "action": {
+    "save": "保存",
+    "saving": "保存中…",
+    "cancel": "取消"
+  }
+}

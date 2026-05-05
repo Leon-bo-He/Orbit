@@ -5,6 +5,7 @@
     "dev": "pnpm --parallel --filter=api --filter=web dev",
     "dev:api": "pnpm --filter api dev",
     "dev:web": "pnpm --filter web dev",
+    "dev:runner": "pnpm --filter playwright-runner dev",
     "build": "pnpm --recursive build",
     "test": "pnpm --recursive test",
     "migrate": "pnpm --filter api migrate",

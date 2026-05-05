@@ -1,0 +1,46 @@
+{
+  "panel": {
+    "subtitle": "連接你的社群平台帳號，讓 Orbit 代你發布。",
+    "add": "新增帳號",
+    "add_first": "新增第一個帳號",
+    "empty": "尚未連接任何帳號。",
+    "loading": "載入中…"
+  },
+  "add": {
+    "title": "連接平台帳號",
+    "platform": "平台",
+    "account_name": "帳號標識",
+    "account_name_required": "請填寫帳號標識",
+    "display_name": "顯示名稱（選填）",
+    "show_instructions": "如何複製 Cookie",
+    "cookies": "Cookie（貼上匯出的 JSON）",
+    "cookies_required": "請貼上 Cookie",
+    "cookies_hint": "支援 Cookie-Editor 匯出的 JSON 陣列，或 Playwright storageState 物件。",
+    "created": "帳號已連接",
+    "warn_missing_domains": "已連接，但缺少這些網域的 Cookie：{{domains}}"
+  },
+  "row": {
+    "recheck": "重新檢測",
+    "rechecking": "檢測中…",
+    "replace": "重新貼上",
+    "delete": "移除",
+    "delete_confirm": "確認移除帳號「{{name}}」？",
+    "deleted": "帳號已移除",
+    "replaced": "Cookie 已更新",
+    "recheck_valid": "Cookie 有效",
+    "recheck_invalid": "Cookie 無效：{{reason}}"
+  },
+  "status": { "valid": "有效", "invalid": "失效", "unknown": "未驗證", "checking": "檢測中" },
+  "platforms": {
+    "douyin": "抖音",
+    "rednote": "小紅書",
+    "wechat_video": "微信視頻號",
+    "bilibili": "嗶哩嗶哩",
+    "tiktok": "TikTok",
+    "youtube": "YouTube",
+    "instagram": "Instagram",
+    "facebook": "Facebook",
+    "x": "X（推特）"
+  },
+  "action": { "save": "儲存", "saving": "儲存中…", "cancel": "取消" }
+}

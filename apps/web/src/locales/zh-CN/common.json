@@ -80,7 +80,8 @@
       "platforms": "平台管理",
       "notifications": "通知",
       "data": "数据",
-      "ai": "AI"
+      "ai": "AI",
+      "platform_accounts": "平台账号"
     },
     "platforms": {
       "builtin_title": "内置平台",

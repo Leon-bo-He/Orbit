@@ -80,7 +80,8 @@
       "platforms": "プラットフォーム",
       "notifications": "通知",
       "data": "データ",
-      "ai": "AI"
+      "ai": "AI",
+      "platform_accounts": "プラットフォームアカウント"
     },
     "platforms": {
       "builtin_title": "組み込みプラットフォーム",

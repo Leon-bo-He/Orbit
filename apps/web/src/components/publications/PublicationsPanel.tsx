@@ -5,6 +5,9 @@ import { usePublications, useUpdatePublication, useDeletePublication, useCreateP
 import { PlatformConfigForm } from './PlatformConfigForm.js';
 import { AddPlatformModal } from './AddPlatformModal.js';
 import { MarkPublishedModal } from './MarkPublishedModal.js';
+import { PublishNowDialog } from './PublishNowDialog.js';
+import { UploadJobBadge } from './UploadJobBadge.js';
+import { UploadJobDrawer } from './UploadJobDrawer.js';
 import { PlatformIcon } from '../ui/PlatformIcon.js';
 import { DateTimePicker } from '../ui/DateTimePicker.js';
 import { TimePicker } from '../ui/TimePicker.js';
@@ -413,6 +416,8 @@ export function PublicationsPanel({ contentId }: PublicationsPanelProps) {
   const [showBundleModal, setShowBundleModal] = useState(false);
   const [markPublishedPub, setMarkPublishedPub] = useState<Publication | null>(null);
   const [removeConfirmPub, setRemoveConfirmPub] = useState<Publication | null>(null);
+  const [publishNowPub, setPublishNowPub] = useState<Publication | null>(null);
+  const [drawerJobId, setDrawerJobId] = useState<string | null>(null);
 
   if (isLoading) {
     return <p className="text-sm text-gray-400 py-4 text-center">{t('loading')}</p>;
@@ -521,6 +526,18 @@ export function PublicationsPanel({ contentId }: PublicationsPanelProps) {
                     </button>
                   )}
 
+                  {pub.status !== 'published' && pub.status !== 'skipped' && (
+                    <button
+                      type="button"
+                      onClick={() => setPublishNowPub(pub)}
+                      className="text-xs text-indigo-600 hover:text-indigo-800 px-1.5 py-0.5 rounded hover:bg-indigo-50 font-medium"
+                    >
+                      {t('action.publish_now')}
+                    </button>
+                  )}
+
+                  <UploadJobBadge publicationId={pub.id} onClick={(jobId) => setDrawerJobId(jobId)} />
+
                   {pub.status === 'draft' && (
                     <button
                       type="button"
@@ -590,6 +607,18 @@ export function PublicationsPanel({ contentId }: PublicationsPanelProps) {
           publication={markPublishedPub}
           onClose={() => setMarkPublishedPub(null)}
         />
+      )}
+
+      {publishNowPub && (
+        <PublishNowDialog
+          publication={publishNowPub}
+          onClose={() => setPublishNowPub(null)}
+          onPublished={(jobId) => setDrawerJobId(jobId)}
+        />
+      )}
+
+      {drawerJobId && (
+        <UploadJobDrawer jobId={drawerJobId} onClose={() => setDrawerJobId(null)} />
       )}
 
       {/* Remove publication confirmation */}

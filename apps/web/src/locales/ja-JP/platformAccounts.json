@@ -1,0 +1,46 @@
+{
+  "panel": {
+    "subtitle": "ソーシャルプラットフォームのアカウントを接続して、Orbit が代わりに投稿できるようにします。",
+    "add": "アカウント追加",
+    "add_first": "最初のアカウントを追加",
+    "empty": "まだアカウントが接続されていません。",
+    "loading": "読み込み中…"
+  },
+  "add": {
+    "title": "プラットフォームアカウントを接続",
+    "platform": "プラットフォーム",
+    "account_name": "アカウントラベル",
+    "account_name_required": "アカウントラベルは必須です",
+    "display_name": "表示名（任意）",
+    "show_instructions": "Cookie のコピー方法",
+    "cookies": "Cookie（エクスポートした JSON を貼り付け）",
+    "cookies_required": "Cookie が必要です",
+    "cookies_hint": "Cookie-Editor の JSON 配列、または Playwright の storageState オブジェクトを受け付けます。",
+    "created": "アカウントを接続しました",
+    "warn_missing_domains": "接続しましたが、次のドメインの Cookie がありません：{{domains}}"
+  },
+  "row": {
+    "recheck": "再確認",
+    "rechecking": "確認中…",
+    "replace": "貼り直し",
+    "delete": "削除",
+    "delete_confirm": "アカウント「{{name}}」を削除しますか？",
+    "deleted": "アカウントを削除しました",
+    "replaced": "Cookie を更新しました",
+    "recheck_valid": "Cookie は有効です",
+    "recheck_invalid": "Cookie が無効：{{reason}}"
+  },
+  "status": { "valid": "有効", "invalid": "無効", "unknown": "未確認", "checking": "確認中" },
+  "platforms": {
+    "douyin": "Douyin",
+    "rednote": "Rednote (小紅書)",
+    "wechat_video": "WeChat 視頻号",
+    "bilibili": "Bilibili",
+    "tiktok": "TikTok",
+    "youtube": "YouTube",
+    "instagram": "Instagram",
+    "facebook": "Facebook",
+    "x": "X (Twitter)"
+  },
+  "action": { "save": "保存", "saving": "保存中…", "cancel": "キャンセル" }
+}

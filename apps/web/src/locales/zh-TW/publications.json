@@ -37,7 +37,8 @@
     "view": "查看",
     "retry": "重試",
     "restore": "恢復",
-    "cancel": "撤銷"
+    "cancel": "撤銷",
+    "publish_now": "自動發布"
   },
   "queue_page": {
     "title": "發佈佇列",
@@ -132,5 +133,42 @@
     "save": "儲存",
     "panel_hint": "在「配置」表單中儲存範本",
     "apply_hint": "點擊任意平台的「配置」按鈕來套用範本"
+  },
+  "publish_now": {
+    "title": "立即發布到平台",
+    "account": "帳號",
+    "schedule_label": "稍後發布（支援時使用平台原生排程）",
+    "submit": "發布",
+    "submitting": "排隊中…",
+    "cancel": "取消",
+    "queued": "已加入發布佇列",
+    "no_accounts": "未連接 {{platform}} 帳號。請前往 設定 → 平台帳號 新增。",
+    "unsupported_platform": "平台「{{platform}}」尚未支援自動發布。"
+  },
+  "job_badge": {
+    "queued": "排隊中",
+    "running": "發布中…",
+    "succeeded": "已發布",
+    "failed": "失敗",
+    "canceled": "已取消"
+  },
+  "job_drawer": {
+    "title": "發布任務",
+    "status": "狀態",
+    "step": "步驟",
+    "url": "結果連結",
+    "failure": "失敗原因",
+    "log": "日誌摘要（最後 4 KB）",
+    "cancel": "取消任務",
+    "retry": "重試",
+    "close": "關閉",
+    "canceled": "已請求取消",
+    "retried": "已加入重試",
+    "stream_disconnected": "即時串流中斷；將繼續以輪詢方式更新狀態。",
+    "status_queued": "排隊中",
+    "status_running": "運行中",
+    "status_succeeded": "已完成",
+    "status_failed": "失敗",
+    "status_canceled": "已取消"
   }
 }

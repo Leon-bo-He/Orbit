@@ -37,7 +37,8 @@
     "view": "表示",
     "retry": "再試行",
     "restore": "元に戻す",
-    "cancel": "取り消す"
+    "cancel": "取り消す",
+    "publish_now": "自動投稿"
   },
   "queue_page": {
     "title": "配信キュー",
@@ -132,5 +133,42 @@
     "save": "保存",
     "panel_hint": "「設定」フォームからテンプレートを保存できます",
     "apply_hint": "テンプレートを適用するには、各プラットフォームの「設定」を開いてください"
+  },
+  "publish_now": {
+    "title": "プラットフォームへ自動投稿",
+    "account": "アカウント",
+    "schedule_label": "後で投稿（プラットフォームの予約機能を優先）",
+    "submit": "投稿",
+    "submitting": "キュー登録中…",
+    "cancel": "キャンセル",
+    "queued": "投稿ジョブをキューに登録しました",
+    "no_accounts": "{{platform}} の接続済みアカウントがありません。設定 → プラットフォームアカウントから追加してください。",
+    "unsupported_platform": "プラットフォーム「{{platform}}」の自動投稿はまだサポートされていません。"
+  },
+  "job_badge": {
+    "queued": "待機中",
+    "running": "投稿中…",
+    "succeeded": "投稿済み",
+    "failed": "失敗",
+    "canceled": "キャンセル済み"
+  },
+  "job_drawer": {
+    "title": "投稿ジョブ",
+    "status": "状態",
+    "step": "ステップ",
+    "url": "結果 URL",
+    "failure": "失敗原因",
+    "log": "ログ抜粋（最後 4 KB）",
+    "cancel": "ジョブを中止",
+    "retry": "再試行",
+    "close": "閉じる",
+    "canceled": "キャンセルを要求しました",
+    "retried": "再試行をキュー登録しました",
+    "stream_disconnected": "ライブストリームが切断されました。ポーリングで状態を更新します。",
+    "status_queued": "待機中",
+    "status_running": "実行中",
+    "status_succeeded": "成功",
+    "status_failed": "失敗",
+    "status_canceled": "キャンセル"
   }
 }

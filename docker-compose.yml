@@ -28,7 +28,28 @@ services:
     volumes:
       - redis_data:/data
 
+  # Playwright sidecar for browser-driven publishing (M1+).
+  # Opt-in via `--profile publishing` so dev workflow without it stays unchanged.
+  playwright_runner:
+    profiles: ["publishing"]
+    build:
+      context: ./apps/playwright-runner
+    environment:
+      PORT: 4000
+      RUNNER_TOKEN: ${RUNNER_TOKEN}
+      RUNNER_MAX_BROWSERS: ${RUNNER_MAX_BROWSERS:-4}
+      PUBLISHING_HEADED: "false"
+    ports: ["4000:4000"]
+    volumes:
+      - shared_uploads:/shared/uploads:ro
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:4000/health').then(r => process.exit(r.ok ? 0 : 1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
 
 volumes:
   postgres_data:
   redis_data:
+  shared_uploads:

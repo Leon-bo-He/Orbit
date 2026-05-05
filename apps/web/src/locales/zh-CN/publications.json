@@ -37,7 +37,8 @@
     "view": "查看",
     "retry": "重试",
     "restore": "恢复",
-    "cancel": "撤销"
+    "cancel": "撤销",
+    "publish_now": "自动发布"
   },
   "queue_page": {
     "title": "发布队列",
@@ -132,5 +133,42 @@
     "save": "保存",
     "panel_hint": "在“配置”表单中保存模板",
     "apply_hint": "点击任意平台的“配置”按钮来应用模板"
+  },
+  "publish_now": {
+    "title": "立即发布到平台",
+    "account": "账号",
+    "schedule_label": "稍后发布（在支持时使用平台原生定时）",
+    "submit": "发布",
+    "submitting": "排队中…",
+    "cancel": "取消",
+    "queued": "已加入发布队列",
+    "no_accounts": "未连接 {{platform}} 账号。请前往 设置 → 平台账号 添加。",
+    "unsupported_platform": "平台「{{platform}}」尚未支持自动发布。"
+  },
+  "job_badge": {
+    "queued": "排队中",
+    "running": "发布中…",
+    "succeeded": "已发布",
+    "failed": "失败",
+    "canceled": "已取消"
+  },
+  "job_drawer": {
+    "title": "发布任务",
+    "status": "状态",
+    "step": "步骤",
+    "url": "结果链接",
+    "failure": "失败原因",
+    "log": "日志摘要（最后 4 KB）",
+    "cancel": "取消任务",
+    "retry": "重试",
+    "close": "关闭",
+    "canceled": "已请求取消",
+    "retried": "已加入重试",
+    "stream_disconnected": "实时流断开；将继续通过轮询更新状态。",
+    "status_queued": "排队中",
+    "status_running": "运行中",
+    "status_succeeded": "已完成",
+    "status_failed": "失败",
+    "status_canceled": "已取消"
   }
 }

@@ -80,7 +80,8 @@
       "platforms": "플랫폼",
       "notifications": "알림",
       "data": "데이터",
-      "ai": "AI"
+      "ai": "AI",
+      "platform_accounts": "플랫폼 계정"
     },
     "platforms": {
       "builtin_title": "기본 플랫폼",

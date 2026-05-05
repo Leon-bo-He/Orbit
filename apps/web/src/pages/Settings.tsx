@@ -21,8 +21,9 @@ import { toast } from '../store/toast.store.js';
 import { useRssStore } from '../store/rss.store.js';
 import { useDeleteRssFeed } from '../api/rss.js';
 import { useAiConfig, useSaveAiConfig, useTestAiConnection } from '../api/ai.js';
+import { PlatformAccountsPanel } from '../components/platform-accounts/PlatformAccountsPanel.js';
 
-type Section = 'account' | 'appearance' | 'workspaces' | 'platforms' | 'notifications' | 'data' | 'ai';
+type Section = 'account' | 'appearance' | 'workspaces' | 'platforms' | 'platform-accounts' | 'notifications' | 'data' | 'ai';
 
 
 const LOCALE_META: Record<SupportedLocale, { label: string }> = {
@@ -2176,6 +2177,13 @@ const NAV_ICONS: Record<Section, React.ReactNode> = {
       <path d="M7 9l6-3M7 11l6 3" strokeLinecap="round"/>
     </svg>
   ),
+  'platform-accounts': (
+    <svg className="w-[15px] h-[15px]" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6">
+      <rect x="2" y="5" width="16" height="11" rx="2"/>
+      <path d="M2 9h16" strokeLinecap="round"/>
+      <circle cx="6" cy="12.5" r="1" fill="currentColor"/>
+    </svg>
+  ),
   notifications: (
     <svg className="w-[15px] h-[15px]" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6">
       <path d="M10 2.5A5 5 0 005 7.5V12l-1.5 2h13L15 12V7.5A5 5 0 0010 2.5z" strokeLinecap="round" strokeLinejoin="round"/>
@@ -2205,8 +2213,9 @@ export function SettingsModal({ onClose, initialSection }: { onClose: () => void
     { id: 'account',       label: t('settings.sections.account')       },
     { id: 'appearance',    label: t('settings.sections.appearance')    },
     { id: 'workspaces',    label: t('settings.sections.workspaces')    },
-    { id: 'platforms',     label: t('settings.sections.platforms')     },
-    { id: 'notifications', label: t('settings.sections.notifications') },
+    { id: 'platforms',         label: t('settings.sections.platforms')         },
+    { id: 'platform-accounts', label: t('settings.sections.platform_accounts') },
+    { id: 'notifications',     label: t('settings.sections.notifications')     },
     { id: 'data',          label: t('settings.sections.data')          },
     { id: 'ai',            label: t('settings.sections.ai')            },
   ];
@@ -2298,8 +2307,9 @@ export function SettingsModal({ onClose, initialSection }: { onClose: () => void
             {section === 'account'       && <AccountPanel />}
             {section === 'appearance'    && <AppearancePanel />}
             {section === 'workspaces'    && <WorkspacesPanel />}
-            {section === 'platforms'     && <PlatformsPanel />}
-            {section === 'notifications' && <NotificationsPanel />}
+            {section === 'platforms'         && <PlatformsPanel />}
+            {section === 'platform-accounts' && <PlatformAccountsPanel />}
+            {section === 'notifications'     && <NotificationsPanel />}
             {section === 'data'          && <DataPanel />}
             {section === 'ai'            && <AiPanel />}
           </div>

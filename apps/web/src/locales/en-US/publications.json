@@ -37,7 +37,45 @@
     "view": "View",
     "retry": "Retry",
     "restore": "Restore",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "publish_now": "Auto-publish"
+  },
+  "publish_now": {
+    "title": "Auto-publish to platform",
+    "account": "Account",
+    "schedule_label": "Schedule for later (use platform-native scheduling when available)",
+    "submit": "Publish",
+    "submitting": "Queuing…",
+    "cancel": "Cancel",
+    "queued": "Publish job queued",
+    "no_accounts": "No connected {{platform}} accounts. Add one in Settings → Platform Accounts.",
+    "unsupported_platform": "Auto-publish is not available for platform \"{{platform}}\" yet."
+  },
+  "job_badge": {
+    "queued": "Queued",
+    "running": "Publishing…",
+    "succeeded": "Published",
+    "failed": "Failed",
+    "canceled": "Canceled"
+  },
+  "job_drawer": {
+    "title": "Publish job",
+    "status": "Status",
+    "step": "Step",
+    "url": "Result URL",
+    "failure": "Failure",
+    "log": "Log excerpt (last 4 KB)",
+    "cancel": "Cancel job",
+    "retry": "Retry",
+    "close": "Close",
+    "canceled": "Cancel requested",
+    "retried": "Retry queued",
+    "stream_disconnected": "Live stream disconnected; status still updating via polling.",
+    "status_queued": "Queued",
+    "status_running": "Running",
+    "status_succeeded": "Succeeded",
+    "status_failed": "Failed",
+    "status_canceled": "Canceled"
   },
   "queue_page": {
     "title": "Publish Queue",

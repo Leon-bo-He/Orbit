@@ -1,0 +1,46 @@
+{
+  "panel": {
+    "subtitle": "소셜 플랫폼 계정을 연결하면 Orbit가 대신 게시합니다.",
+    "add": "계정 추가",
+    "add_first": "첫 번째 계정 추가",
+    "empty": "아직 연결된 계정이 없습니다.",
+    "loading": "로드 중…"
+  },
+  "add": {
+    "title": "플랫폼 계정 연결",
+    "platform": "플랫폼",
+    "account_name": "계정 라벨",
+    "account_name_required": "계정 라벨이 필요합니다",
+    "display_name": "표시 이름(선택)",
+    "show_instructions": "쿠키 복사 방법",
+    "cookies": "쿠키(내보낸 JSON 붙여넣기)",
+    "cookies_required": "쿠키가 필요합니다",
+    "cookies_hint": "Cookie-Editor JSON 배열 또는 Playwright storageState 객체를 모두 지원합니다.",
+    "created": "계정이 연결되었습니다",
+    "warn_missing_domains": "연결됨, 그러나 이 도메인의 쿠키가 없습니다: {{domains}}"
+  },
+  "row": {
+    "recheck": "재확인",
+    "rechecking": "확인 중…",
+    "replace": "다시 붙여넣기",
+    "delete": "제거",
+    "delete_confirm": "계정 \"{{name}}\"을(를) 제거하시겠습니까?",
+    "deleted": "계정이 제거되었습니다",
+    "replaced": "쿠키가 업데이트되었습니다",
+    "recheck_valid": "쿠키가 유효합니다",
+    "recheck_invalid": "쿠키가 유효하지 않습니다: {{reason}}"
+  },
+  "status": { "valid": "유효", "invalid": "유효하지 않음", "unknown": "미확인", "checking": "확인 중" },
+  "platforms": {
+    "douyin": "Douyin",
+    "rednote": "Rednote (Xiaohongshu)",
+    "wechat_video": "WeChat Video",
+    "bilibili": "Bilibili",
+    "tiktok": "TikTok",
+    "youtube": "YouTube",
+    "instagram": "Instagram",
+    "facebook": "Facebook",
+    "x": "X (Twitter)"
+  },
+  "action": { "save": "저장", "saving": "저장 중…", "cancel": "취소" }
+}
