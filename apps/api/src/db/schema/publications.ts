@@ -1,5 +1,6 @@
 import { pgTable, uuid, text, timestamp, jsonb } from 'drizzle-orm/pg-core';
 import { contents } from './contents';
+import { platformAccounts } from './platform-accounts';
 
 export const publications = pgTable('publications', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -10,6 +11,9 @@ export const publications = pgTable('publications', {
   platformTags: jsonb('platform_tags').notNull().default([]),
   coverUrl: text('cover_url'),
   platformSettings: jsonb('platform_settings').notNull().default({}),
+  platformAccountId: uuid('platform_account_id').references(() => platformAccounts.id, {
+    onDelete: 'set null',
+  }),
   scheduledAt: timestamp('scheduled_at', { withTimezone: true }),
   publishedAt: timestamp('published_at', { withTimezone: true }),
   status: text('status').notNull().default('draft'),

@@ -104,6 +104,7 @@ export class PublicationService {
     platformTags?: unknown[];
     coverUrl?: string | null;
     platformSettings?: unknown;
+    platformAccountId?: string | null;
     scheduledAt?: Date | null;
     status?: string;
   }) {

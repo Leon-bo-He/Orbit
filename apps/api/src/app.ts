@@ -26,6 +26,8 @@ import { NotificationChannelService } from './domain/notification-channel/notifi
 import { RssService } from './domain/rss/rss.service.js';
 import { AiService } from './domain/ai/ai.service.js';
 import { BriefService } from './domain/ai/brief.service.js';
+import { PlatformAccountService } from './domain/platform-account/platform-account.service.js';
+import { UploadJobService } from './domain/upload-job/upload-job.service.js';
 
 // Infrastructure repositories
 import { WorkspaceRepository } from './infrastructure/db/repositories/workspace.repository.js';
@@ -39,6 +41,8 @@ import { NotificationChannelRepository } from './infrastructure/db/repositories/
 import { RssCacheRepository } from './infrastructure/db/repositories/rss-cache.repository.js';
 import { AiConfigRepository } from './infrastructure/db/repositories/ai-config.repository.js';
 import { RssReportsRepository } from './infrastructure/db/repositories/rss-reports.repository.js';
+import { PlatformAccountRepository } from './infrastructure/db/repositories/platform-account.repository.js';
+import { UploadJobRepository } from './infrastructure/db/repositories/upload-job.repository.js';
 
 export interface Services {
   workspace: WorkspaceService;
@@ -52,15 +56,19 @@ export interface Services {
   rss: RssService;
   ai: AiService;
   brief: BriefService;
+  platformAccount: PlatformAccountService;
+  uploadJob: UploadJobService;
 }
 
 function createServices(): Services {
   const contentRepo = new ContentRepository();
+  const publicationSvc = new PublicationService(new PublicationRepository());
+  const platformAccountSvc = new PlatformAccountService(new PlatformAccountRepository());
   return {
     workspace: new WorkspaceService(new WorkspaceRepository()),
     content: new ContentService(contentRepo),
     idea: new IdeaService(new IdeaRepository(), contentRepo),
-    publication: new PublicationService(new PublicationRepository()),
+    publication: publicationSvc,
     plan: new PlanService(new PlanRepository()),
     metric: new MetricService(new MetricRepository()),
     user: new UserService(new UserRepository()),
@@ -68,6 +76,12 @@ function createServices(): Services {
     rss: new RssService(new RssCacheRepository()),
     ai: new AiService(new AiConfigRepository(), new RssReportsRepository(), new RssCacheRepository()),
     get brief() { return new BriefService(new AiConfigRepository(), this.ai); },
+    platformAccount: platformAccountSvc,
+    uploadJob: new UploadJobService(
+      new UploadJobRepository(),
+      publicationSvc,
+      platformAccountSvc,
+    ),
   };
 }
 

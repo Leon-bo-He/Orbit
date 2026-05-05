@@ -13,3 +13,5 @@ export * from './rss-feeds';
 export * from './rss-articles';
 export * from './ai-configs';
 export * from './rss-reports';
+export * from './platform-accounts';
+export * from './upload-jobs';

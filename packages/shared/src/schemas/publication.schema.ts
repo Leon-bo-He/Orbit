@@ -23,6 +23,7 @@ export const updatePublicationSchema = z.object({
   platformTags: z.array(z.string()).optional(),
   coverUrl: z.string().url().nullable().optional(),
   platformSettings: platformSettingsSchema.optional(),
+  platformAccountId: z.string().uuid().nullable().optional(),
   scheduledAt: z.coerce.date().nullable().optional(),
   status: z.enum(['draft', 'queued', 'ready', 'posting', 'published', 'failed', 'skipped']).optional(),
 });

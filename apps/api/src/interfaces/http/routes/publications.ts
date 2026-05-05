@@ -68,6 +68,7 @@ export function publicationsRoutes(
     if (body.platformTags !== undefined) updateData.platformTags = body.platformTags;
     if (body.coverUrl !== undefined) updateData.coverUrl = body.coverUrl ?? null;
     if (body.platformSettings !== undefined) updateData.platformSettings = body.platformSettings;
+    if (body.platformAccountId !== undefined) updateData.platformAccountId = body.platformAccountId ?? null;
     if (body.scheduledAt !== undefined) updateData.scheduledAt = body.scheduledAt ?? null;
     if (body.status !== undefined) updateData.status = body.status;
     return reply.send(await pubSvc.update(sub, id, updateData));

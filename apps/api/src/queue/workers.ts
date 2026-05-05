@@ -5,8 +5,11 @@ import { users, notificationChannels } from '../db/schema/index.js';
 import { and, eq } from 'drizzle-orm';
 import { sendMessage } from '../lib/telegram.js';
 import { getTelegramMessages } from '../lib/telegram-messages.js';
+import { startPublishingWorker } from './publishing-dispatcher.js';
 
 export function startWorkers() {
+  startPublishingWorker();
+
   const notificationWorker = new Worker(
     'notifications',
     async (job) => {
