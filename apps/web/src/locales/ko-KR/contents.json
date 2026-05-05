@@ -174,13 +174,13 @@
   "platforms": {
     "douyin": "TikTok",
     "xiaohongshu": "Xiaohongshu",
-    "weixin": "WeChat 공식 계정",
     "weixin_video": "WeChat 비디오",
     "bilibili": "Bilibili",
     "x": "X (Twitter)",
     "youtube": "YouTube",
     "instagram": "Instagram",
     "tiktok": "TikTok",
+    "facebook": "Facebook",
     "custom": "커스텀"
   },
   "update_error": "콘텐츠 업데이트 실패: {{message}}",

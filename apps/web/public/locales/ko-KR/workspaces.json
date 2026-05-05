@@ -39,12 +39,12 @@
   "platforms": {
     "douyin": "TikTok",
     "xiaohongshu": "Xiaohongshu",
-    "weixin": "WeChat 공식 계정",
     "weixin_video": "WeChat 비디오",
     "bilibili": "Bilibili",
     "x": "X (Twitter)",
     "youtube": "YouTube",
-    "instagram": "Instagram"
+    "instagram": "Instagram",
+    "facebook": "Facebook"
   },
   "name_required": "워크스페이스 이름을 입력하세요",
   "icon_custom_placeholder": "커스텀 아이콘 (텍스트, 이모지)",

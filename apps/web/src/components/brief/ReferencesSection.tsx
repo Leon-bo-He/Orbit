@@ -15,13 +15,13 @@ interface ReferencesSectionProps {
 const BUILTIN_PLATFORM_OPTIONS = [
   { value: 'douyin',       label: 'Douyin'       },
   { value: 'xiaohongshu',  label: 'RedNote'       },
-  { value: 'weixin',       label: 'WeChat OA'     },
   { value: 'weixin_video', label: 'WeChat Video'  },
   { value: 'bilibili',     label: 'Bilibili'      },
   { value: 'x',            label: 'X'             },
   { value: 'youtube',      label: 'YouTube'       },
   { value: 'instagram',    label: 'Instagram'     },
   { value: 'tiktok',       label: 'TikTok'        },
+  { value: 'facebook',     label: 'Facebook'      },
 ];
 
 const EMPTY_FORM: CreateContentReferenceInput & {

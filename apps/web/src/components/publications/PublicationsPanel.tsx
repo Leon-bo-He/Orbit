@@ -12,8 +12,8 @@ import { useUiStore, type PlatformBundle, type PlatformBundleItem } from '../../
 import { useCustomPlatforms } from '../../api/custom-platforms.js';
 
 const BUILTIN_PLATFORMS = [
-  'douyin', 'xiaohongshu', 'weixin', 'weixin_video',
-  'bilibili', 'x', 'youtube', 'instagram', 'tiktok',
+  'douyin', 'xiaohongshu', 'weixin_video',
+  'bilibili', 'x', 'youtube', 'instagram', 'tiktok', 'facebook',
 ];
 
 const STATUS_STYLES: Record<string, string> = {

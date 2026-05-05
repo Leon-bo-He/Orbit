@@ -11,8 +11,8 @@ import { PlatformIcon } from '../ui/PlatformIcon.js';
 import { useUiStore } from '../../store/ui.store.js';
 
 const BUILT_IN_PLATFORMS: Platform[] = [
-  'douyin', 'xiaohongshu', 'weixin', 'weixin_video',
-  'bilibili', 'x', 'youtube', 'instagram', 'tiktok',
+  'douyin', 'xiaohongshu', 'weixin_video',
+  'bilibili', 'x', 'youtube', 'instagram', 'tiktok', 'facebook',
 ];
 
 const ALL_CONTENT_TYPES: ContentType[] = [

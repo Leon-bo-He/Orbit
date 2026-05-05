@@ -39,12 +39,12 @@
   "platforms": {
     "douyin": "抖音",
     "xiaohongshu": "小紅書",
-    "weixin": "微信公眾號",
     "weixin_video": "微信視頻號",
     "bilibili": "嗶哩嗶哩",
     "x": "X (Twitter)",
     "youtube": "YouTube",
-    "instagram": "Instagram"
+    "instagram": "Instagram",
+    "facebook": "Facebook"
   },
   "name_required": "請輸入工作空間名稱",
   "icon_custom_placeholder": "自訂圖示（文字、Emoji）",

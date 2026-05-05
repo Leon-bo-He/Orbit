@@ -39,12 +39,12 @@
   "platforms": {
     "douyin": "Douyin",
     "xiaohongshu": "RedNote",
-    "weixin": "WeChat OA",
     "weixin_video": "WeChat Video",
     "bilibili": "Bilibili",
     "x": "X (Twitter)",
     "youtube": "YouTube",
-    "instagram": "Instagram"
+    "instagram": "Instagram",
+    "facebook": "Facebook"
   },
   "name_required": "Workspace name is required",
   "icon_custom_placeholder": "Custom icon (text, emoji)",

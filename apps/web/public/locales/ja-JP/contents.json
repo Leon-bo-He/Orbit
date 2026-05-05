@@ -160,13 +160,13 @@
   "platforms": {
     "douyin": "TikTok",
     "xiaohongshu": "RedNote",
-    "weixin": "WeChat公式アカウント",
     "weixin_video": "WeChatビデオ",
     "bilibili": "Bilibili",
     "x": "X (Twitter)",
     "youtube": "YouTube",
     "instagram": "Instagram",
     "tiktok": "TikTok",
+    "facebook": "Facebook",
     "custom": "カスタム"
   },
   "update_error": "コンテンツの更新に失敗しました：{{message}}",

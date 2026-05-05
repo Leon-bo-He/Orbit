@@ -1850,13 +1850,13 @@ function AccountPanel() {
 const BUILTIN_PLATFORMS = [
   { id: 'douyin',       label: 'Douyin'       },
   { id: 'xiaohongshu',  label: 'RedNote'      },
-  { id: 'weixin',       label: 'WeChat OA'    },
   { id: 'weixin_video', label: 'WeChat Video' },
   { id: 'bilibili',     label: 'Bilibili'     },
   { id: 'x',            label: 'X (Twitter)'  },
   { id: 'youtube',      label: 'YouTube'      },
   { id: 'instagram',    label: 'Instagram'    },
   { id: 'tiktok',       label: 'TikTok'       },
+  { id: 'facebook',     label: 'Facebook'     },
 ];
 
 function PlatformsPanel() {

@@ -19,13 +19,13 @@
   "platforms": {
     "douyin": "抖音",
     "xiaohongshu": "小紅書",
-    "weixin": "微信公眾號",
     "weixin_video": "視頻號",
     "bilibili": "嗶哩嗶哩",
     "x": "X (Twitter)",
     "youtube": "YouTube",
     "instagram": "Instagram",
     "tiktok": "TikTok",
+    "facebook": "Facebook",
     "custom": "自訂"
   },
   "action": {

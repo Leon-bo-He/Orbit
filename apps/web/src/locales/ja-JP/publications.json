@@ -21,13 +21,13 @@
   "platforms": {
     "douyin": "Douyin",
     "xiaohongshu": "RedNote",
-    "weixin": "WeChat公式アカウント",
     "weixin_video": "WeChatビデオ",
     "bilibili": "Bilibili",
     "x": "X (Twitter)",
     "youtube": "YouTube",
     "instagram": "Instagram",
     "tiktok": "TikTok",
+    "facebook": "Facebook",
     "custom": "カスタム"
   },
   "action": {
