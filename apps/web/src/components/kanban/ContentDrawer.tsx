@@ -52,8 +52,8 @@ function TimelineTab({
   function handlePickerChange(ascIdx: number, iso: string | null) {
     if (!iso) return;
     const newTime = new Date(iso).getTime();
-    const prev = ascIdx > 0 ? new Date(ascending[ascIdx - 1].timestamp).getTime() : -Infinity;
-    const next = ascIdx < ascending.length - 1 ? new Date(ascending[ascIdx + 1].timestamp).getTime() : Infinity;
+    const prev = ascIdx > 0 ? new Date(ascending[ascIdx - 1]!.timestamp).getTime() : -Infinity;
+    const next = ascIdx < ascending.length - 1 ? new Date(ascending[ascIdx + 1]!.timestamp).getTime() : Infinity;
     if (newTime <= prev || newTime >= next) {
       setErrors((e) => ({ ...e, [ascIdx]: true }));
       return;
@@ -187,9 +187,10 @@ function DrawerBody({ content, workspaceId, onClose }: DrawerBodyProps) {
   }
 
   function togglePlatform(platform: string) {
-    const next = content.targetPlatforms.includes(platform)
-      ? content.targetPlatforms.filter((p) => p !== platform)
-      : [...content.targetPlatforms, platform];
+    const p = platform as Platform;
+    const next = content.targetPlatforms.includes(p)
+      ? content.targetPlatforms.filter((x) => x !== p)
+      : [...content.targetPlatforms, p];
     immediateUpdate({ targetPlatforms: next });
   }
 
@@ -361,7 +362,7 @@ function DrawerBody({ content, workspaceId, onClose }: DrawerBodyProps) {
                     );
                   })}
                   {customPlatforms.map((cp) => {
-                    const active = content.targetPlatforms.includes(cp.id);
+                    const active = content.targetPlatforms.includes(cp.id as Platform);
                     return (
                       <button
                         key={cp.id}
