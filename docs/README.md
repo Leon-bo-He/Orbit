@@ -159,9 +159,9 @@ Orbit/
 
 ---
 
-## Documentation
+## Friend Links
 
-- **[DESIGN.md](DESIGN.md)** — Full product design, data model, and API reference.
+[LinuxDO](https://linux.do/)
 
 ---
 
