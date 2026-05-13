@@ -69,7 +69,24 @@
     "allow_comments": "コメントを許可",
     "save": "保存",
     "cancel": "キャンセル",
-    "title": "設定"
+    "title": "設定",
+    "media": {
+      "title": "メディア",
+      "kind_video": "動画",
+      "kind_note": "画像＋テキスト",
+      "video_label": "動画",
+      "thumb_label": "サムネイル（任意）",
+      "video_pick": "クリックして動画をアップロード",
+      "thumb_pick": "クリックしてサムネイルをアップロード",
+      "video_attached": "動画を添付しました",
+      "video_hint": "MP4 / MOV / WebM / MKV、最大 500 MB。",
+      "thumb_hint": "JPEG / PNG / WebP、最大 10 MB。横長カバーとしてアップロードされます。",
+      "images_label": "画像 ({{count}}/9)",
+      "images_hint": "JPEG / PNG / WebP、各 10 MB まで、最大 9 枚。",
+      "uploading": "アップロード中…",
+      "remove": "削除",
+      "too_many_images": "画像投稿は最大 9 枚です。"
+    }
   },
   "add": {
     "title": "プラットフォームを追加",

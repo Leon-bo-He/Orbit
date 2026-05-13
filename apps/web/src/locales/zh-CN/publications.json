@@ -69,7 +69,24 @@
     "allow_comments": "允许评论",
     "save": "保存",
     "cancel": "取消",
-    "title": "配置"
+    "title": "配置",
+    "media": {
+      "title": "媒体素材",
+      "kind_video": "视频",
+      "kind_note": "图文",
+      "video_label": "视频",
+      "thumb_label": "封面（可选）",
+      "video_pick": "点击上传视频",
+      "thumb_pick": "点击上传封面",
+      "video_attached": "视频已上传",
+      "video_hint": "支持 MP4 / MOV / WebM / MKV，最大 500 MB。",
+      "thumb_hint": "支持 JPEG / PNG / WebP，最大 10 MB。作为横版封面上传。",
+      "images_label": "图片（{{count}}/9）",
+      "images_hint": "支持 JPEG / PNG / WebP，每张最大 10 MB，最多 9 张。",
+      "uploading": "上传中…",
+      "remove": "移除",
+      "too_many_images": "图文最多 9 张图片。"
+    }
   },
   "add": {
     "title": "添加发布平台",

@@ -69,7 +69,24 @@
     "allow_comments": "댓글 허용",
     "save": "저장",
     "cancel": "취소",
-    "title": "설정"
+    "title": "설정",
+    "media": {
+      "title": "미디어",
+      "kind_video": "동영상",
+      "kind_note": "이미지+텍스트",
+      "video_label": "동영상",
+      "thumb_label": "썸네일(선택)",
+      "video_pick": "동영상 업로드",
+      "thumb_pick": "썸네일 업로드",
+      "video_attached": "동영상 첨부됨",
+      "video_hint": "MP4 / MOV / WebM / MKV, 최대 500 MB.",
+      "thumb_hint": "JPEG / PNG / WebP, 최대 10 MB. 가로형 커버로 업로드됩니다.",
+      "images_label": "이미지 ({{count}}/9)",
+      "images_hint": "JPEG / PNG / WebP, 각 10 MB까지, 최대 9장.",
+      "uploading": "업로드 중…",
+      "remove": "제거",
+      "too_many_images": "이미지 게시물은 최대 9장까지 가능합니다."
+    }
   },
   "add": {
     "title": "플랫폼 추가",

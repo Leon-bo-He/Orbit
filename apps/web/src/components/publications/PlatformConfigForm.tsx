@@ -2,8 +2,27 @@ import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { Publication } from '@orbit/shared';
 import { useUpdatePublication } from '../../api/publications.js';
+import {
+  useUploadPublicationVideo,
+  useUploadPublicationThumbnail,
+  useUploadPublicationNoteImages,
+} from '../../api/publicationUploads.js';
 import { DateTimePicker } from '../ui/DateTimePicker.js';
 import { useUiStore, type PublicationTemplate } from '../../store/ui.store.js';
+import { toast } from '../../store/toast.store.js';
+
+type MediaKind = 'video' | 'note';
+
+interface MediaSettings {
+  mediaKind?: MediaKind;
+  videoUrl?: string;
+  videoPath?: string;
+  videoName?: string;
+  thumbnailUrl?: string;
+  thumbnailPath?: string;
+  imageUrls?: string[];
+  imagePaths?: string[];
+}
 
 interface PlatformConfigFormProps {
   publication: Publication;
@@ -168,6 +187,25 @@ export function PlatformConfigForm({ publication, onClose }: PlatformConfigFormP
     publication.platformSettings?.allowComments ?? true,
   );
 
+  const initialMedia: MediaSettings = (publication.platformSettings ?? {}) as MediaSettings;
+  const [mediaKind, setMediaKind] = useState<MediaKind>(
+    initialMedia.mediaKind ?? (initialMedia.imagePaths?.length ? 'note' : 'video'),
+  );
+  const [videoUrl, setVideoUrl] = useState<string | undefined>(initialMedia.videoUrl);
+  const [videoPath, setVideoPath] = useState<string | undefined>(initialMedia.videoPath);
+  const [videoName, setVideoName] = useState<string | undefined>(initialMedia.videoName);
+  const [thumbnailUrl, setThumbnailUrl] = useState<string | undefined>(initialMedia.thumbnailUrl);
+  const [thumbnailPath, setThumbnailPath] = useState<string | undefined>(initialMedia.thumbnailPath);
+  const [imageUrls, setImageUrls] = useState<string[]>(initialMedia.imageUrls ?? []);
+  const [imagePaths, setImagePaths] = useState<string[]>(initialMedia.imagePaths ?? []);
+
+  const videoInputRef = useRef<HTMLInputElement>(null);
+  const thumbInputRef = useRef<HTMLInputElement>(null);
+  const noteInputRef = useRef<HTMLInputElement>(null);
+  const uploadVideo = useUploadPublicationVideo();
+  const uploadThumb = useUploadPublicationThumbnail();
+  const uploadNote = useUploadPublicationNoteImages();
+
   const [pickerOpen, setPickerOpen] = useState(false);
   const [saveModalOpen, setSaveModalOpen] = useState(false);
   const pickerRef = useRef<HTMLDivElement>(null);
@@ -202,7 +240,85 @@ export function PlatformConfigForm({ publication, onClose }: PlatformConfigFormP
     setTags(tags.filter((t) => t !== tag));
   }
 
+  async function handleVideoPick(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    try {
+      const r = await uploadVideo.mutateAsync(file);
+      setVideoUrl(r.url);
+      setVideoPath(r.path);
+      setVideoName(file.name);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : String(err));
+    }
+  }
+
+  async function handleThumbPick(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    try {
+      const r = await uploadThumb.mutateAsync(file);
+      setThumbnailUrl(r.url);
+      setThumbnailPath(r.path);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : String(err));
+    }
+  }
+
+  async function handleNotePick(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files ?? []);
+    e.target.value = '';
+    if (files.length === 0) return;
+    if (imageUrls.length + files.length > 9) {
+      toast.error(t('config.media.too_many_images'));
+      return;
+    }
+    try {
+      const r = await uploadNote.mutateAsync(files);
+      setImageUrls([...imageUrls, ...r.files.map((f) => f.url)]);
+      setImagePaths([...imagePaths, ...r.files.map((f) => f.path)]);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : String(err));
+    }
+  }
+
+  function clearVideo() {
+    setVideoUrl(undefined);
+    setVideoPath(undefined);
+    setVideoName(undefined);
+  }
+
+  function clearThumbnail() {
+    setThumbnailUrl(undefined);
+    setThumbnailPath(undefined);
+  }
+
+  function removeNoteImage(index: number) {
+    setImageUrls(imageUrls.filter((_, i) => i !== index));
+    setImagePaths(imagePaths.filter((_, i) => i !== index));
+  }
+
   async function handleSave() {
+    // Preserve unrelated platformSettings keys (e.g. productLink/productTitle set elsewhere).
+    const prevSettings = (publication.platformSettings ?? {}) as Record<string, unknown>;
+    const media: MediaSettings =
+      mediaKind === 'video'
+        ? {
+            mediaKind: 'video',
+            ...(videoUrl ? { videoUrl } : {}),
+            ...(videoPath ? { videoPath } : {}),
+            ...(videoName ? { videoName } : {}),
+            ...(thumbnailUrl ? { thumbnailUrl } : {}),
+            ...(thumbnailPath ? { thumbnailPath } : {}),
+          }
+        : {
+            mediaKind: 'note',
+            imageUrls,
+            imagePaths,
+          };
+
     await updatePublication.mutateAsync({
       id: publication.id,
       contentId: publication.contentId,
@@ -211,7 +327,12 @@ export function PlatformConfigForm({ publication, onClose }: PlatformConfigFormP
         platformCopy: platformCopy || null,
         platformTags: tags,
         scheduledAt: scheduledAt ? new Date(scheduledAt).toISOString() : null,
-        platformSettings: { visibility, allowComments },
+        platformSettings: {
+          ...prevSettings,
+          visibility,
+          allowComments,
+          ...media,
+        },
       },
     });
     onClose();
@@ -276,6 +397,138 @@ export function PlatformConfigForm({ publication, onClose }: PlatformConfigFormP
           rows={3}
           className="w-full text-sm border border-gray-200 rounded px-2 py-1.5 outline-none focus:ring-2 focus:ring-indigo-200 resize-none"
         />
+      </div>
+
+      {/* Media (video + thumbnail, or note images) */}
+      <div className="border border-gray-200 rounded-lg p-3 bg-white">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-xs font-medium text-gray-600">{t('config.media.title')}</span>
+          <div className="inline-flex rounded-md border border-gray-200 overflow-hidden text-xs">
+            <button
+              type="button"
+              onClick={() => setMediaKind('video')}
+              className={`px-2.5 py-1 ${mediaKind === 'video' ? 'bg-indigo-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-50'}`}
+            >
+              {t('config.media.kind_video')}
+            </button>
+            <button
+              type="button"
+              onClick={() => setMediaKind('note')}
+              className={`px-2.5 py-1 border-l border-gray-200 ${mediaKind === 'note' ? 'bg-indigo-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-50'}`}
+            >
+              {t('config.media.kind_note')}
+            </button>
+          </div>
+        </div>
+
+        {mediaKind === 'video' ? (
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <p className="text-[11px] font-medium text-gray-500 mb-1">{t('config.media.video_label')}</p>
+              {videoUrl ? (
+                <div className="rounded border border-gray-200 overflow-hidden bg-gray-50">
+                  <video src={videoUrl} controls className="w-full aspect-video object-contain bg-black" />
+                  <div className="flex items-center justify-between px-2 py-1 text-[11px]">
+                    <span className="truncate text-gray-500" title={videoName ?? videoPath}>
+                      {videoName ?? t('config.media.video_attached')}
+                    </span>
+                    <button type="button" onClick={clearVideo} className="text-red-500 hover:text-red-700">
+                      {t('config.media.remove')}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => videoInputRef.current?.click()}
+                  disabled={uploadVideo.isPending}
+                  className="w-full aspect-video rounded border-2 border-dashed border-gray-300 hover:border-indigo-400 hover:bg-indigo-50 text-xs text-gray-500 disabled:opacity-60"
+                >
+                  {uploadVideo.isPending ? t('config.media.uploading') : t('config.media.video_pick')}
+                </button>
+              )}
+              <input
+                ref={videoInputRef}
+                type="file"
+                accept="video/mp4,video/quicktime,video/webm,video/x-matroska"
+                className="hidden"
+                onChange={(e) => void handleVideoPick(e)}
+              />
+              <p className="text-[10px] text-gray-400 mt-1">{t('config.media.video_hint')}</p>
+            </div>
+
+            <div>
+              <p className="text-[11px] font-medium text-gray-500 mb-1">{t('config.media.thumb_label')}</p>
+              {thumbnailUrl ? (
+                <div className="rounded border border-gray-200 overflow-hidden bg-gray-50">
+                  <img src={thumbnailUrl} alt="thumbnail" className="w-full aspect-video object-cover" />
+                  <div className="flex items-center justify-end px-2 py-1 text-[11px]">
+                    <button type="button" onClick={clearThumbnail} className="text-red-500 hover:text-red-700">
+                      {t('config.media.remove')}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => thumbInputRef.current?.click()}
+                  disabled={uploadThumb.isPending}
+                  className="w-full aspect-video rounded border-2 border-dashed border-gray-300 hover:border-indigo-400 hover:bg-indigo-50 text-xs text-gray-500 disabled:opacity-60"
+                >
+                  {uploadThumb.isPending ? t('config.media.uploading') : t('config.media.thumb_pick')}
+                </button>
+              )}
+              <input
+                ref={thumbInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                className="hidden"
+                onChange={(e) => void handleThumbPick(e)}
+              />
+              <p className="text-[10px] text-gray-400 mt-1">{t('config.media.thumb_hint')}</p>
+            </div>
+          </div>
+        ) : (
+          <div>
+            <p className="text-[11px] font-medium text-gray-500 mb-1">
+              {t('config.media.images_label', { count: imageUrls.length })}
+            </p>
+            <div className="grid grid-cols-3 gap-2">
+              {imageUrls.map((url, i) => (
+                <div key={url + i} className="relative rounded border border-gray-200 overflow-hidden bg-gray-50">
+                  <img src={url} alt="" className="w-full aspect-square object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => removeNoteImage(i)}
+                    className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/60 text-white text-xs hover:bg-black/80"
+                    aria-label={t('config.media.remove')}
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+              {imageUrls.length < 9 && (
+                <button
+                  type="button"
+                  onClick={() => noteInputRef.current?.click()}
+                  disabled={uploadNote.isPending}
+                  className="aspect-square rounded border-2 border-dashed border-gray-300 hover:border-indigo-400 hover:bg-indigo-50 text-2xl text-gray-400 disabled:opacity-60"
+                >
+                  {uploadNote.isPending ? '…' : '+'}
+                </button>
+              )}
+            </div>
+            <input
+              ref={noteInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              multiple
+              className="hidden"
+              onChange={(e) => void handleNotePick(e)}
+            />
+            <p className="text-[10px] text-gray-400 mt-1">{t('config.media.images_hint')}</p>
+          </div>
+        )}
       </div>
 
       {/* Hashtags */}

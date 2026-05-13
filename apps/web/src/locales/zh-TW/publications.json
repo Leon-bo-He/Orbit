@@ -69,7 +69,24 @@
     "allow_comments": "允許留言",
     "save": "儲存",
     "cancel": "取消",
-    "title": "設定"
+    "title": "設定",
+    "media": {
+      "title": "媒體素材",
+      "kind_video": "影片",
+      "kind_note": "圖文",
+      "video_label": "影片",
+      "thumb_label": "封面（選填）",
+      "video_pick": "點擊上傳影片",
+      "thumb_pick": "點擊上傳封面",
+      "video_attached": "影片已上傳",
+      "video_hint": "支援 MP4 / MOV / WebM / MKV，最大 500 MB。",
+      "thumb_hint": "支援 JPEG / PNG / WebP，最大 10 MB。作為橫版封面上傳。",
+      "images_label": "圖片（{{count}}/9）",
+      "images_hint": "支援 JPEG / PNG / WebP，每張最大 10 MB，最多 9 張。",
+      "uploading": "上傳中…",
+      "remove": "移除",
+      "too_many_images": "圖文最多 9 張圖片。"
+    }
   },
   "add": {
     "title": "新增發佈平台",

@@ -106,7 +106,24 @@
     "allow_comments": "Allow Comments",
     "save": "Save",
     "cancel": "Cancel",
-    "title": "Configure"
+    "title": "Configure",
+    "media": {
+      "title": "Media",
+      "kind_video": "Video",
+      "kind_note": "Image-text",
+      "video_label": "Video",
+      "thumb_label": "Thumbnail (optional)",
+      "video_pick": "Click to upload video",
+      "thumb_pick": "Click to upload thumbnail",
+      "video_attached": "Video attached",
+      "video_hint": "MP4 / MOV / WebM / MKV, up to 500 MB.",
+      "thumb_hint": "JPEG / PNG / WebP, up to 10 MB. Uploaded as landscape cover.",
+      "images_label": "Images ({{count}}/9)",
+      "images_hint": "JPEG / PNG / WebP, up to 10 MB each. Up to 9 images.",
+      "uploading": "Uploading…",
+      "remove": "Remove",
+      "too_many_images": "A note can have at most 9 images."
+    }
   },
   "add": {
     "title": "Add Platform",
